@@ -49,6 +49,19 @@ public class MovieController {
 ------------------------------------------------------------------------
 
 
+## Résumé 
+
+- Un controller REST est annoté avec `@RestController`.
+- `@RequestMapping` définit la racine des endpoints.
+- `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` correspondent aux verbes REST.
+- `@PathVariable` extrait un paramètre depuis l’URL.
+- `@RequestBody` lit le contenu envoyé par le client.
+- Toutes les méthodes exposées sont **publiques**.
+- Le controller ne contient **aucune logique métier**.
+- La logique métier doit être placée dans un **@Service**.
+
+---
+
 ## Explications 
 
 ### `@RestController`
@@ -90,13 +103,3 @@ public class MovieController {
 
 ---
 
-## Résumé 
-
-- Un controller REST est annoté avec `@RestController`.
-- `@RequestMapping` définit la racine des endpoints.
-- `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` correspondent aux verbes REST.
-- `@PathVariable` extrait un paramètre depuis l’URL.
-- `@RequestBody` lit le contenu envoyé par le client.
-- Toutes les méthodes exposées sont **publiques**.
-- Le controller ne contient **aucune logique métier**.
-- La logique métier doit être placée dans un **@Service**.
