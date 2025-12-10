@@ -1,6 +1,6 @@
-# MovieController - CRUD REST
+# CRUD REST - MovieController
 
-## Code Exemple
+## Exemple de Code 
 
 ``` java
 package com.ganatan.starter.movies;
