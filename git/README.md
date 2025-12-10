@@ -3,5 +3,6 @@
 
 ## Initialisation
 
-- [Init du repo](./initialisation/git-init.md)
+- [Init du repo](./git-init.md)
+- [Branches Commandes](./branch.md)
 
