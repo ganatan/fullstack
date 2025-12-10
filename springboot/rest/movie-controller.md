@@ -1,5 +1,7 @@
 # MovieController - CRUD REST
 
+## Code Exemple
+
 ``` java
 package com.ganatan.starter.movies;
 
@@ -47,7 +49,7 @@ public class MovieController {
 ------------------------------------------------------------------------
 
 
-# Explications des éléments utilisés
+## Explications 
 
 ### `@RestController`
 - Combine `@Controller` et `@ResponseBody`.
@@ -88,7 +90,7 @@ public class MovieController {
 
 ---
 
-# Résumé 
+## Résumé 
 
 - Un controller REST est annoté avec `@RestController`.
 - `@RequestMapping` définit la racine des endpoints.
