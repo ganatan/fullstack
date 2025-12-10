@@ -135,6 +135,4 @@ realMovie.show();
 -   `super` appelle le comportement de la classe parente.
 -   Le polymorphisme permet d'utiliser une implémentation via un type
     abstrait.
--   En entreprise, on n'utilise pas de cast d'interface vers
-    implémentation.
 -   `SpringApplication.run()` démarre l'application Spring Boot.
