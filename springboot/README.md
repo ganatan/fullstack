@@ -1,6 +1,4 @@
-# Springboot
-
-Documentation technique Springboot.
+# Documentation technique Springboot.
 
 ## REST
 
