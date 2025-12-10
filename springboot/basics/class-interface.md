@@ -6,22 +6,6 @@ package com.ganatan.starter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
-public class SpringbootStarterApplication {
-
-  public static void main(String[] args) {
-
-    MovieInterface movie = new Movie();
-    movie.delete();
-
-    Movie realMovie = (Movie) movie;
-    realMovie.show();
-
-    SpringApplication.run(SpringbootStarterApplication.class, args);
-  }
-
-}
-
 interface MovieInterface {
   void delete();
 }
@@ -57,4 +41,22 @@ class Movie extends MovieModel {
   }
 
 }
+
+@SpringBootApplication
+public class SpringbootStarterApplication {
+
+  public static void main(String[] args) {
+
+    MovieInterface movie = new Movie();
+    movie.delete();
+
+    Movie realMovie = (Movie) movie;
+    realMovie.show();
+
+    SpringApplication.run(SpringbootStarterApplication.class, args);
+  }
+
+}
+
+
 ```
