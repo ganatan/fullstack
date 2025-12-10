@@ -60,3 +60,53 @@ public class SpringbootStarterApplication {
 
 
 ```
+
+
+# Explication du fonctionnement (Class + Interface + Héritage + Polymorphisme)
+
+---
+
+## `interface MovieInterface`
+
+- Définit un **contrat**.
+- Impose la méthode `delete()` à toute classe qui l’implémente.
+- Toutes les méthodes d’une interface sont **implicitement `public abstract`**.
+- Sert de **type d’abstraction** pour le polymorphisme.
+
+---
+
+## `class MovieModel implements MovieInterface`
+
+- Implémente **obligatoirement** la méthode `delete()`.
+- Contient un **attribut d’instance** `name`.
+- Définit une méthode propre `show()`.
+- C’est une **classe concrète** réutilisable.
+- Elle respecte le contrat de l’interface.
+
+---
+
+## `class Movie extends MovieModel`
+
+- Hérite de `MovieModel` avec `extends`.
+- Redéfinit les méthodes :
+  - `show()`
+  - `delete()`
+- Utilise `super.show()` et `super.delete()` pour appeler le comportement du parent.
+- Illustre le **polymorphisme par héritage**.
+
+---
+
+## `@Override`
+
+- Indique au compilateur que la méthode :
+  - remplace une méthode du parent
+  - ou implémente une méthode de l’interface.
+- Protège contre les erreurs de signature.
+- Non obligatoire, mais **indispensable en pratique professionnelle**.
+
+---
+
+## Polymorphisme dans le `main`
+
+```java
+MovieInterface movie = new Movie();
