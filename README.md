@@ -1,6 +1,4 @@
-# fullstack
-
-Documentation sur les technologies suivantes :
+# Fullstack
 
 - [Angular](./angular/README.md)
 - [Spring Boot](./springboot/README.md)
