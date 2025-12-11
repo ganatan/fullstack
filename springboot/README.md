@@ -6,6 +6,6 @@
 
 ## REST
 
-- [Initailisation](./rest/springboot-init.md)
+- [Initialisation](./springboot-initializr.md)
 - [Controller REST - MovieController](./rest/movie-controller.md)
 
