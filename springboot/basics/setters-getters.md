@@ -58,7 +58,10 @@ class Movie {
   }
 
   public void show() {
-    System.out.println(name + " " + releaseDate + " " + franchise + " " + budget);
+    System.out.println("name : " + name);
+    System.out.println("releaseDate : " + releaseDate);
+    System.out.println("franchise : " + franchise);
+    System.out.println("budget : " + budget);
   }
 }
 
