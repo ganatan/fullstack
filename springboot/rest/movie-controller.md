@@ -6,7 +6,7 @@ Créer le package `com.ganatan.starter.movies` puis ajouter la classe `MovieCont
 Ensuite tester les endpoints sur : http://localhost:8080/api/movies
 
 
-## Exemple de Code 
+## Code du fichier MovieController.java
 
 ``` java
 package com.ganatan.starter.movies;
