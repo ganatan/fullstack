@@ -1,9 +1,9 @@
 ## 🎯 Génération du projet Spring Boot avec **Spring Initializr**
 
-Rends-toi sur **Spring Initializr** :  
+Se rendre sur **Spring Initializr** :  
 👉 https://start.spring.io
 
-Configure le projet avec les paramètres suivants :
+Configurer le projet avec les paramètres suivants :
 
 ### 🏗️ **Projet**
 - **Project** : Maven  
@@ -23,6 +23,6 @@ Configure le projet avec les paramètres suivants :
 - **Spring Web**
 
 ### 📥 Génération
-Clique sur **Generate** pour télécharger l'archive du projet.
+Cliquer sur **Generate** pour télécharger l'archive du projet.
 
-Tu peux ensuite l’importer dans ton IDE (Eclipse / IntelliJ).
+Le projet peut ensuite être importé dans un IDE (Eclipse / IntelliJ).
