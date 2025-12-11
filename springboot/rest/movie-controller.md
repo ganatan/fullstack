@@ -1,5 +1,11 @@
 # CRUD REST - MovieController
 
+## Création du package et de la classe
+
+Créer le package `com.ganatan.starter.movies` puis ajouter la classe `MovieController`.  
+Ensuite tester les endpoints sur : http://localhost:8080/api/movies
+
+
 ## Exemple de Code 
 
 ``` java
