@@ -87,8 +87,6 @@ public class SpringbootStarterApplication {
 - Une classe Java possède des propriétés privées accessibles via des getters et setters.
 - Le constructeur permet d’instancier un objet complet avec toutes ses valeurs.
 - La méthode `show()` affiche l’état courant de l’objet.
-- Le code est entièrement contenu dans un seul fichier pour un apprentissage simple.
-- Cette structure correspond à un POJO classique utilisé partout dans les projets Java.
 
 ---
 
@@ -99,7 +97,6 @@ Les attributs `name`, `releaseDate`, `franchise` et `budget` sont privés, ce qu
 
 ### Getters et Setters
 Ils permettent d’accéder et de modifier les propriétés tout en conservant un contrôle strict sur l’état de l’objet.  
-C’est la convention standard utilisée en entreprise et compatible avec Spring, Hibernate, JSON, etc.
 
 ### Constructeurs
 - Constructeur vide pour créer un objet puis l’initialiser via des setters.
@@ -108,5 +105,3 @@ C’est la convention standard utilisée en entreprise et compatible avec Spring
 ### Méthode show()
 Affiche l’objet sous forme de texte simple, utile pour tester ou déboguer.
 
-### Utilisation dans main
-Création d’un objet `Movie`, initialisation des valeurs, et exécution de la méthode `show()` avant le lancement de Spring Boot.
