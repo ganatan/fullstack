@@ -9,5 +9,5 @@
 ## Rest
 
 - [Initialisation](./springboot-initializr.md)
-- [Controller REST - MovieController](./rest/movie-controller.md)
+- [Controller REST - ContinentController](./rest/continent-crud.md)
 
