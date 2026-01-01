@@ -1,6 +1,6 @@
-# Classe Movie – Exemple complet dans un seul fichier
+# Classe Movie
 
-## Exemple de code
+## Code
 
 ```java
 package com.ganatan.starter;

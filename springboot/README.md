@@ -4,6 +4,7 @@
 
 - [Class - Interface](./basics/class-interface.md)
 - [Setters - Getters](./basics/setters-getters.md)
+- [lombok](./basics/lombok.md)
 
 ## Rest
 
