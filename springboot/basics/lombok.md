@@ -1,6 +1,6 @@
-# Lombok — Documentation succincte
+# Lombok
 
-## Exemple simple avec `@Data`
+## Exemple avec `@Data`
 
 ```java
 package com.ganatan.starter.continents;
