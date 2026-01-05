@@ -1,5 +1,8 @@
 # Documentation Springboot
 
+## Init
+- [Initialisation](./springboot-initializr.md)
+
 ## Basics
 
 - [Class - Interface](./basics/class-interface.md)
@@ -8,6 +11,5 @@
 
 ## Rest
 
-- [Initialisation](./springboot-initializr.md)
 - [Controller REST - ContinentController](./rest/continent-crud.md)
 
