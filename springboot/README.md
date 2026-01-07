@@ -4,8 +4,8 @@
 - [Installation](./java-installation.md)
 
 ## Init
-- [Initialisation](./rest/springboot-initializr.md)
-- [Root Controller - RootController](./rest/root-controller.md)
+- [Initialisation](./rest/001-springboot-initializr.md)
+- [Root Controller - RootController](./rest/002-root-controller.md)
 - [Controller REST - ContinentController](./rest/continent-crud.md)
 
 ## Basics
