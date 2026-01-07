@@ -73,6 +73,12 @@ File → Project Structure (Ctrl + Alt + Shift + S)
 
 ---
 
+### Updater les dépendances Maven
+
+Reload All Maven Projects
+
+---
+
 ## Commentaires
 
 File → Settings  
