@@ -22,8 +22,9 @@ mvn -v
 
 ### 1.1 Modifier le pom.xml
 
-  Veiller à la version pour Java 25
-  Exclure **/tools/**
+Contraintes :
+- Java 25 → JaCoCo **0.8.14 minimum**
+- exclusion du dossier **/tools/**
 
 Ajouter le plugin suivant dans :
 
@@ -40,10 +41,10 @@ Ajouter le plugin suivant dans :
   <groupId>org.jacoco</groupId>
   <artifactId>jacoco-maven-plugin</artifactId>
   <version>0.8.14</version>
-	<configuration>
-		<excludes>
-		  <exclude>**/tools/**</exclude>
-	  </excludes>
+  <configuration>
+    <excludes>
+      <exclude>**/tools/**</exclude>
+    </excludes>
   </configuration>
   <executions>
     <execution>
@@ -83,12 +84,12 @@ target/site/jacoco/index.html
 
 ## 2) Ajouter Checkstyle
 
-### 2.1 Créer la configuration
+### 2.1 Créer la configuration à la racine
 
-Créer le fichier :
+Créer le fichier **à la racine du projet** :
 
 ```text
-config/checkstyle/checkstyle.xml
+checkstyle.xml
 ```
 
 Contenu minimal :
@@ -121,7 +122,7 @@ Ajouter le plugin Checkstyle dans `<build><plugins>` :
   <artifactId>maven-checkstyle-plugin</artifactId>
   <version>3.6.0</version>
   <configuration>
-    <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+    <configLocation>checkstyle.xml</configLocation>
     <encoding>UTF-8</encoding>
     <consoleOutput>true</consoleOutput>
     <failsOnError>true</failsOnError>
@@ -155,6 +156,7 @@ mvn clean install
 ```
 
 Cette commande :
+- compile le projet
 - exécute les tests
 - génère le rapport JaCoCo
 - applique Checkstyle
@@ -165,9 +167,7 @@ Cette commande :
 ## 4) Fichiers ajoutés au projet
 
 ```text
-config/
-└── checkstyle/
-    └── checkstyle.xml
+checkstyle.xml
 pom.xml
 ```
 
@@ -177,4 +177,5 @@ pom.xml
 
 - JaCoCo : mesure du coverage
 - Checkstyle : qualité du code
+- Java 25 → JaCoCo 0.8.14 obligatoire
 - `mvn clean install` = validation complète du projet
