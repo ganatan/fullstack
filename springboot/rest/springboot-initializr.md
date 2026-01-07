@@ -9,7 +9,7 @@ Configurer le projet avec les paramètres suivants :
 - **Project** : Maven  
 - **Language** : Java  
 - **Spring Boot** : 4.0.0  
-- **Java** : 21  
+- **Java** : 25  
 - **Packaging** : JAR  
 
 ### 🧩 **Coordonnées**
