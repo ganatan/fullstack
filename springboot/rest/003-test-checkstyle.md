@@ -3,14 +3,13 @@
 Cette documentation décrit **pas à pas**, de façon **essentielle**, comment ajouter :
 - le **coverage avec JaCoCo**
 - le **contrôle de style avec Checkstyle**
+- des **tests unitaires simples**
 
-dans une application Spring Boot Maven.
+dans une application **Spring Boot Maven**.
 
 ---
 
 ## 0) Pré-requis
-
-Vérifier Maven :
 
 ```bash
 mvn -v
@@ -18,23 +17,28 @@ mvn -v
 
 ---
 
-## 1) Ajouter le coverage (JaCoCo)
-
-### 1.1 Modifier le pom.xml
-
-Contraintes :
-- Java 25 → JaCoCo **0.8.14 minimum**
-- exclusion du dossier **/tools/**
-
-Ajouter le plugin suivant dans :
+## 1) Dépendances Spring Boot minimales
 
 ```xml
-<build>
-  <plugins>
-    ...
-  </plugins>
-</build>
+<dependencies>
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+  </dependency>
+
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
 ```
+
+---
+
+## 2) Coverage avec JaCoCo
+
+### Plugin Maven
 
 ```xml
 <plugin>
@@ -48,7 +52,6 @@ Ajouter le plugin suivant dans :
   </configuration>
   <executions>
     <execution>
-      <id>prepare-agent</id>
       <goals>
         <goal>prepare-agent</goal>
       </goals>
@@ -64,35 +67,20 @@ Ajouter le plugin suivant dans :
 </plugin>
 ```
 
----
-
-### 1.2 Générer le rapport de coverage
-
 ```bash
 mvn clean test
 ```
 
----
-
-### 1.3 Consulter le rapport
-
+Rapport :
 ```text
 target/site/jacoco/index.html
 ```
 
 ---
 
-## 2) Ajouter Checkstyle
+## 3) Checkstyle
 
-### 2.1 Créer la configuration à la racine
-
-Créer le fichier **à la racine du projet** :
-
-```text
-checkstyle.xml
-```
-
-Contenu minimal :
+### Fichier `checkstyle.xml`
 
 ```xml
 <?xml version="1.0"?>
@@ -110,11 +98,7 @@ Contenu minimal :
 </module>
 ```
 
----
-
-### 2.2 Modifier le pom.xml
-
-Ajouter le plugin Checkstyle dans `<build><plugins>` :
+### Plugin Maven
 
 ```xml
 <plugin>
@@ -128,7 +112,6 @@ Ajouter le plugin Checkstyle dans `<build><plugins>` :
   </configuration>
   <executions>
     <execution>
-      <id>checkstyle</id>
       <phase>verify</phase>
       <goals>
         <goal>check</goal>
@@ -140,41 +123,91 @@ Ajouter le plugin Checkstyle dans `<build><plugins>` :
 
 ---
 
-### 2.3 Lancer Checkstyle
+## 4) Tests ajoutés
 
-```bash
-mvn verify
+### 4.1 Test du RootController
+
+```java
+package com.ganatan.starter.api.root;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+
+class RootControllerTest {
+
+  @Test
+  void root_shouldReturnAMap() {
+    RootController controller = new RootController();
+    Map<String, Object> result = controller.root();
+
+    assertNotNull(result);
+    assertEquals("springboot-starter", result.get("application"));
+    assertEquals("running", result.get("status"));
+    assertTrue(result.containsKey("java"));
+    assertNotNull(result.get("java"));
+  }
+
+  @Test
+  void root_shouldContainThreeKeys() {
+    RootController controller = new RootController();
+    Map<String, Object> result = controller.root();
+
+    assertEquals(3, result.size());
+  }
+
+  @Test
+  void root_shouldReturnCurrentJavaVersion() {
+    RootController controller = new RootController();
+    Map<String, Object> result = controller.root();
+
+    assertEquals(System.getProperty("java.version"), result.get("java"));
+  }
+}
+```
+
+### 4.2 Test de démarrage Spring Boot
+
+```java
+package com.ganatan.starter;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class StarterApplicationTests {
+
+  @Test
+  void contextLoads() {
+  }
+
+  @Test
+  void constructorTest() {
+    new StarterApplication();
+  }
+
+  @Test
+  void mainTest() {
+    StarterApplication.main(new String[]{});
+  }
+}
 ```
 
 ---
 
-## 3) Commande finale à retenir
+## 5) Commande finale
 
 ```bash
 mvn clean install
-```
-
-Cette commande :
-- compile le projet
-- exécute les tests
-- génère le rapport JaCoCo
-- applique Checkstyle
-- échoue si une règle est violée
-
----
-
-## 4) Fichiers ajoutés au projet
-
-```text
-checkstyle.xml
-pom.xml
 ```
 
 ---
 
 ## Résumé
 
-- JaCoCo : mesure du coverage
-- Checkstyle : qualité du code
-- Java 25 → JaCoCo 0.8.14 obligatoire
-- `mvn clean install` = validation complète du projet
+- dépendances Spring Boot minimales
+- JaCoCo pour le coverage
+- Checkstyle pour la qualité
+- tests unitaires simples
+- `mvn clean install` valide tout le projet
