@@ -2,6 +2,7 @@
 
 ## Essentiels
 - [Commandes](./commandes.md)
+- [pom.xml](./pom-xml.md)
 
 
 ## Java
