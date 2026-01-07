@@ -123,7 +123,6 @@ Ajouter le plugin Checkstyle dans `<build><plugins>` :
   <version>3.6.0</version>
   <configuration>
     <configLocation>checkstyle.xml</configLocation>
-    <encoding>UTF-8</encoding>
     <consoleOutput>true</consoleOutput>
     <failsOnError>true</failsOnError>
   </configuration>
