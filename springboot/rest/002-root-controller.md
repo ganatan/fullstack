@@ -132,3 +132,20 @@ Réponse JSON :
   "java": "25.0.x"
 }
 ```
+
+
+
+---
+
+## 📦 Commandes Maven usuelles
+
+```bash
+mvn clean                   # nettoyage du dossier target
+mvn compile                 # compilation des sources
+mvn test                    # exécution des tests
+mvn package                 # génération de l’artefact
+mvn install                 # installation en repository local
+mvn dependency:tree         # affichage de l’arbre de dépendances
+mvn versions:display-dependency-updates
+mvn versions:display-plugin-updates
+mvn spring-boot:run         # exécution de l’application Spring Boot
