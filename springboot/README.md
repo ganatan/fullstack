@@ -1,5 +1,8 @@
 # Documentation Springboot
 
+## Java
+- [Installation](./java-installation.md)
+
 ## Init
 - [Initialisation](./springboot-initializr.md)
 
