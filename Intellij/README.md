@@ -1,150 +1,204 @@
+# IntelliJ IDEA — Installation et configuration (Windows)
 
-# Installation
-  
-  https://www.jetbrains.com/idea/download/?section=windows
+## Installation
 
-  ideaIU-2025.1.3.exe
+Téléchargement officiel :
 
-  IntelliJ Ultimate Edition 🟢	✔️ support complet des serveurs (Tomcat, GlassFish...)
-  IntelliJ Community Edition 🔴	❌ pas de support Tomcat, pas de "Run on Server"
+https://www.jetbrains.com/idea/download/?section=windows
 
-  Il faut Activer ta licence IntelliJ Ultimate
-    via
-      Files / Settings / Plugins
+Fichier utilisé :
 
+ideaIU-2025.1.3.exe
 
-# Utilisation de Intellij
-  Ouvrir un projet
-  Selection Maven Project
+---
 
-# Parametrage du JDK Configuré   
-  - Test de java
-  where java
-      C:\Program Files\Common Files\Oracle\Java\javapath
+## Éditions IntelliJ IDEA
 
-  File > Project Structure (Ctrl+Alt+Maj+S)
-    Onglet Project
-      Dans Project SDK, clique Add SDK > JDK
-      Sélectionne ton dossier JDK local :
-        Ex sous Windows : C:\Program Files\Java\jdk-21
-      Valide > Apply > OK
+- IntelliJ IDEA Ultimate Edition 🟢  
+  Support complet des serveurs applicatifs  
+  Tomcat, GlassFish, Jetty, Jakarta EE  
+  Fonctionnalité « Run on Server » disponible
 
-# Touches Commentaires
-  File / Settings
-    KeyMap / Windows
-      Main Menu / code
-        Comment Actions
-          Tout supprimer
-          Add Keyboard Shortcut
-            Taper       Ctrl + /
+- IntelliJ IDEA Community Edition 🔴  
+  Pas de support Tomcat  
+  Pas de « Run on Server »
 
+---
 
-# Format du texte
-  File / Settings
-    KeyMap / Windows
-      Main Menu / code
-        code Formatting Actions
-          Reformat Code
-          Tout supprimer
-          Add Keyboard Shortcut
-            Taper       Maj + Alt + F
+## Activation de la licence (Ultimate)
 
-# Changement de la version de JDK
-  Ouvre le menu :
-  File → Project Structure… (Ctrl + Alt + Shift + S)
-  Dans Project :
-    Project SDK → choisis jdk-25
+File → Settings → Plugins
 
-# Changement Couleur Editeur
-  File → Settings → Appearance & Behavior → Appearance    
-    Light with Light Header
+---
 
-# Changement Taille Texte / font 
-  File → Settings → Editor → Font
-    consolas   12 / 1.0
+## Ouvrir un projet
 
-# Formattage
-  Formattage du texte
-    Ctrl + Alt + L
+- Open Project
+- Sélectionner un projet Maven
 
-# Indetation et Tab
-  
-  - Pour les fichiers Java
-    File → Settings → Editor → Code Style → Java → Tabs and Indents
-    2 partout
+---
 
-  - Pour les fichiers XML
-    File → Settings → Editor → Code Style → XML    
+## Configuration du JDK
 
-# Raccourcis
-  
-  Ctrl + F4 : Ferme Fichier
+### Vérification Java système
 
-# Lancement run et Browser
-  run / Edit Configurations
-    Modify Options
-      Add Before Launch Task
-        Laucnh Web Browser
-          URL : http://localhost:3003/
+```
+where java
+```
 
-# Parametrage de Tomcat
-  Run / Edit Configurations
+---
 
-# Parametre Microsoft
-  Microsoft Defender
-    Exclude Folders      
+### Définir le JDK du projet
 
-# Execution
-  backend-java
-    Type : WebApp Java EE/Jakarta EE (Servlets)
-    main() : ❌ Pas de méthode main()
-    Fonctionnement : WAR déployé sur un serveur externe (Tomcat, Jetty…)
-    Lancement :
-      Eclipse : Run on Server
-      IntelliJ : Edit Configurations > Tomcat Server > Deployment WAR
+File → Project Structure (Ctrl + Alt + Shift + S)
 
-  backend-spring
-    Type : Spring MVC classique (sans Spring Boot)
-    main() : ❌ Pas de méthode main()
-    Fonctionnement : WAR avec DispatcherServlet, Spring XML ou JavaConfig, déployé sur Tomcat
-    Lancement :
-      Eclipse : Run on Server (via WTP)
-      IntelliJ : Tomcat Server > Deployment WAR
+- Project SDK → Add SDK → JDK
+- Sélectionner le dossier JDK local
 
-  backend-springboot
-    Type : Spring Boot application
-    main() : ✅ Avec méthode main()
-    Fonctionnement : Serveur intégré (Tomcat embarqué), lancé via SpringApplication.run(...)
-    Lancement :
-      Eclipse : clic droit sur Application.java → Run as > Java Application
-      IntelliJ : clic droit → Run 'Application.main()'
+Exemple :
 
-# Fermer une fenetre
-  File → Settings → Keymap
-      
-    Window
-      Editor Tabs
-        Editor Close Action
-          Close Tab
+```
+C:\Program Files\Java\jdk-21
+```
 
-# Formattage
-  Ctrl + Alt + L      
+Apply → OK
 
-# Erreur UTF sur Eclipse
-  Clic droit sur ton projet java-starter → Properties
-  Menu Resource
-  Dans la section Text file encoding :
-  Sélectionne Other
-  Choisis UTF-8
-    Clique sur Apply and Close  
+---
 
-# lombok
-# Activer l’annotation processing
-  File → Settings…
-    Build, Execution, Deployment
-      Compiler
-        Annotation Processors
-          Coche Enable annotation processing
-          En bas → cocher aussi :
-          ✔ "Obtain processors from project classpath"
-        Valide → OK
+### Changer la version de JDK
+
+File → Project Structure (Ctrl + Alt + Shift + S)
+
+- Project SDK → jdk-25
+
+---
+
+## Commentaires
+
+File → Settings  
+Keymap → Windows  
+Main Menu → Code → Comment Actions  
+
+Raccourci :
+
+```
+Ctrl + /
+```
+
+---
+
+## Formatage du code
+
+Raccourci :
+
+```
+Ctrl + Alt + L
+```
+
+Configuration personnalisée :
+
+Shift + Alt + F
+
+---
+
+## Indentation
+
+### Java
+
+Editor → Code Style → Java → Tabs and Indents  
+
+- Indent : 2
+- Tab size : 2
+
+### XML
+
+Editor → Code Style → XML  
+
+Indentation identique
+
+---
+
+## Apparence
+
+Theme :
+
+Light with Light Header
+
+Police :
+
+- Consolas
+- 12
+- Line height 1.0
+
+---
+
+## Raccourcis utiles
+
+- Ctrl + F4 : fermer l’onglet
+
+---
+
+## Lancement navigateur
+
+Run → Edit Configurations  
+
+Before Launch → Launch Web Browser  
+
+URL :
+
+```
+http://localhost:3003/
+```
+
+---
+
+## Tomcat
+
+Run → Edit Configurations  
+Tomcat Server → Deployment WAR
+
+---
+
+## Microsoft Defender
+
+Exclude Folders  
+Ajouter le dossier des projets Java
+
+---
+
+## Exécution backend
+
+### backend-java
+
+- WAR
+- Pas de main()
+- Tomcat externe
+
+### backend-spring
+
+- Spring MVC
+- WAR
+- Tomcat externe
+
+### backend-springboot
+
+- Spring Boot
+- main()
+- Tomcat embarqué
+
+---
+
+## UTF-8 Eclipse
+
+Properties → Resource → Text file encoding → UTF-8
+
+---
+
+## Lombok
+
+File → Settings  
+
+Build, Execution, Deployment → Compiler → Annotation Processors  
+
+- Enable annotation processing
+- Obtain processors from project classpath
