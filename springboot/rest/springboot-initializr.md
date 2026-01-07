@@ -16,7 +16,7 @@ Configurer le projet avec les paramètres suivants :
 - **Group** : `com.ganatan`  
 - **Artifact** : `springboot-starter`  
 - **Name** : `springboot-starter`  
-- **Description** : `Demo project for Spring Boot Starter`  
+- **Description** : `Demo project for Spring Boot`  
 - **Package Name** : `com.ganatan.starter`
 
 ### 📦 **Dépendances à ajouter**
