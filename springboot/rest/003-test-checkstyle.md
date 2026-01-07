@@ -22,6 +22,9 @@ mvn -v
 
 ### 1.1 Modifier le pom.xml
 
+  Veiller à la version pour Java 25
+  Exclure **/tools/**
+
 Ajouter le plugin suivant dans :
 
 ```xml
