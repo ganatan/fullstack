@@ -14,5 +14,6 @@
 
 ## Rest
 
+- [Root Controller - RootController](./rest/RootController.md)
 - [Controller REST - ContinentController](./rest/continent-crud.md)
 
