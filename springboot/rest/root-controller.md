@@ -66,41 +66,16 @@ Réponse JSON :
 {
   "application": "springboot-starter",
   "status": "running",
-  "java": "21.0.x"
+  "java": "25.0.x"
 }
 ```
 
 ---
 
-## Règles de conception
+## Architecture
 
-- Pas de logique métier
-- Pas de DTO
-- Pas de service
-- Pas de repository
-- Pas de configuration spécifique
-- Le contrôleur doit rester stable dans le temps
-
----
-
-## Évolution possible
-
-Ce contrôleur peut évoluer vers :
-- un endpoint /health
-- un endpoint /info
-- un point d’entrée pour un reverse-proxy
-- un endpoint de monitoring simple
-
-Sans jamais devenir un contrôleur métier.
-
----
-
-## Position dans l’architecture
-
+```text
 starter
 ├── SpringbootStarterApplication.java
 └── root
     └── RootController.java
-
-Le RootController appartient à la couche API / infrastructure.
-Il ne doit jamais dépendre du domaine.
