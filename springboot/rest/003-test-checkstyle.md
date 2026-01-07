@@ -37,6 +37,11 @@ Ajouter le plugin suivant dans :
   <groupId>org.jacoco</groupId>
   <artifactId>jacoco-maven-plugin</artifactId>
   <version>0.8.14</version>
+	<configuration>
+		<excludes>
+		  <exclude>**/tools/**</exclude>
+	  </excludes>
+  </configuration>
   <executions>
     <execution>
       <id>prepare-agent</id>
