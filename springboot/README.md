@@ -12,7 +12,7 @@
 - [Initialisation](./rest/001-springboot-initializr.md)
 - [Root Controller - RootController](./rest/002-root-controller.md)
 - [Test - CheckStyle](./rest/003-test-checkstyle.md)
-- [Controller REST - ContinentController](./rest/continent-crud.md)
+- [Controller REST - ContinentController](./rest/004-continent-controller.md)
 
 ## Basics
 
