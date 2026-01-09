@@ -1,78 +1,40 @@
-# 004 — Continent Repository
+# 004 — Continent Repository (version simple)
 
-Introduction d’un **repository in-memory** pour isoler l’accès aux données.
+Cette étape introduit le **Repository pattern de façon minimale**.  
+Objectif : séparer légèrement les responsabilités **sans complexité inutile**.
 
-Objectif :  
-séparer clairement **controller / service / accès aux données**,  
-sans base de données, en préparant les évolutions futures.
-
----
-
-## Contexte
-
-Après l’introduction :
-- d’un `ContinentController`
-- d’un `ContinentService`
-
-le service contenait encore directement les données.
-
-Cette étape introduit un **repository** pour :
-- sortir les données du service
-- préparer un futur switch (DB, API externe)
-- améliorer la testabilité
+Pas d’interface, pas de token, pas de module dédié.  
+Juste **Controller → Service → Repository**.
 
 ---
 
-## Architecture cible
-
-```
-Controller  →  Service  →  Repository
-```
-
-- Controller : HTTP uniquement
-- Service : logique applicative
-- Repository : source des données
-
----
-
-## Structure impactée
+## Structure du projet
 
 ```
 src/
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
 ├── continent.controller.ts
 ├── continent.service.ts
 ├── continent.repository.ts
-├── continent.repository.inmemory.ts
+├── main.ts
 ```
 
 ---
 
-## Contrat du repository
+## Repository
 
-### Fichier : `src/continent.repository.ts`
+Le repository contient **les données** et expose une méthode `findAll()`.
 
-```ts
-export type Continent = {
-  id: number;
-  name: string;
-};
-
-export interface ContinentRepository {
-  findAll(): Continent[];
-}
-```
-
----
-
-## Implémentation in-memory
-
-### Fichier : `src/continent.repository.inmemory.ts`
+### `src/continent.repository.ts`
 
 ```ts
-import { Continent, ContinentRepository } from './continent.repository';
+import { Injectable } from '@nestjs/common';
 
-export class InMemoryContinentRepository implements ContinentRepository {
-  private readonly items: Continent[] = [
+@Injectable()
+export class ContinentRepository {
+  private continents = [
     { id: 1, name: 'Europe' },
     { id: 2, name: 'Asia' },
     { id: 3, name: 'Africa' },
@@ -81,73 +43,104 @@ export class InMemoryContinentRepository implements ContinentRepository {
     { id: 6, name: 'Antarctica' },
   ];
 
-  findAll(): Continent[] {
-    return this.items;
+  findAll() {
+    return this.continents;
   }
 }
 ```
 
 ---
 
-## Service utilisant le repository
+## Service
 
-### Fichier : `src/continent.service.ts`
+Le service **appelle le repository**.  
+Il ne connaît pas les détails des données.
+
+### `src/continent.service.ts`
 
 ```ts
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ContinentRepository } from './continent.repository';
-
-export const CONTINENT_REPOSITORY = 'CONTINENT_REPOSITORY';
 
 @Injectable()
 export class ContinentService {
-  constructor(
-    @Inject(CONTINENT_REPOSITORY)
-    private readonly repository: ContinentRepository,
-  ) {}
+  constructor(private readonly continentRepository: ContinentRepository) {}
 
   getAll() {
-    return this.repository.findAll();
+    return this.continentRepository.findAll();
   }
 }
 ```
 
 ---
 
-## Enregistrement dans le module
+## Controller
 
-### Fichier : `src/app.module.ts`
+Le controller gère uniquement la **route HTTP**.
+
+### `src/continent.controller.ts`
+
+```ts
+import { Controller, Get } from '@nestjs/common';
+import { ContinentService } from './continent.service';
+
+@Controller('continents')
+export class ContinentController {
+  constructor(private readonly continentService: ContinentService) {}
+
+  @Get()
+  getAll() {
+    return this.continentService.getAll();
+  }
+}
+```
+
+---
+
+## Module
+
+Le module déclare simplement le repository comme provider.
+
+### `src/app.module.ts`
 
 ```ts
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ContinentController } from './continent.controller';
-import { ContinentService, CONTINENT_REPOSITORY } from './continent.service';
-import { InMemoryContinentRepository } from './continent.repository.inmemory';
+import { ContinentService } from './continent.service';
+import { ContinentRepository } from './continent.repository';
 
 @Module({
   controllers: [AppController, ContinentController],
-  providers: [
-    AppService,
-    ContinentService,
-    { provide: CONTINENT_REPOSITORY, useClass: InMemoryContinentRepository },
-  ],
+  providers: [AppService, ContinentService, ContinentRepository],
 })
 export class AppModule {}
 ```
 
 ---
 
-## Endpoint inchangé
-
-### Requête
+## Flux de données
 
 ```
 GET /continents
+    ↓
+ContinentController.getAll()
+    ↓
+ContinentService.getAll()
+    ↓
+ContinentRepository.findAll()
+    ↓
+Retour des données
 ```
 
-### Réponse
+---
+
+## Résultat
+
+```
+GET http://localhost:3000/continents
+```
 
 ```json
 [
@@ -162,20 +155,11 @@ GET /continents
 
 ---
 
-## Choix techniques
+## Pourquoi cette version
 
-- repository comme **contrat**
-- implémentation in-memory
-- injection via token NestJS
-- aucune dépendance à une DB
+- simple
+- lisible
+- pédagogique
+- évolutive plus tard (DB, interface, module)
 
----
-
-## Évolutions possibles
-
-- `findById(id)`
-- CRUD complet
-- remplacement par repository DB
-- tests unitaires isolés (repo / service)
-
-Cette étape solidifie l’architecture sans alourdir le projet.
+C’est la **bonne étape intermédiaire**, sans sur-architecture.
