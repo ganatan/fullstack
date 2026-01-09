@@ -18,6 +18,17 @@ Cette étape ajoute une **feature isolée** : la gestion des continents (statiqu
 
 ---
 
+## Convention de nommage
+
+- **Fichier** : singulier  
+  `continent.controller.ts`
+- **Route HTTP** : pluriel  
+  `/continents`
+
+Cette convention est standard dans NestJS.
+
+---
+
 ## Structure impactée
 
 ```
@@ -25,7 +36,7 @@ src/
 ├── app.controller.ts
 ├── app.module.ts
 ├── app.service.ts
-├── continents.controller.ts
+├── continent.controller.ts
 ├── main.ts
 ```
 
@@ -33,13 +44,13 @@ src/
 
 ## Nouveau controller
 
-### Fichier : `src/continents.controller.ts`
+### Fichier : `src/continent.controller.ts`
 
 ```ts
 import { Controller, Get } from '@nestjs/common';
 
 @Controller('continents')
-export class ContinentsController {
+export class ContinentController {
   @Get()
   getAll() {
     return [
@@ -64,10 +75,10 @@ export class ContinentsController {
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ContinentsController } from './continents.controller';
+import { ContinentController } from './continent.controller';
 
 @Module({
-  controllers: [AppController, ContinentsController],
+  controllers: [AppController, ContinentController],
   providers: [AppService],
 })
 export class AppModule {}
@@ -104,7 +115,7 @@ GET /continents
 npm run start:dev
 ```
 
-URL locale par défaut :
+URL locale :
 
 ```
 http://localhost:3000/continents
