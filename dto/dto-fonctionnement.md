@@ -1,4 +1,4 @@
-# Fonctionnement d’un DTO — explication simple (JavaScript)
+# Fonctionnement d’un DTO
 
 Ce document explique **ce qu’est un DTO** avec un exemple **très simple**,
 en **JavaScript**, sans framework complexe, sans TypeScript.
@@ -147,16 +147,3 @@ Avec DTO :
 Mais le **concept est le même** partout.
 
 ---
-
-## À retenir
-
-- DTO = concept, pas une techno
-- DTO existe même en JavaScript pur
-- DTO = protection + clarté
-
----
-
-## Conclusion
-
-Si tu comprends cet exemple Express,
-tu comprends **les DTO en NestJS, Spring Boot et Angular**.
