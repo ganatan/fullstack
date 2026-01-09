@@ -222,162 +222,143 @@ Par défaut :
 
 ---
 
-## Installer Postman
+## Tester l’API avec Postman (simple)
 
-### Option A — Windows (winget)
+Base URL locale :
 
-```bash
-winget install Postman.Postman
 ```
-
-### Option B — macOS (brew)
-
-```bash
-brew install --cask postman
-```
-
-### Option C — Linux (snap)
-
-```bash
-sudo snap install postman
+http://localhost:3000
 ```
 
 ---
 
-## Utiliser Postman
+## GET — Liste des continents
 
-### 1) Créer un environnement
+- Méthode : `GET`
+- URL :
 
-Dans Postman :
-- **Environments** → **Create environment**
-- Nom : `local`
-- Variable : `baseUrl`
-- Initial value : `http://localhost:3000`
-- Save
-- Sélectionner l’environnement `local` en haut à droite
+```
+http://localhost:3000/continents
+```
 
-### 2) Créer une collection
-
-- **Collections** → **New collection**
-- Nom : `continents`
-
-### 3) Ajouter les requêtes
-
-Dans chaque requête :
-- utiliser `{{baseUrl}}` au lieu de l’URL complète
-- Headers pour POST/PUT : `Content-Type: application/json`
+Résultat attendu :
+- `200`
+- tableau JSON
 
 ---
 
-## Tests CRUD complets dans Postman
+## GET — Continent par id
 
-### GET all
+- Méthode : `GET`
+- URL :
 
-- Method : `GET`
-- URL : `{{baseUrl}}/continents`
+```
+http://localhost:3000/continents/1
+```
 
-Attendu : `200` + tableau JSON
+Résultat attendu :
+- `200`
+- objet JSON
 
----
-
-### GET one
-
-- Method : `GET`
-- URL : `{{baseUrl}}/continents/1`
-
-Attendu : `200` + objet JSON
-
-Cas erreur :
-- URL : `{{baseUrl}}/continents/999`
-- Attendu : `404`
+Erreur :
+```
+http://localhost:3000/continents/999
+```
+- `404`
 
 ---
 
-### POST create
+## POST — Créer un continent
 
-- Method : `POST`
-- URL : `{{baseUrl}}/continents`
-- Body → raw → JSON
+- Méthode : `POST`
+- URL :
 
+```
+http://localhost:3000/continents
+```
+
+Headers :
+```
+Content-Type: application/json
+```
+
+Body (raw / JSON) :
 ```json
 {
   "name": "Test Continent"
 }
 ```
 
-Attendu : `201` + objet créé (id auto)
+Résultat attendu :
+- `201`
+- continent créé avec `id` auto
 
-Cas erreur :
-- Body `{}` ou sans `name`
-- Attendu : `400` + message `name is required`
+Erreur :
+```json
+{}
+```
+- `400`
+- `name is required`
 
 ---
 
-### PUT update
+## PUT — Modifier un continent
 
-- Method : `PUT`
-- URL : `{{baseUrl}}/continents/1`
-- Body → raw → JSON
+- Méthode : `PUT`
+- URL :
 
+```
+http://localhost:3000/continents/1
+```
+
+Headers :
+```
+Content-Type: application/json
+```
+
+Body :
 ```json
 {
   "name": "Europe Updated"
 }
 ```
 
-Attendu : `200` + objet modifié
+Résultat attendu :
+- `200`
+- continent modifié
 
-Cas erreur :
-- URL : `{{baseUrl}}/continents/999`
-- Attendu : `404`
-
----
-
-### DELETE
-
-- Method : `DELETE`
-- URL : `{{baseUrl}}/continents/1`
-
-Attendu : `200` + `true`
-
-Cas erreur :
-- URL : `{{baseUrl}}/continents/999`
-- Attendu : `404`
+Erreur :
+```
+http://localhost:3000/continents/999
+```
+- `404`
 
 ---
 
-## Vérifs rapides (sans Postman)
+## DELETE — Supprimer un continent
 
-### GET all
+- Méthode : `DELETE`
+- URL :
 
-```bash
-curl -s http://localhost:3000/continents
+```
+http://localhost:3000/continents/1
 ```
 
-### POST create
+Résultat attendu :
+- `200`
+- `true`
 
-```bash
-curl -s -X POST http://localhost:3000/continents \
-  -H "Content-Type: application/json" \
-  -d '{ "name": "Test Continent" }'
+Erreur :
 ```
+http://localhost:3000/continents/999
+```
+- `404`
 
 ---
 
-## Résultat attendu
+## Résumé express
 
-- CRUD complet opérationnel
-- erreurs HTTP cohérentes
-- création impossible sans `name`
-- stockage InMemory
-
----
-
-## Prochaine étape
-
-**008-continent-dto**
-
-Objectif :
-- typage strict des entrées/sorties
-- validation structurée
-- stabilisation du contrat API
+- Base URL : `http://localhost:3000`
+- Routes : `/continents`
+- Body en JSON uniquement
+- Stockage InMemory
