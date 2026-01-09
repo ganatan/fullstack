@@ -1,93 +1,36 @@
-# 008 — Continent DTO (minimal et pragmatique)
+# 008 — Continent DTO (version simple)
 
-Cette étape introduit des **DTO minimalistes** pour sécuriser l’API et préparer
-l’utilisation d’un ORM (Prisma, TypeORM…) avec PostgreSQL ou MySQL.
+Cette étape introduit des **DTO simples**, sans validation automatique.
 
-Objectif unique :
+Objectif :
 - supprimer `any`
-- figer le contrat d’entrée HTTP
-- valider automatiquement les données
-- découpler l’API de la base de données
+- typer clairement les entrées
+- préparer l’utilisation d’un ORM (Prisma, PostgreSQL, MySQL)
+- rester lisible et explicite
 
-Aucune sur‑architecture. Aucun mapping inutile.
-
----
-
-## Pré-requis
-
-- CRUD fonctionnel (étapes 001 → 007)
-- NestJS
-- Module `continent` existant
-
----
-
-## Installation des dépendances
-
-```bash
-npm install class-validator class-transformer
-```
+Aucune magie. Aucune dépendance supplémentaire.
 
 ---
 
 ## Principe
 
-- Le **Controller** reçoit uniquement des DTO
-- Le **Service** ne valide plus manuellement
-- Le **Repository** reste inchangé
-- Les routes HTTP ne changent pas
-- La validation est faite automatiquement par NestJS
+- Les DTO sont de **simples interfaces TypeScript**
+- La validation reste **manuelle et minimale** dans le service
+- L’architecture ne change pas
+- Les routes HTTP restent identiques
 
 ---
 
-## Activation de la validation globale
-
-Fichier : `src/main.ts`
-
-```ts
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
-
-  await app.listen(3000);
-}
-bootstrap();
-```
-
-Effets :
-- champs inconnus rejetés
-- erreurs `400` automatiques
-- suppression de la validation manuelle
-
----
-
-## DTOs
+## DTO simples
 
 Fichier : `src/modules/continent/continent.dto.ts`
 
 ```ts
-import { IsOptional, IsString, Length } from 'class-validator';
-
-export class CreateContinentDto {
-  @IsString()
-  @Length(2, 60)
+export interface CreateContinentDto {
   name: string;
 }
 
-export class UpdateContinentDto {
-  @IsOptional()
-  @IsString()
-  @Length(2, 60)
+export interface UpdateContinentDto {
   name?: string;
 }
 ```
@@ -148,12 +91,16 @@ export class ContinentController {
 
 ---
 
-## Service
+## Service (validation explicite minimale)
 
 Fichier : `src/modules/continent/continent.service.ts`
 
 ```ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ContinentRepository } from './continent.repository';
 import { CreateContinentDto, UpdateContinentDto } from './continent.dto';
 
@@ -174,10 +121,17 @@ export class ContinentService {
   }
 
   create(dto: CreateContinentDto) {
-    return this.continentRepository.create(dto);
+    if (!dto.name) {
+      throw new BadRequestException('name is required');
+    }
+    return this.continentRepository.create({ name: dto.name });
   }
 
   update(id: number, dto: UpdateContinentDto) {
+    if (Object.keys(dto).length === 0) {
+      throw new BadRequestException('at least one field is required');
+    }
+
     const updated = this.continentRepository.update(id, dto);
     if (!updated) {
       throw new NotFoundException(`Continent ${id} not found`);
@@ -197,88 +151,38 @@ export class ContinentService {
 
 ---
 
-## Repository (rappel)
+## Repository (inchangé)
 
-Fichier : `src/modules/continent/continent.repository.ts`
-
-```ts
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
-export class ContinentRepository {
-  private continents = [
-    { id: 1, name: 'Europe' },
-    { id: 2, name: 'Asia' },
-    { id: 3, name: 'Africa' },
-    { id: 4, name: 'America' },
-    { id: 5, name: 'Oceania' },
-    { id: 6, name: 'Antarctica' },
-  ];
-
-  private currentId = 7;
-
-  findAll() {
-    return this.continents;
-  }
-
-  findById(id: number) {
-    return this.continents.find((c) => c.id === id);
-  }
-
-  create(data: any) {
-    const newContinent = {
-      id: this.currentId++,
-      ...data,
-    };
-    this.continents.push(newContinent);
-    return newContinent;
-  }
-
-  update(id: number, data: any) {
-    const index = this.continents.findIndex((c) => c.id === id);
-    if (index === -1) return undefined;
-
-    this.continents[index] = { ...this.continents[index], ...data };
-    return this.continents[index];
-  }
-
-  delete(id: number) {
-    const index = this.continents.findIndex((c) => c.id === id);
-    if (index === -1) return false;
-
-    this.continents.splice(index, 1);
-    return true;
-  }
-}
-```
+Le repository reste **strictement identique** à l’étape précédente.
+Il pourra être remplacé plus tard par une implémentation Prisma ou SQL
+sans toucher aux controllers ni aux services.
 
 ---
 
-## Comportement obtenu
+## Ce que cette version apporte
 
-- `{}` → `400 Bad Request`
-- `{ "name": "" }` → `400 Bad Request`
-- `{ "name": "A" }` → `400 Bad Request`
-- `{ "name": "Europe", "id": 99 }` → `400 Bad Request`
-- données valides → OK
-
----
-
-## Ce que cette étape apporte
-
-- API sécurisée
-- contrat stable
-- validation automatique
-- préparation ORM / base relationnelle
-- aucune modification des routes
+- plus de `any`
+- contrat clair et lisible
+- aucune dépendance
+- validation explicite
+- compréhension immédiate
+- ORM prêt à être branché
 
 ---
 
-## Étape suivante
+## Ce que cette version n’impose pas
 
-**009-continent-prisma-postgresql**
+- pas de validation automatique
+- pas de décorateurs
+- pas de pipeline global
+- pas de complexité cachée
 
-Objectif :
-- brancher Prisma
-- connecter PostgreSQL ou MySQL
-- remplacer uniquement le repository
+---
+
+## Étape suivante possible
+
+- **009-continent-prisma-postgresql**  
+ou
+- **009-continent-dto-validation** (si tu veux ajouter la validation plus tard)
+
+Cette étape 008 est **volontairement simple** et **parfaitement saine**.
