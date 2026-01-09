@@ -26,11 +26,11 @@ Aucune magie. Aucune dépendance supplémentaire.
 Fichier : `src/modules/continent/continent.dto.ts`
 
 ```ts
-export interface CreateContinentDto {
+export class CreateContinentDto {
   name: string;
 }
 
-export interface UpdateContinentDto {
+export class UpdateContinentDto {
   name?: string;
 }
 ```
