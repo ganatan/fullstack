@@ -1,6 +1,5 @@
-# Angular
+# Documentation Angular
 
-Documentation technique Angular.
+## Init
+- [Initialisation](./001-initialization.md)
 
-Retour au menu principal :  
-[◀️ fullstack](../README.md)

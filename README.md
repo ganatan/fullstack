@@ -4,6 +4,6 @@
 - [Intellij](./Intellij/README.md)
 
 - [Angular](./angular/README.md)
-- [NestJS](./nest/README.md)
+- [NestJS](./nestjs/README.md)
 - [Spring Boot](./springboot/README.md)
 - [TypeScript](./typescript/README.md)
