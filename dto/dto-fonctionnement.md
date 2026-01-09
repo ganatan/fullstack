@@ -1,176 +1,284 @@
-# Fonctionnement d’un DTO
+# 008 — Continent DTO (minimal et pragmatique)
 
-Ce document explique **ce qu’est un DTO** avec un exemple **très simple**,  
-en **JavaScript**, sans TypeScript, sans framework complexe.
+Cette étape introduit des **DTO minimalistes** pour sécuriser l’API et préparer
+l’utilisation d’un ORM (Prisma, TypeORM…) avec PostgreSQL ou MySQL.
 
-Objectif : comprendre **le concept**, pas la techno.
+Objectif unique :
+- supprimer `any`
+- figer le contrat d’entrée HTTP
+- valider automatiquement les données
+- découpler l’API de la base de données
 
----
-
-## Définition simple
-
-> **Un DTO (Data Transfer Object) est un objet volontairement construit  
-> pour représenter ce que l’API expose vers l’extérieur.**
-
-Ce n’est **pas** l’objet interne.  
-Ce n’est **pas** l’objet de la base de données.  
-C’est un **objet intermédiaire**, contrôlé.
+Aucune sur‑architecture. Aucun mapping inutile.
 
 ---
 
-## Exemple minimal avec Express
+## Pré-requis
 
-Fichier unique : `app.js`
+- CRUD fonctionnel (étapes 001 → 007)
+- NestJS
+- Module `continent` existant
 
-```js
-const express = require('express');
-const app = express();
+---
 
-app.use(express.json());
+## Installation des dépendances
 
-let continents = [
-  { id: 1, name: 'Europe', internalCode: 'EU', createdAt: '2020-01-01' },
-  { id: 2, name: 'Asia', internalCode: 'AS', createdAt: '2020-01-01' },
-];
+```bash
+npm install class-validator class-transformer
 ```
 
 ---
 
-## API sans DTO
+## Principe
 
-```js
-app.get('/continents-without-dto', (req, res) => {
-  res.json(continents);
-});
+- Le **Controller** reçoit uniquement des DTO
+- Le **Service** ne valide plus manuellement
+- Le **Repository** reste inchangé
+- Les routes HTTP ne changent pas
+- La validation est faite automatiquement par NestJS
+
+---
+
+## Activation de la validation globale
+
+Fichier : `src/main.ts`
+
+```ts
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  await app.listen(3000);
+}
+bootstrap();
 ```
 
-### Appel
+Effets :
+- champs inconnus rejetés
+- erreurs `400` automatiques
+- suppression de la validation manuelle
 
+---
+
+## DTOs
+
+Fichier : `src/modules/continent/continent.dto.ts`
+
+```ts
+import { IsOptional, IsString, Length } from 'class-validator';
+
+export class CreateContinentDto {
+  @IsString()
+  @Length(2, 60)
+  name: string;
+}
+
+export class UpdateContinentDto {
+  @IsOptional()
+  @IsString()
+  @Length(2, 60)
+  name?: string;
+}
 ```
-GET /continents-without-dto
-```
 
-### Réponse
+---
 
-```json
-[
-  {
-    "id": 1,
-    "name": "Europe",
-    "internalCode": "EU",
-    "createdAt": "2020-01-01"
-  },
-  {
-    "id": 2,
-    "name": "Asia",
-    "internalCode": "AS",
-    "createdAt": "2020-01-01"
+## Controller
+
+Fichier : `src/modules/continent/continent.controller.ts`
+
+```ts
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ContinentService } from './continent.service';
+import { CreateContinentDto, UpdateContinentDto } from './continent.dto';
+
+@Controller('continents')
+export class ContinentController {
+  constructor(private readonly continentService: ContinentService) {}
+
+  @Get()
+  getAll() {
+    return this.continentService.getAll();
   }
-]
-```
 
-### Problèmes
+  @Get(':id')
+  getById(@Param('id', ParseIntPipe) id: number) {
+    return this.continentService.getById(id);
+  }
 
-- champs internes exposés
-- API couplée à la structure interne
-- toute modification interne peut casser l’API
+  @Post()
+  create(@Body() dto: CreateContinentDto) {
+    return this.continentService.create(dto);
+  }
 
----
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateContinentDto,
+  ) {
+    return this.continentService.update(id, dto);
+  }
 
-## API avec DTO
-
-```js
-app.get('/continents-with-dto', (req, res) => {
-  const continentDtos = continents.map(c => ({
-    id: c.id,
-    name: c.name,
-  }));
-
-  res.json(continentDtos);
-});
-```
-
-### Appel
-
-```
-GET /continents-with-dto
-```
-
-### Réponse
-
-```json
-[
-  { "id": 1, "name": "Europe" },
-  { "id": 2, "name": "Asia" }
-]
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.continentService.delete(id);
+  }
+}
 ```
 
 ---
 
-## Ce qui a changé
+## Service
 
-- les données internes sont **transformées**
-- seuls les champs utiles sont exposés
-- l’API devient **indépendante** de la structure interne
+Fichier : `src/modules/continent/continent.service.ts`
 
-👉 **Cette transformation est le DTO.**
+```ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ContinentRepository } from './continent.repository';
+import { CreateContinentDto, UpdateContinentDto } from './continent.dto';
 
----
+@Injectable()
+export class ContinentService {
+  constructor(private readonly continentRepository: ContinentRepository) {}
 
-## DTO et mapping (point clé)
+  getAll() {
+    return this.continentRepository.findAll();
+  }
 
-Dans cet exemple, cette ligne :
+  getById(id: number) {
+    const continent = this.continentRepository.findById(id);
+    if (!continent) {
+      throw new NotFoundException(`Continent ${id} not found`);
+    }
+    return continent;
+  }
 
-```js
-continents.map(c => ({ id: c.id, name: c.name }))
+  create(dto: CreateContinentDto) {
+    return this.continentRepository.create(dto);
+  }
+
+  update(id: number, dto: UpdateContinentDto) {
+    const updated = this.continentRepository.update(id, dto);
+    if (!updated) {
+      throw new NotFoundException(`Continent ${id} not found`);
+    }
+    return updated;
+  }
+
+  delete(id: number) {
+    const deleted = this.continentRepository.delete(id);
+    if (!deleted) {
+      throw new NotFoundException(`Continent ${id} not found`);
+    }
+    return true;
+  }
+}
 ```
 
-fait deux choses :
-- elle **sélectionne** les champs
-- elle **reconstruit** un nouvel objet
+---
 
-👉 **C’est du mapping.**
+## Repository (rappel)
 
-> **Dès qu’on utilise un DTO, on fait forcément du mapping**,  
-> même en JavaScript pur.
+Fichier : `src/modules/continent/continent.repository.ts`
+
+```ts
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class ContinentRepository {
+  private continents = [
+    { id: 1, name: 'Europe' },
+    { id: 2, name: 'Asia' },
+    { id: 3, name: 'Africa' },
+    { id: 4, name: 'America' },
+    { id: 5, name: 'Oceania' },
+    { id: 6, name: 'Antarctica' },
+  ];
+
+  private currentId = 7;
+
+  findAll() {
+    return this.continents;
+  }
+
+  findById(id: number) {
+    return this.continents.find((c) => c.id === id);
+  }
+
+  create(data: any) {
+    const newContinent = {
+      id: this.currentId++,
+      ...data,
+    };
+    this.continents.push(newContinent);
+    return newContinent;
+  }
+
+  update(id: number, data: any) {
+    const index = this.continents.findIndex((c) => c.id === id);
+    if (index === -1) return undefined;
+
+    this.continents[index] = { ...this.continents[index], ...data };
+    return this.continents[index];
+  }
+
+  delete(id: number) {
+    const index = this.continents.findIndex((c) => c.id === id);
+    if (index === -1) return false;
+
+    this.continents.splice(index, 1);
+    return true;
+  }
+}
+```
 
 ---
 
-## DTO en une phrase
+## Comportement obtenu
 
-> **Un DTO, c’est ce que tu choisis de montrer.  
-> Le reste ne sort jamais.**
-
----
-
-## Pourquoi c’est important
-
-Sans DTO :
-- fuite de données
-- API fragile
-- dette technique immédiate
-
-Avec DTO :
-- API stable
-- données maîtrisées
-- évolution interne sans casser les clients
+- `{}` → `400 Bad Request`
+- `{ "name": "" }` → `400 Bad Request`
+- `{ "name": "A" }` → `400 Bad Request`
+- `{ "name": "Europe", "id": 99 }` → `400 Bad Request`
+- données valides → OK
 
 ---
 
-## Lien avec les frameworks modernes
+## Ce que cette étape apporte
 
-- NestJS → DTO en `class`
-- Spring Boot → DTO + mapping (manuel ou MapStruct)
-- Angular → DTO côté client
-
-La **techno change**,  
-le **concept reste exactement le même**.
+- API sécurisée
+- contrat stable
+- validation automatique
+- préparation ORM / base relationnelle
+- aucune modification des routes
 
 ---
 
-### Conclusion
+## Étape suivante
 
-Si tu comprends cet exemple Express :
-- tu comprends les DTO
-- tu comprends le mapping
-- tu comprends les questions d’entretien Spring Boot / NestJS
+**009-continent-prisma-postgresql**
+
+Objectif :
+- brancher Prisma
+- connecter PostgreSQL ou MySQL
+- remplacer uniquement le repository
