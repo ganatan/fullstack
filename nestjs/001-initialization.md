@@ -1,6 +1,6 @@
-# backend-nest --- version minimale
+# backend-nest
 
-Projet **NestJS volontairement minimal**.\
+Projet **NestJS minimal**.\
 Pas de base de données, pas de Swagger, pas de logique métier.\
 Juste un serveur HTTP qui démarre et retourne du JSON.
 
@@ -16,6 +16,8 @@ Juste un serveur HTTP qui démarre et retourne du JSON.
 ## Création du projet
 
 ``` bash
+npm install -g @nestjs/cli
+nest --version
 npx @nestjs/cli new backend-nest
 cd backend-nest
 ```
