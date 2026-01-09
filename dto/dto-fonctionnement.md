@@ -1,20 +1,20 @@
 # Fonctionnement d’un DTO
 
-Ce document explique **ce qu’est un DTO** avec un exemple **très simple**,
-en **JavaScript**, sans framework complexe, sans TypeScript.
+Ce document explique **ce qu’est un DTO** avec un exemple **très simple**,  
+en **JavaScript**, sans TypeScript, sans framework complexe.
 
-Objectif : comprendre le **concept**, pas la techno.
+Objectif : comprendre **le concept**, pas la techno.
 
 ---
 
 ## Définition simple
 
 > **Un DTO (Data Transfer Object) est un objet volontairement construit  
-> pour ce que l’API expose vers l’extérieur.**
+> pour représenter ce que l’API expose vers l’extérieur.**
 
-Ce n’est **pas** l’objet interne.
-Ce n’est **pas** l’objet base de données.
-C’est un **objet intermédiaire**.
+Ce n’est **pas** l’objet interne.  
+Ce n’est **pas** l’objet de la base de données.  
+C’est un **objet intermédiaire**, contrôlé.
 
 ---
 
@@ -36,7 +36,7 @@ let continents = [
 
 ---
 
-## API SANS DTO
+## API sans DTO
 
 ```js
 app.get('/continents-without-dto', (req, res) => {
@@ -73,11 +73,11 @@ GET /continents-without-dto
 
 - champs internes exposés
 - API couplée à la structure interne
-- changement interne = API cassée
+- toute modification interne peut casser l’API
 
 ---
 
-## API AVEC DTO
+## API avec DTO
 
 ```js
 app.get('/continents-with-dto', (req, res) => {
@@ -111,15 +111,34 @@ GET /continents-with-dto
 
 - les données internes sont **transformées**
 - seuls les champs utiles sont exposés
-- l’API devient indépendante de l’interne
+- l’API devient **indépendante** de la structure interne
 
-👉 Cette transformation **est le DTO**.
+👉 **Cette transformation est le DTO.**
+
+---
+
+## DTO et mapping (point clé)
+
+Dans cet exemple, cette ligne :
+
+```js
+continents.map(c => ({ id: c.id, name: c.name }))
+```
+
+fait deux choses :
+- elle **sélectionne** les champs
+- elle **reconstruit** un nouvel objet
+
+👉 **C’est du mapping.**
+
+> **Dès qu’on utilise un DTO, on fait forcément du mapping**,  
+> même en JavaScript pur.
 
 ---
 
 ## DTO en une phrase
 
-> **Un DTO, c’est ce que tu montres.  
+> **Un DTO, c’est ce que tu choisis de montrer.  
 > Le reste ne sort jamais.**
 
 ---
@@ -128,22 +147,30 @@ GET /continents-with-dto
 
 Sans DTO :
 - fuite de données
+- API fragile
 - dette technique immédiate
-- évolution dangereuse
 
 Avec DTO :
 - API stable
 - données maîtrisées
-- évolution sans casse
+- évolution interne sans casser les clients
 
 ---
 
 ## Lien avec les frameworks modernes
 
 - NestJS → DTO en `class`
-- Spring Boot → DTO + mapping
+- Spring Boot → DTO + mapping (manuel ou MapStruct)
 - Angular → DTO côté client
 
-Mais le **concept est le même** partout.
+La **techno change**,  
+le **concept reste exactement le même**.
 
 ---
+
+### Conclusion
+
+Si tu comprends cet exemple Express :
+- tu comprends les DTO
+- tu comprends le mapping
+- tu comprends les questions d’entretien Spring Boot / NestJS
