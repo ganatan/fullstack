@@ -1,5 +1,4 @@
-# Documentation technique Git.
-
+# Documentation Git.
 
 ## Initialisation
 
