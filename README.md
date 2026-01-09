@@ -1,7 +1,7 @@
-# Concepts
+## Concepts
 - [DTO](./dto/README.md)
 
-# Languages
+## Languages
 - [TypeScript](./typescript/README.md)
 
 # Tools
