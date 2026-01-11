@@ -4,24 +4,24 @@ Ce document résume **les codes de réponse HTTP essentiels** utilisés dans un 
 avec une ressource simple : `Continent`.
 
 Objectif :  
-- comprendre **quand** utiliser chaque code
-- rester cohérent entre Spring Boot, NestJS, Express, Symfony, Django
-- éviter les codes au hasard
+- comprendre **quand** utiliser chaque code  
+- rester cohérent entre Spring Boot, NestJS, Express, Symfony, Django  
+- faire le lien entre **codes numériques** et **constantes frameworks**
 
 ---
 
 ## Vue d’ensemble rapide
 
-| Code | Nom | Usage principal |
-|----|----|----|
-| 200 | OK | Lecture ou mise à jour réussie |
-| 201 | Created | Ressource créée |
-| 204 | No Content | Suppression réussie |
-| 400 | Bad Request | Erreur de validation |
-| 404 | Not Found | Ressource inexistante |
-| 405 | Method Not Allowed | Verbe HTTP non autorisé |
-| 415 | Unsupported Media Type | Mauvais Content-Type |
-| 500 | Internal Server Error | Erreur serveur |
+| Code | Nom | Constante Spring | Constante NestJS |
+|----|----|------------------|------------------|
+| 200 | OK | `HttpStatus.OK` | `HttpStatus.OK` |
+| 201 | Created | `HttpStatus.CREATED` | `HttpStatus.CREATED` |
+| 204 | No Content | `HttpStatus.NO_CONTENT` | `HttpStatus.NO_CONTENT` |
+| 400 | Bad Request | `HttpStatus.BAD_REQUEST` | `HttpStatus.BAD_REQUEST` |
+| 404 | Not Found | `HttpStatus.NOT_FOUND` | `HttpStatus.NOT_FOUND` |
+| 405 | Method Not Allowed | `HttpStatus.METHOD_NOT_ALLOWED` | `HttpStatus.METHOD_NOT_ALLOWED` |
+| 415 | Unsupported Media Type | `HttpStatus.UNSUPPORTED_MEDIA_TYPE` | `HttpStatus.UNSUPPORTED_MEDIA_TYPE` |
+| 500 | Internal Server Error | `HttpStatus.INTERNAL_SERVER_ERROR` | `HttpStatus.INTERNAL_SERVER_ERROR` |
 
 ---
 
@@ -29,8 +29,10 @@ Objectif :
 
 ### GET /continents
 
-#### ✅ 200 OK
-La requête est valide et retourne une liste.
+#### ✅ 200 OK  
+`HttpStatus.OK`
+
+Utilisé lorsque la requête est valide et retourne une liste.
 
 ```json
 [
@@ -42,14 +44,18 @@ La requête est valide et retourne une liste.
 
 ### GET /continents/{id}
 
-#### ✅ 200 OK
+#### ✅ 200 OK  
+`HttpStatus.OK`
+
 La ressource existe.
 
 ```json
 { "id": 1, "name": "Europe" }
 ```
 
-#### ❌ 404 Not Found
+#### ❌ 404 Not Found  
+`HttpStatus.NOT_FOUND`
+
 L’identifiant n’existe pas.
 
 ```json
@@ -62,14 +68,18 @@ L’identifiant n’existe pas.
 
 ### POST /continents
 
-#### ✅ 201 Created
+#### ✅ 201 Created  
+`HttpStatus.CREATED`
+
 La ressource est créée avec succès.
 
 ```json
 { "id": 7, "name": "Europe" }
 ```
 
-#### ❌ 400 Bad Request
+#### ❌ 400 Bad Request  
+`HttpStatus.BAD_REQUEST`
+
 Les données envoyées sont invalides.
 
 Cas typiques :
@@ -87,13 +97,10 @@ Cas typiques :
 }
 ```
 
-#### ❌ 415 Unsupported Media Type
-Le header `Content-Type` n’est pas correct.
+#### ❌ 415 Unsupported Media Type  
+`HttpStatus.UNSUPPORTED_MEDIA_TYPE`
 
-Exemple incorrect :
-```
-Content-Type: text/plain
-```
+Le header `Content-Type` n’est pas correct.
 
 ---
 
@@ -101,17 +108,23 @@ Content-Type: text/plain
 
 ### PUT /continents/{id}
 
-#### ✅ 200 OK
+#### ✅ 200 OK  
+`HttpStatus.OK`
+
 La ressource est mise à jour.
 
 ```json
 { "id": 1, "name": "Europa" }
 ```
 
-#### ❌ 400 Bad Request
+#### ❌ 400 Bad Request  
+`HttpStatus.BAD_REQUEST`
+
 Les données envoyées sont invalides.
 
-#### ❌ 404 Not Found
+#### ❌ 404 Not Found  
+`HttpStatus.NOT_FOUND`
+
 La ressource à modifier n’existe pas.
 
 ---
@@ -120,48 +133,50 @@ La ressource à modifier n’existe pas.
 
 ### DELETE /continents/{id}
 
-#### ✅ 204 No Content
-La ressource est supprimée.
+#### ✅ 204 No Content  
+`HttpStatus.NO_CONTENT`
 
-*(aucun body retourné)*
+La ressource est supprimée avec succès.  
+Aucun body retourné.
 
-#### ❌ 404 Not Found
+#### ❌ 404 Not Found  
+`HttpStatus.NOT_FOUND`
+
 La ressource n’existe pas.
 
 ---
 
-## 5️⃣ Codes transverses
+## 5️⃣ Codes transverses importants
 
-### ❌ 405 Method Not Allowed
+### ❌ 405 Method Not Allowed  
+`HttpStatus.METHOD_NOT_ALLOWED`
+
 Le verbe HTTP n’est pas autorisé sur cette route.
-
-Exemple :
-```
-POST /continents/1
-```
 
 ---
 
-### ❌ 500 Internal Server Error
+### ❌ 500 Internal Server Error  
+`HttpStatus.INTERNAL_SERVER_ERROR`
+
 Erreur interne du serveur.
 
-Causes possibles :
+À utiliser **uniquement** pour :
+- bug applicatif
 - exception non gérée
-- bug dans le code
 - crash runtime
 
-⚠️ **Ne jamais utiliser 500 pour une erreur de validation.**
+⚠️ **Jamais pour une erreur de validation ou de saisie utilisateur.**
 
 ---
 
 ## Bonnes pratiques essentielles
 
-- 200 → lecture / mise à jour OK
-- 201 → création uniquement
-- 204 → suppression sans body
-- 400 → erreur de validation client
-- 404 → ressource inexistante
-- 500 → bug serveur uniquement
+- `200 OK` → lecture ou mise à jour réussie  
+- `201 Created` → création uniquement  
+- `204 No Content` → suppression sans body  
+- `400 Bad Request` → erreur de validation client  
+- `404 Not Found` → ressource inexistante  
+- `500 Internal Server Error` → bug serveur uniquement  
 
 ---
 
@@ -174,10 +189,10 @@ Causes possibles :
 
 ## Conclusion
 
-Si ton CRUD respecte ces codes :
-- ton API est prévisible
-- ton frontend sait réagir correctement
+Si ton CRUD respecte ces codes **et leurs constantes associées** :
+- ton API est lisible
+- ton code est explicite
 - tes tests sont simples
-- tes backends restent interchangeables
+- Spring Boot et NestJS restent parfaitement alignés
 
 C’est une base indispensable pour toute API REST sérieuse.
