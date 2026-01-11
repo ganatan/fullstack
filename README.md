@@ -1,6 +1,8 @@
 ### Concepts
 - [DTO](./dto/dto-fonctionnement.md)
 - [OpenAPI](./openapi/openapi-fonctionnement.md)
+- [CRUD](./openapi/crud-fonctionnement.md)
+
 
 ### Languages
 - [TypeScript](./typescript/README.md)

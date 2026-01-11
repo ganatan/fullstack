@@ -1,4 +1,4 @@
-# Fonctionnement d’OpenAPI (exemple pédagogique)
+# Fonctionnement d’OpenAPI
 
 Ce document est une **documentation d’exemple**.  
 Il sert à **comprendre OpenAPI par la pratique**, pas à définir le contrat officiel du projet.
