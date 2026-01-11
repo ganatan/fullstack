@@ -2,6 +2,7 @@
 - [DTO](./dto/dto-fonctionnement.md)
 - [OpenAPI](./openapi/openapi-fonctionnement.md)
 - [CRUD](./crud/crud-fonctionnement.md)
+- [Reponses HTTP](./crud/reponses-http.md)
 
 
 ### Languages
