@@ -1,198 +1,119 @@
-# Réponses HTTP — CRUD (référence essentielle)
+# CRUD REST — Réponses HTTP
 
-Ce document résume **les codes de réponse HTTP essentiels** utilisés dans un **CRUD REST**,  
-avec une ressource simple : `Continent`.
+Référence **simple, visuelle et universelle** des réponses HTTP pour un CRUD REST.
 
-Objectif :  
-- comprendre **quand** utiliser chaque code  
-- rester cohérent entre Spring Boot, NestJS, Express, Symfony, Django  
-- faire le lien entre **codes numériques** et **constantes frameworks**
+Ressource d’exemple : `Continent`  
+URL de base : `/continents`
 
----
-
-## Vue d’ensemble rapide
-
-| Code | Nom | Constante Spring | Constante NestJS |
-|----|----|------------------|------------------|
-| 200 | OK | `HttpStatus.OK` | `HttpStatus.OK` |
-| 201 | Created | `HttpStatus.CREATED` | `HttpStatus.CREATED` |
-| 204 | No Content | `HttpStatus.NO_CONTENT` | `HttpStatus.NO_CONTENT` |
-| 400 | Bad Request | `HttpStatus.BAD_REQUEST` | `HttpStatus.BAD_REQUEST` |
-| 404 | Not Found | `HttpStatus.NOT_FOUND` | `HttpStatus.NOT_FOUND` |
-| 405 | Method Not Allowed | `HttpStatus.METHOD_NOT_ALLOWED` | `HttpStatus.METHOD_NOT_ALLOWED` |
-| 415 | Unsupported Media Type | `HttpStatus.UNSUPPORTED_MEDIA_TYPE` | `HttpStatus.UNSUPPORTED_MEDIA_TYPE` |
-| 500 | Internal Server Error | `HttpStatus.INTERNAL_SERVER_ERROR` | `HttpStatus.INTERNAL_SERVER_ERROR` |
+Objectif :
+- décider rapidement **quel code HTTP retourner**
+- rester cohérent entre **Spring Boot, NestJS, Express, Symfony, Django**
+- servir de **référence essentielle** dans une documentation technique
 
 ---
 
-## 1️⃣ GET — Lire
+## CRUD REST — Réponses HTTP (référence condensée)
 
-### GET /continents
+| Verbe | Situation | Code | Constante |
+|------|-----------|------|-----------|
+| GET | Lecture liste | 200 | `HttpStatus.OK` |
+| GET | Lecture ressource | 200 | `HttpStatus.OK` |
+| GET | Ressource inexistante | 404 | `HttpStatus.NOT_FOUND` |
+| POST | Création réussie | 201 | `HttpStatus.CREATED` |
+| POST | Requête invalide | 400 | `HttpStatus.BAD_REQUEST` |
+| PUT | Mise à jour réussie | 200 | `HttpStatus.OK` |
+| PUT | Ressource inexistante | 404 | `HttpStatus.NOT_FOUND` |
+| DELETE | Suppression réussie | 204 | `HttpStatus.NO_CONTENT` |
+| DELETE | Ressource inexistante | 404 | `HttpStatus.NOT_FOUND` |
+| * | Verbe non autorisé | 405 | `HttpStatus.METHOD_NOT_ALLOWED` |
+| * | Erreur interne | 500 | `HttpStatus.INTERNAL_SERVER_ERROR` |
 
-#### ✅ 200 OK  
-`HttpStatus.OK`
+---
 
-Utilisé lorsque la requête est valide et retourne une liste.
+## CRUD REST — Cas détaillés avec exemples
 
+### GET
+
+| Requête | Cas | Code | Exemple réponse |
+|-------|----|----|----------------|
+| `GET /continents` | Liste existante | 200 | `[{"id":1,"name":"Europe"}]` |
+| `GET /continents/1` | Ressource trouvée | 200 | `{"id":1,"name":"Europe"}` |
+| `GET /continents/1000` | Ressource absente | 404 | `{ "error": "NOT_FOUND" }` |
+
+---
+
+### POST
+
+| Requête | Cas | Code | Exemple réponse |
+|-------|----|----|----------------|
+| `POST /continents` | Création réussie | 201 | `{"id":7,"name":"Asia"}` |
+| `POST /continents` | Body invalide | 400 | `{ "error": "BAD_REQUEST" }` |
+| `POST /continents` | Content-Type invalide | 415 | — |
+
+**Body valide**
 ```json
-[
-  { "id": 1, "name": "Europe" }
-]
+{ "name": "Asia" }
 ```
 
 ---
 
-### GET /continents/{id}
+### PUT
 
-#### ✅ 200 OK  
-`HttpStatus.OK`
+| Requête | Cas | Code | Exemple réponse |
+|-------|----|----|----------------|
+| `PUT /continents/1` | Mise à jour réussie | 200 | `{"id":1,"name":"Europa"}` |
+| `PUT /continents/1000` | Ressource inexistante | 404 | `{ "error": "NOT_FOUND" }` |
+| `PUT /continents/1` | Body invalide | 400 | `{ "error": "BAD_REQUEST" }` |
 
-La ressource existe.
-
+**Body valide**
 ```json
-{ "id": 1, "name": "Europe" }
-```
-
-#### ❌ 404 Not Found  
-`HttpStatus.NOT_FOUND`
-
-L’identifiant n’existe pas.
-
-```json
-{ "error": "CONTINENT_NOT_FOUND" }
+{ "name": "Europa" }
 ```
 
 ---
 
-## 2️⃣ POST — Créer
+### DELETE
 
-### POST /continents
-
-#### ✅ 201 Created  
-`HttpStatus.CREATED`
-
-La ressource est créée avec succès.
-
-```json
-{ "id": 7, "name": "Europe" }
-```
-
-#### ❌ 400 Bad Request  
-`HttpStatus.BAD_REQUEST`
-
-Les données envoyées sont invalides.
-
-Cas typiques :
-- champ manquant
-- champ vide
-- champ trop long
-- mauvais format JSON
-
-```json
-{
-  "error": "VALIDATION_ERROR",
-  "details": {
-    "name": "must not be blank"
-  }
-}
-```
-
-#### ❌ 415 Unsupported Media Type  
-`HttpStatus.UNSUPPORTED_MEDIA_TYPE`
-
-Le header `Content-Type` n’est pas correct.
+| Requête | Cas | Code | Réponse |
+|-------|----|----|--------|
+| `DELETE /continents/1` | Suppression réussie | 204 | *(aucun body)* |
+| `DELETE /continents/1000` | Ressource inexistante | 404 | `{ "error": "NOT_FOUND" }` |
 
 ---
 
-## 3️⃣ PUT — Mettre à jour
+## Cas transverses
 
-### PUT /continents/{id}
-
-#### ✅ 200 OK  
-`HttpStatus.OK`
-
-La ressource est mise à jour.
-
-```json
-{ "id": 1, "name": "Europa" }
-```
-
-#### ❌ 400 Bad Request  
-`HttpStatus.BAD_REQUEST`
-
-Les données envoyées sont invalides.
-
-#### ❌ 404 Not Found  
-`HttpStatus.NOT_FOUND`
-
-La ressource à modifier n’existe pas.
+| Requête | Cas | Code |
+|-------|----|----|
+| `POST /continents/1` | Verbe HTTP interdit | 405 |
+| * | Exception non gérée | 500 |
 
 ---
 
-## 4️⃣ DELETE — Supprimer
+## Règles essentielles
 
-### DELETE /continents/{id}
-
-#### ✅ 204 No Content  
-`HttpStatus.NO_CONTENT`
-
-La ressource est supprimée avec succès.  
-Aucun body retourné.
-
-#### ❌ 404 Not Found  
-`HttpStatus.NOT_FOUND`
-
-La ressource n’existe pas.
-
----
-
-## 5️⃣ Codes transverses importants
-
-### ❌ 405 Method Not Allowed  
-`HttpStatus.METHOD_NOT_ALLOWED`
-
-Le verbe HTTP n’est pas autorisé sur cette route.
-
----
-
-### ❌ 500 Internal Server Error  
-`HttpStatus.INTERNAL_SERVER_ERROR`
-
-Erreur interne du serveur.
-
-À utiliser **uniquement** pour :
-- bug applicatif
-- exception non gérée
-- crash runtime
-
-⚠️ **Jamais pour une erreur de validation ou de saisie utilisateur.**
-
----
-
-## Bonnes pratiques essentielles
-
-- `200 OK` → lecture ou mise à jour réussie  
-- `201 Created` → création uniquement  
-- `204 No Content` → suppression sans body  
-- `400 Bad Request` → erreur de validation client  
-- `404 Not Found` → ressource inexistante  
-- `500 Internal Server Error` → bug serveur uniquement  
+- `200 OK` → lecture ou mise à jour réussie
+- `201 Created` → création uniquement
+- `204 No Content` → suppression sans body
+- `400 Bad Request` → erreur client
+- `404 Not Found` → ressource inexistante
+- `405 Method Not Allowed` → mauvais verbe HTTP
+- `500 Internal Server Error` → bug serveur uniquement
 
 ---
 
 ## Règle d’or
 
-> **Un code HTTP décrit le résultat de la requête,  
+> **Le code HTTP décrit le résultat de la requête,  
 > pas l’implémentation interne.**
 
 ---
 
 ## Conclusion
 
-Si ton CRUD respecte ces codes **et leurs constantes associées** :
-- ton API est lisible
-- ton code est explicite
-- tes tests sont simples
-- Spring Boot et NestJS restent parfaitement alignés
+Ces deux tableaux suffisent pour :
+- écrire un CRUD cohérent
+- documenter une API proprement
+- aligner Spring Boot et NestJS sans discussion
 
-C’est une base indispensable pour toute API REST sérieuse.
+C’est la base minimale d’une API REST sérieuse.
