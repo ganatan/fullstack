@@ -13,8 +13,7 @@ Options :
 
 - CSS
 - SSR (not)
-- Zoneless (not)
-- IA (not)
+- IA (none)
 
 # Check dependencies
 
