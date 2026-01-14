@@ -3,6 +3,8 @@
 ## Commandes
 
 ```bash
+ng g component components/edit
+
 ng g c components/edit
 ```
 
