@@ -2,5 +2,5 @@
 
 ## Init
 - [Initialisation](./001-initialization.md)
-- [Initialisation](./002-component.md)
+- [Component](./002-component.md)
 
