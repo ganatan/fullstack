@@ -5,4 +5,5 @@
 - [Component](./002-component.md)
 - [pipe](./003-pipe.md)
 - [directive](./004-directive.md)
+- [bootstrap](./005-bootstrap.md)
 
