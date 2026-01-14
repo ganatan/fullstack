@@ -1,4 +1,4 @@
-# angular-component
+# angular-pipe
 
 ## Commandes
 

@@ -6,4 +6,5 @@
 - [pipe](./003-pipe.md)
 - [directive](./004-directive.md)
 - [bootstrap](./005-bootstrap.md)
+- [tailwind](./006-tailwind.md)
 
