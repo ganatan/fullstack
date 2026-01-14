@@ -1,16 +1,20 @@
-# Initialisation
+# angular-starter
+
+## Commandes
 
 ```bash
     npm uninstall -g @angular/cli
     npm install -g @angular/cli
 
     ng version
+```    
 ---
 
-# Création Starter
+## Création Starter
 
 ```bash
     ng new angular-starter
+```
 ---
 
 Options :
@@ -24,5 +28,7 @@ Options :
 ```bash
     npm list --depth=0
     npm outdated
+```    
+
 ---
 
