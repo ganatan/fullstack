@@ -1,4 +1,4 @@
-# Installation
+# Initialisation
 
 ```bash
     npm uninstall -g @angular/cli
