@@ -2,87 +2,69 @@
 
 ## Commandes
 
-    ng g component components/edit
-    ng g component components/table
-
-    ng g c components/edit
-    ng g c components/table
+```bash
+ng g c components/edit
+```
 
 ---
 
 ## Code
 
-### src/app/components/edit/edit.html
+### src/app/components/edit/edit.component.html
 
-    {{ value }}<br>
-    <input [value]="value">
+```html
+<p>{{ value }}</p>
+<input [value]="value" />
+```
 
-### src/app/components/edit/edit.ts
+### src/app/components/edit/edit.component.ts
 
-    import { Component, Input } from '@angular/core';
+```ts
+import { Component, Input } from '@angular/core';
 
-    @Component({
-      selector: 'app-edit',
-      imports: [],
-      templateUrl: './edit.html',
-      styleUrl: './edit.css',
-    })
-    export class EditComponent {
-      @Input() value = '';
-    }
+@Component({
+  selector: 'app-edit',
+  standalone: true,
+  templateUrl: './edit.component.html',
+  styleUrl: './edit.component.css',
+})
+export class EditComponent {
+  @Input() value = '';
+}
+```
 
-### src/app/app.html
+### src/app/app.component.html
 
-    <h1>angular-component</h1>
-    <h2>app-edit</h2><br>
-    <app-edit [value]="appEditValue"></app-edit><br>
-    <button (click)="changeAppEdit()">changeAppEdit</button>
+```html
+<h1>angular-component</h1>
+<h2>app-edit</h2>
 
-### src/app/app.ts
+<app-edit [value]="appEditValue"></app-edit>
 
-    import { Component, signal } from '@angular/core';
-    import { EditComponent } from './components/edit/edit';
+<button type="button" (click)="changeAppEdit()">
+  changeAppEdit
+</button>
+```
 
-    @Component({
-      selector: 'app-root',
-      imports: [
-        EditComponent,
-      ],
-      templateUrl: './app.html',
-      styleUrl: './app.css'
-    })
-    export class App {
-      protected readonly title = signal('angular-starter');
+### src/app/app.component.ts
 
-      appEditValue: string = 'Aliens';
+```ts
+import { Component, signal } from '@angular/core';
+import { EditComponent } from './components/edit/edit.component';
 
-      changeAppEdit(): void {
-        this.appEditValue = this.appEditValue + 'Changed';
-      }
-    }
+@Component({
+  selector: 'app-root',
+  imports: [EditComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
+})
+export class AppComponent {
+  protected readonly title = signal('angular-starter');
 
----
+  appEditValue = 'Aliens';
 
-## Décorateur @Component
-
-- @Component({...})
-
-interface TypeDecorator
-
-Décorateur Angular qui transforme une classe TypeScript en composant Angular.
-Il permet de configurer le composant (template, styles, dépendances…).
-
----
-
-## Propriétés par défaut
-
-- selector
-- imports
-- templateUrl
-- styleUrl
-
----
-
-## Paramètres
-
-    @Input() value = '';
+  changeAppEdit(): void {
+    this.appEditValue = `${this.appEditValue}Changed`;
+  }
+}
+```
