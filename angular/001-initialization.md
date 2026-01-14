@@ -20,6 +20,3 @@ Options :
     npm list --depth=0
     npm outdated
 
-# Rajout du coverage
-
-    "coverage": "ng test --no-watch --code-coverage"
