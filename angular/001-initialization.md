@@ -1,22 +1,26 @@
-
 # Installation
-  npm uninstall -g @angular/cli
-  npm install -g @angular/cli
-  
-  ng version
 
-# Creation Starter
-  ng new angular-starter
+    npm uninstall -g @angular/cli
+    npm install -g @angular/cli
 
-  Options
-    CSS
-    SSR (not)
-    Zoneless (not)        Desactivation de Zoneless 
-    IA (not)
+    ng version
+
+# Création Starter
+
+    ng new angular-starter
+
+Options :
+
+- CSS
+- SSR (not)
+- Zoneless (not)
+- IA (not)
 
 # Check dependencies
-  npm list --depth=0
-  npm outdated
+
+    npm list --depth=0
+    npm outdated
 
 # Rajout du coverage
-  "coverage": "ng test --no-watch --code-coverage"
+
+    "coverage": "ng test --no-watch --code-coverage"
