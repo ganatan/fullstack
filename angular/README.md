@@ -4,4 +4,5 @@
 - [Initialisation](./001-initialization.md)
 - [Component](./002-component.md)
 - [pipe](./003-pipe.md)
+- [directive](./004-directive.md)
 
