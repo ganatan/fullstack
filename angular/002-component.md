@@ -12,30 +12,30 @@ ng g c components/edit
 
 ## Code
 
-### src/app/components/edit/edit.component.html
+### src/app/components/edit/edit.html
 
 ```html
 <p>{{ value }}</p>
 <input [value]="value" />
 ```
 
-### src/app/components/edit/edit.component.ts
+### src/app/components/edit/edit.ts
 
 ```ts
 import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-edit',
-  standalone: true,
-  templateUrl: './edit.component.html',
-  styleUrl: './edit.component.css',
+  imports: [],
+  templateUrl: './edit.html',
+  styleUrl: './edit.css',
 })
-export class EditComponent {
+export class Edit {
   @Input() value = '';
 }
 ```
 
-### src/app/app.component.html
+### src/app/app.html
 
 ```html
 <h1>angular-component</h1>
@@ -48,25 +48,25 @@ export class EditComponent {
 </button>
 ```
 
-### src/app/app.component.ts
+### src/app/app.ts
 
 ```ts
 import { Component, signal } from '@angular/core';
-import { EditComponent } from './components/edit/edit.component';
+import { Edit } from './components/edit/edit'
 
 @Component({
   selector: 'app-root',
-  imports: [EditComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  imports: [Edit],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
 })
-export class AppComponent {
+export class App {
   protected readonly title = signal('angular-starter');
-
   appEditValue = 'Aliens';
 
   changeAppEdit(): void {
     this.appEditValue = `${this.appEditValue}Changed`;
   }
+
 }
 ```
