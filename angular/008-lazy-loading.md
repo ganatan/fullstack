@@ -1,4 +1,4 @@
-# angular-routing
+# angular-lazy-loading
 
 ## Code
 
