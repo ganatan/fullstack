@@ -16,72 +16,82 @@
 
 ```ts
 import { Injectable } from '@angular/core';
+import { Observable, concat, of, throwError, timer } from 'rxjs';
+import { delay, tap, mergeMap } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class Items {
   constructor() {
     console.log('Items:constructor');
   }
 
-  load() {
-    console.log('Items:load');
-    let result = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(true);
-        console.log('Items:resolve');
-      }, 4000)
-    })
-    return result;
+  load$(): Observable<boolean> {
+    console.log('RxObservable:loadItems');
+
+    return concat(
+      of(true).pipe(
+        delay(2000),
+        tap(() => console.log('RxObservable:loadItems:next:true'))
+      ),
+      of(false).pipe(
+        delay(2000),
+        tap(() => console.log('RxObservable:loadItems:next:false'))
+      ),
+      timer(2000).pipe(
+        tap(() => console.log('RxObservable:loadItems:error')),
+        mergeMap(() => throwError(() => 'error'))
+      )
+    );
   }
-  
 }
 ```
-
-### src/app/app.html
-
-```html
-<h1>angular-starter-service</h1>
-<button (click)="onLoadItems()">Load Items</button>
-message : {{ message }}
-<router-outlet />
-```
-
 ### src/app/app.ts
 
 ```ts
-import { Component, inject, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Items } from './services/items';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    RouterOutlet,
-  ],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
   protected readonly title = signal('angular-starter');
 
-  message:string='';
-  constructor(private items: Items) {
-  }
+  message = '';
+  private readonly destroy$ = new Subject<void>();
+
+  constructor(private items: Items) {}
 
   onLoadItems() {
     console.log('App:onLoadItems');
-    this.items.load()
-      .then(() => { 
-        this.message = 'onLoadItems:then';
-        console.log('App:onLoadItems:then') })
-      .catch(() => { 
-        this.message = 'onLoadItems:catch';
-        console.log('onLoadItems:catch') 
-      })
-      .finally(() => { console.log('App:onLoadItems:finally') });
+
+    this.items.load$()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (value) => {
+          this.message = `onLoadItems:next:${value}`;
+          console.log('App:onLoadItems:next', value);
+        },
+        error: () => {
+          this.message = 'onLoadItems:error';
+          console.log('App:onLoadItems:error');
+        },
+        complete: () => {
+          this.message = 'onLoadItems:complete';
+          console.log('App:onLoadItems:complete');
+        }
+      });
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }
 ```
