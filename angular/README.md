@@ -21,3 +21,4 @@
 - [openapi](./018-openapi.md)
 - [behavior-subject](./019-behavior-subject.md)
 - [map](./020-map.md)
+- [switchmap](./021-switchmap.md)
