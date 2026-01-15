@@ -18,3 +18,5 @@
 - [reactive-forms](./015-reactive-forms.md)
 - [ngrx](./016-ngrx.md)
 - [dto](./017-dto.md)
+- [openapi](./018-openapi.md)
+- [behavior-subject](./019-behavior-subject.md)
