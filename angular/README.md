@@ -16,3 +16,5 @@
 - [subject](./013-subject.md)
 - [template-driven-forms](./014-template-driven-forms.md)
 - [reactive-forms](./015-reactive-forms.md)
+- [ngrx](./016-ngrx.md)
+- [dto](./017-dto.md)
