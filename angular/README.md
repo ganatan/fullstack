@@ -11,4 +11,5 @@
 - [lazy-loading](./008-lazy-loading.md)
 - [service-promise](./009-service-promise.md)
 - [service-observable](./010-service-observable.md)
+- [ngfor-trackby](./011-ngfor-trackby.md)
 

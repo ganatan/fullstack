@@ -1,4 +1,4 @@
-# angular-service
+# angular-observable
 
 ## Commandes
 
