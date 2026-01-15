@@ -8,4 +8,5 @@
 - [bootstrap](./005-bootstrap.md)
 - [tailwind](./006-tailwind.md)
 - [routing](./007-routing.md)
+- [lazy-loading](./008-lazy-loading.md)
 
