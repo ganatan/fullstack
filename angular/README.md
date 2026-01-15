@@ -9,5 +9,6 @@
 - [tailwind](./006-tailwind.md)
 - [routing](./007-routing.md)
 - [lazy-loading](./008-lazy-loading.md)
-- [service](./009-service.md)
+- [service-promise](./009-service-promise.md)
+- [service-observable](./010-service-observable.md)
 
