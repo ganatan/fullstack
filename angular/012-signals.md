@@ -1,4 +1,4 @@
-# angular-ngfor-trackby
+# angular-signals
 
 ## Code
 
