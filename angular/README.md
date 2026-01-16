@@ -27,4 +27,5 @@
 - [promise](./101-promise.md)
 - [observable](./102-observable.md)
 - [observable next](./103-observable-next.md)
-- [subject](./104-subject.md)
+- [observable multi next](./104-observable-multi-next.md)
+- [subject](./105-subject.md)
