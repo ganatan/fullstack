@@ -29,3 +29,4 @@
 - [observable next](./103-observable-next.md)
 - [observable multi next](./104-observable-multi-next.md)
 - [subject](./105-subject.md)
+- [behaviorsubject](./106-behaviorsubject.md)
