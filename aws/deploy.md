@@ -1,6 +1,6 @@
 # deploy.md
 
-## Déploiement Docker sur AWS avec ECR, EKS, ALB et Route 53
+## Déploiement Docker sur AWS avec ECR, EKS, ALB, Route 53 et CloudWatch
 
 ### 1. Créer le repository Docker
 - AWS Console → **Elastic Container Registry (ECR)**
@@ -22,6 +22,7 @@
 - **IAM** gère les droits
 - Le pipeline CI/CD a le droit de pousser vers ECR
 - **EKS** a le droit de tirer les images depuis ECR
+- **CloudWatch** est autorisé à recevoir les logs
 
 ---
 
@@ -34,14 +35,21 @@
 
 ---
 
-### 5. Exposition externe
+### 5. Logs et monitoring
+- Les applications loggent sur **stdout / stderr**
+- Un agent (CloudWatch Agent ou Fluent Bit) est déployé dans le cluster
+- Les logs sont centralisés dans **CloudWatch Logs**
+
+---
+
+### 6. Exposition externe
 - **Ingress Controller** crée automatiquement un **ALB (Application Load Balancer)**
 - L’ALB reçoit le trafic HTTP/HTTPS
 - Le trafic est routé vers les services Kubernetes via l’Ingress
 
 ---
 
-### 6. DNS
+### 7. DNS
 - **Route 53** gère les noms de domaine
 - Les entrées DNS pointent vers l’ALB
 
@@ -55,7 +63,8 @@ Exemples :
 - **ECR** : registry Docker
 - **IAM** : permissions
 - **EKS** : exécution des conteneurs
-- **Ingress** : routage HTTP dans Kubernetes
+- **Ingress** : routage HTTP Kubernetes
 - **ALB** : point d’entrée réseau AWS
 - **Route 53** : DNS
+- **CloudWatch** : logs et monitoring
 - Tout est décrit en **YAML dans le repository**
