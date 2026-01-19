@@ -2,8 +2,10 @@
 
 ## Initialisation
 
+- [Glossaire](./glossaire.md)
+
 - [Init](./init.md)
 - [Deploy](./deploy.md)
 - [Deploy Legacy](./deploy-legacy.md)
-- [logs](./logs.md)
+- [s3](./s3.md)
 - [infra](./infra.md)
