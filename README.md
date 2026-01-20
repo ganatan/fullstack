@@ -12,6 +12,7 @@
 
 ### Languages
 - [TypeScript](./typescript/README.md)
+- [Java](./java/README.md)
 
 ### Tools
 - [Git](./git/README.md)
