@@ -96,7 +96,6 @@ public class RootController {
       "while_zeroIteration", zeroIteration,
       "while_break", breakCase,
       "while_continue", continueCase,
-      "while_infinite_guard", Map.of("i5", i5, "guard", guard),
       "while_decrement", decrementCase,
       "while_nested", nestedCase,
       "while_null_guard", nullGuardCase
