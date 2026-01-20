@@ -3,6 +3,7 @@
 ## Essentiels
 - [Commandes](./commandes.md)
 - [pom.xml](./pom-xml.md)
+- [application.properties](./application.properties.md)
 
 
 ## Java
