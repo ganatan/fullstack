@@ -9,6 +9,7 @@
 - [data-types-date](./bases/006-data-types-date.md)
 - [class](./bases/007-class.md)
 - [if](./bases/008-if.md)
+- [for](./bases/009-for.md)
 
 
 
