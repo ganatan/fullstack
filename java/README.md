@@ -6,7 +6,8 @@
 - [enum](./bases/003-enum.md)
 - [map](./bases/004-map.md)
 - [data-types](./bases/005-data-types.md)
-- [class](./bases/006-class.md)
+- [data-types-date](./bases/006-data-types-date.md)
+- [class](./bases/007-class.md)
 
 
 
