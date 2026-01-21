@@ -1,134 +1,54 @@
-# thrown – Java (exceptions)
+# thrown – Java (principe essentiel)
 
 ---
 
-## Définition
-
-`thrown` **n’est pas un mot-clé Java**.
-
-Le terme **thrown** est utilisé dans la documentation et le vocabulaire Java pour désigner une **exception qui a été levée** (passé de l’état normal à l’état exceptionnel).
-
-Le mot-clé réel en Java est **`throw`**.
-
----
-
-## Cycle de vie d’une exception
-
-1. Une exception est **créée**
-2. Elle est **levée** (`throw`)
-3. Elle est **propagée**
-4. Elle est **attrapée** (`catch`) ou remonte jusqu’à la JVM
-
-Quand on dit *“the exception is thrown”*, cela signifie :
-→ l’instruction `throw` a été exécutée.
-
----
-
-## Mot-clé réel : throw
+## Code
 
 ```java
-throw new IllegalArgumentException("invalid value");
-```
+package com.ganatan.starter.api.root;
 
-- `throw` lève explicitement une exception
-- arrête immédiatement l’exécution du flux courant
-- nécessite une instance de `Throwable`
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
----
+@RestController
+public class RootController {
 
-## thrown vs throw vs throws
-
-### throw
-Mot-clé Java  
-Utilisé **dans le code** pour lever une exception.
-
-```java
-throw new RuntimeException("error");
-```
-
----
-
-### throws
-Mot-clé Java  
-Utilisé **dans la signature d’une méthode**.
-
-```java
-public void readFile() throws IOException {
-}
-```
-
-Indique que la méthode **peut propager** une exception.
-
----
-
-### thrown
-Terme conceptuel (documentation / langage naturel)
-
-- jamais écrit dans le code
-- signifie : *l’exception a été levée*
-- utilisé dans :
-  - Javadoc
-  - documentation
-  - messages d’erreur
-  - entretiens techniques
-
----
-
-## Exemple complet
-
-```java
-public void divide(int a, int b) {
-  if (b == 0) {
-    throw new ArithmeticException("division by zero");
+  @GetMapping("/thrown")
+  public Map<String, Object> root(@RequestParam boolean fail) {
+    try {
+      process(fail);
+      return Map.of("status", "ok");
+    } catch (RuntimeException e) {
+      return Map.of("status", "error");
+    }
   }
-  int result = a / b;
-}
-```
 
-- `ArithmeticException` est **thrown**
-- la méthode ne la capture pas
-- elle remonte à l’appelant
-
----
-
-## Checked vs Unchecked (lien avec thrown)
-
-### Checked Exception
-- doit être déclarée avec `throws`
-- ou capturée avec `try/catch`
-
-```java
-public void load() throws IOException {
-  throw new IOException();
+  private void process(boolean fail) {
+    if (fail) {
+      throw new RuntimeException("error");
+    }
+  }
 }
 ```
 
 ---
 
-### Unchecked Exception
-- hérite de `RuntimeException`
-- peut être thrown sans déclaration
+## Explications
 
-```java
-throw new IllegalStateException();
-```
-
----
-
-## Règles importantes
-
-- on ne peut `throw` que des `Throwable`
-- une exception thrown interrompt le flux
-- une méthode peut propager plusieurs exceptions
-- une exception non capturée termine le thread
-
----
-
-## Résumé
-
-- ❌ `thrown` n’est pas un mot-clé Java
-- ✅ `throw` lève une exception
-- ✅ `throws` déclare une propagation
-- `thrown` = état logique d’une exception levée
-- terme fondamental en lecture de stacktrace et doc
-
+1. Le paramètre `fail` décide si une exception est déclenchée.
+2. `process(fail)` exécute la logique métier.
+3. Si `fail=false`, aucune exception n’est levée et le flux continue normalement.
+4. Si `fail=true`, l’instruction `throw` est exécutée.
+5. À cet instant, l’exception est dite **thrown**.
+6. `throw` interrompt immédiatement l’exécution de la méthode courante.
+7. Aucune ligne après le `throw` n’est exécutée.
+8. L’exception remonte la pile d’appels.
+9. Le `catch` dans `root()` intercepte l’exception.
+10. L’exception thrown est alors exploitée.
+11. Le flux est transformé en réponse contrôlée.
+12. Sans `try/catch`, Spring gérerait l’erreur automatiquement.
+13. Une exception non capturée stoppe le process.
+14. `thrown` n’est pas un mot-clé mais un état logique.
+15. Une exception n’a d’intérêt que si elle est capturée ou propagée volontairement.
