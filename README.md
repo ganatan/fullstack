@@ -1,3 +1,7 @@
+### Languages
+- [Java](./java/README.md)
+- [TypeScript](./typescript/README.md)
+
 ### Framework
 - [Angular](./angular/README.md)
 - [NestJS](./nestjs/README.md)
@@ -9,10 +13,6 @@
 - [OpenAPI](./openapi/openapi-fonctionnement.md)
 - [CRUD](./crud/crud-fonctionnement.md)
 - [Reponses HTTP](./crud/reponses-http.md)
-
-### Languages
-- [TypeScript](./typescript/README.md)
-- [Java](./java/README.md)
 
 ### Tools
 - [Git](./git/README.md)
