@@ -13,6 +13,7 @@
 - [do-while](./bases/010-do-while.md)
 - [ternary](./bases/011-ternary.md)
 - [array](./bases/012-array.md)
+- [thrown](./bases/013-thrown.md)
 
 
 
