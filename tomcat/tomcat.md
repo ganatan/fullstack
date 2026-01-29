@@ -1,5 +1,16 @@
 # Installation et utilisation de Apache Tomcat 11 (Windows)
 
+## 0. Compatibilité
+
+| Tomcat | Java | Spring Framework | Spring Boot | Maven |
+|-------|------|------------------|-------------|--------|
+| 9.0.x | 8 → 17 | 5.3.x | 2.7.x | 3.6+ |
+| 10.0.x | 11 → 17 | 5.3.x | 2.7.x | 3.6+ |
+| 10.1.x | 17 → 25 | 6.0.x → 6.2.x | 3.1.x → 3.4.x | 3.8+ |
+| 11.0.x | 17 → 25 | 6.2.x | 4.0.x | 3.9+ |
+
+
+
 ## 1. Pré-requis
 - Java 21 minimum
 
