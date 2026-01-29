@@ -93,6 +93,14 @@ Ctrl + /
 
 ---
 
+## Lancement du Terminal
+
+Raccourci :
+
+```
+Alt + F12
+```
+
 ## Formatage du code
 
 Raccourci :

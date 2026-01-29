@@ -1,6 +1,10 @@
-# Documentation Spring
+# Spring
 
 ## Concepts
+- [Beans](./basics/beans.md)
 
-- [Beans](./beans.md)
+
+
+## SpringMVC
+- [Initialisation](./springmvc/init.md)
 
