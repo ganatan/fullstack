@@ -1,11 +1,10 @@
 # Windows
 
+## 1. Installation / désinstallation des applications
 
-## 1. Installation applications
-
-  Win + I
-  Applications
-  Applications installées
-  Rechercher le programme
-  Désinstaller
-  Confirmer
+- `Win + I`
+- **Applications**
+- **Applications installées**
+- Rechercher le programme
+- **Désinstaller**
+- Confirmer
