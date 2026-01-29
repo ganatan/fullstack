@@ -33,9 +33,11 @@ Choisir :
 
 ## 3. Installation
 Paramètres recommandés :
+- user-name : admin
+- Password : Trustno1
+- Java path Virtual Machine : D:\hal\Java\jdk-25
 - Dossier : D:\hal\Tomcat 11.0
 - Port HTTP : 8080
-- Java path : D:\hal\Java\jdk-25
 
 ---
 
