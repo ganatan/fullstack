@@ -27,7 +27,7 @@ https://tomcat.apache.org/
 Choisir :
 - Tomcat 11
 - Windows Service Installer
-- Fichier : apache-tomcat-11.0.11.exe
+- Fichier : apache-tomcat-11.0.18.exe
 
 ---
 
@@ -35,7 +35,7 @@ Choisir :
 Paramètres recommandés :
 - Dossier : D:\hal\Tomcat 11.0
 - Port HTTP : 8080
-- Java path : C:\Program Files\Java\jdk-21
+- Java path : D:\hal\Java\jdk-25
 
 ---
 
