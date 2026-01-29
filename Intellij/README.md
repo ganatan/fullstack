@@ -101,6 +101,8 @@ Raccourci :
 Alt + F12
 ```
 
+View → Tool Windows → Terminal
+
 ## Formatage du code
 
 Raccourci :
