@@ -1,4 +1,4 @@
-## Résumé de l’architecture du projet
+## Architecture du projet
 
 1. Projet **Maven WAR** Spring MVC classique, déployé sur **Tomcat externe**.  
 2. `.project`, `.classpath`, `.settings/*` : configuration **Eclipse WTP** (serveur, JSP).  

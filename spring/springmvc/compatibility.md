@@ -1,4 +1,4 @@
-## Compatibilités Spring Framework (point central)
+## Compatibilités Spring Framework
 
 | Spring Framework | Java     | Tomcat              | Eclipse                  | Maven |
 |------------------|----------|---------------------|--------------------------|--------|

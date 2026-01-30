@@ -1,4 +1,4 @@
-# Maven Properties — documentation simple
+# Maven Properties
 
 ## Objectif
 Centraliser les versions et paramètres dans un `pom.xml` afin de :
