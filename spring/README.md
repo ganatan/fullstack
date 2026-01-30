@@ -6,5 +6,6 @@
 
 
 ## SpringMVC
+- [Compatibilité](./springmvc/compatibility.md)
 - [Initialisation](./springmvc/init.md)
 
