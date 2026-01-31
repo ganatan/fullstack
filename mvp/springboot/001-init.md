@@ -52,9 +52,9 @@ Ajouter ou vérifier :
 <name>springboot-starter</name>
 <description>Demo project for Spring Boot</description>
 <url/>
+```
 
 ---
-
 ## ⚙️ Configuration Spring Boot
 
 ### application.properties
