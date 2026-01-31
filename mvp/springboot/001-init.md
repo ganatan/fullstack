@@ -66,6 +66,25 @@ server.port=3000
 
 ---
 
+## 🔄 Refactor effectué
+
+Renommage de :
+
+- `SpringbootStarterApplication`
+
+en :
+
+- `StarterApplication`
+
+---
+
+## 📂 Fichiers impactés
+
+- `src/main/java/com/ganatan/starter/StarterApplication.java`
+- `src/test/java/com/ganatan/starter/StarterApplicationTests.java`
+
+---
+
 ## ▶️ Lancement
 
 mvn spring-boot:run
