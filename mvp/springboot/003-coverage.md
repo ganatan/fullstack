@@ -2,16 +2,16 @@
 
 ## 🎯 Objectif
 
-Mettre en place les dépendances de test et la couverture de code afin de :
-- valider le bon fonctionnement du socle technique
-- mesurer la couverture des classes principales
-- rester cohérent avec les conventions Spring Initializr
+Mettre en place :
+- les dépendances de test
+- JaCoCo pour la couverture
+- des tests unitaires simples (socle technique)
+
+Conventions : classes de tests au pluriel (Spring Initializr).
 
 ---
 
-## 📦 Dépendances Maven
-
-Ajouter ou vérifier les dépendances suivantes dans le `pom.xml` :
+## 📦 pom.xml – Dépendances
 
 ```xml
 <dependency>
@@ -28,9 +28,9 @@ Ajouter ou vérifier les dépendances suivantes dans le `pom.xml` :
 
 ---
 
-## 🧪 Plugin de couverture de code (JaCoCo)
+## 🧪 pom.xml – Plugin JaCoCo
 
-Ajouter le plugin suivant dans la section `<plugins>` du `pom.xml` :
+À ajouter dans `<build><plugins>` :
 
 ```xml
 <plugin>
@@ -56,13 +56,11 @@ Ajouter le plugin suivant dans la section `<plugins>` du `pom.xml` :
 
 ---
 
-## 📁 Structure des tests
-
-Conformément aux conventions Spring Initializr, les classes de test sont nommées au pluriel.
+## 📁 Emplacement des tests
 
 ```
 src/test/java
-└── com.ganatan.starter.api
+└── com/ganatan/starter/api
     ├── grouppurchase
     │   ├── GroupPurchaseControllerTests.java
     │   └── GroupPurchaseTests.java
@@ -72,67 +70,91 @@ src/test/java
 
 ---
 
-## ✅ Tests implémentés
-
-### GroupPurchaseControllerTests
-
-Objectif :
-- vérifier que le controller retourne une collection valide
-- s’assurer que les données de bootstrap sont présentes
+## ✅ Code complet – GroupPurchaseControllerTests.java
 
 ```java
-@Test
-void getItemsReturnsGroupPurchases() {
-  GroupPurchaseController controller = new GroupPurchaseController();
-  Collection<GroupPurchase> result = controller.getItems();
+package com.ganatan.starter.api.grouppurchase;
 
-  assertNotNull(result);
-  assertFalse(result.isEmpty());
-  assertEquals(4, result.size());
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.Collection;
+
+import org.junit.jupiter.api.Test;
+
+class GroupPurchaseControllerTests {
+
+  @Test
+  void getItemsReturnsGroupPurchases() {
+    GroupPurchaseController controller = new GroupPurchaseController();
+    Collection<GroupPurchase> result = controller.getItems();
+
+    assertNotNull(result);
+    assertFalse(result.isEmpty());
+    assertEquals(4, result.size());
+  }
+
 }
 ```
 
 ---
 
-### GroupPurchaseTests
-
-Objectif :
-- valider le constructeur
-- vérifier l’intégrité des données du modèle
+## ✅ Code complet – GroupPurchaseTests.java
 
 ```java
-@Test
-void constructor_setsIdAndName() {
-  GroupPurchase groupPurchase = new GroupPurchase(1L, "Computer");
+package com.ganatan.starter.api.grouppurchase;
 
-  assertEquals(1L, groupPurchase.getId());
-  assertEquals("Computer", groupPurchase.getName());
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+
+class GroupPurchaseTests {
+
+  @Test
+  void constructor_setsIdAndName() {
+    GroupPurchase groupPurchase = new GroupPurchase(1L, "Computer");
+
+    assertEquals(1L, groupPurchase.getId());
+    assertEquals("Computer", groupPurchase.getName());
+  }
+
 }
 ```
 
 ---
 
-### RootControllerTests
-
-Objectif :
-- vérifier la réponse de l’endpoint racine
-- valider les informations techniques retournées
+## ✅ Code complet – RootControllerTests.java
 
 ```java
-@Test
-void rootReturnsApplicationInfo() {
-  RootController controller = new RootController();
-  Map<String, Object> result = controller.root();
+package com.ganatan.starter.api.root;
 
-  assertNotNull(result);
-  assertEquals("springboot-starter", result.get("application"));
-  assertTrue(result.containsKey("java"));
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+
+class RootControllerTests {
+
+  @Test
+  void rootReturnsApplicationInfo() {
+    RootController controller = new RootController();
+    Map<String, Object> result = controller.root();
+
+    assertNotNull(result);
+    assertEquals("springboot-starter", result.get("application"));
+    assertTrue(result.containsKey("java"));
+  }
+
 }
 ```
 
 ---
 
-## ▶️ Exécution des tests et génération du rapport
+## ▶️ Exécution
 
 ```bash
 mvn clean test
@@ -142,7 +164,7 @@ mvn clean test
 
 ## 📊 Rapport de couverture
 
-Après l’exécution des tests, le rapport JaCoCo est généré à l’emplacement suivant :
+Rapport HTML JaCoCo :
 
 ```
 target/site/jacoco/index.html
@@ -152,7 +174,6 @@ target/site/jacoco/index.html
 
 ## ✅ Résultat attendu
 
-- Les tests passent sans erreur
-- Les classes de test respectent les conventions Spring Initializr
-- La couverture de code est générée
-- Le socle technique est validé avant l’implémentation du MVP
+- Tests OK
+- Rapport JaCoCo généré
+- Socle validé avant le MVP métier
