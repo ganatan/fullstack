@@ -162,7 +162,7 @@ public class GroupPurchaseController {
   }
 
   @GetMapping("/group-purchases")
-  public List<GroupPurchase> getAll() {
+  public List<GroupPurchase> getItems() {
     return groupPurchases;
   }
 
