@@ -3,28 +3,10 @@
 ## 🎯 Objectif
 
 Mettre en place :
-- les dépendances de test
 - JaCoCo pour la couverture
 - des tests unitaires simples (socle technique)
 
 Conventions : classes de tests au pluriel (Spring Initializr).
-
----
-
-## 📦 pom.xml – Dépendances
-
-```xml
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-test</artifactId>
-  <scope>test</scope>
-</dependency>
-```
 
 ---
 
@@ -112,7 +94,7 @@ import org.junit.jupiter.api.Test;
 class GroupPurchaseTests {
 
   @Test
-  void constructor_setsIdAndName() {
+  void setsIdAndName() {
     GroupPurchase groupPurchase = new GroupPurchase(1L, "Computer");
 
     assertEquals(1L, groupPurchase.getId());
