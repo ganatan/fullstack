@@ -46,6 +46,7 @@ Importer le projet dans Eclipse ou IntelliJ.
 
 Ajouter ou vérifier :
 
+```xml
 <artifactId>springboot-starter</artifactId>
 <version>1.0.0</version>
 <name>springboot-starter</name>
