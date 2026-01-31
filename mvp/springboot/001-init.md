@@ -1,28 +1,71 @@
-## 🎯 Génération du projet Spring Boot avec **Spring Initializr**
+# Initialisation du projet Spring Boot
 
-Se rendre sur **Spring Initializr** :  
-👉 https://start.spring.io
+## 🎯 Génération du projet avec Spring Initializr
 
-Configurer le projet avec les paramètres suivants :
+Se rendre sur :
+https://start.spring.io
 
-### 🏗️ **Projet**
-- **Project** : Maven  
-- **Language** : Java  
-- **Spring Boot** : 4.0.2
-- **Java** : 25  
-- **Packaging** : JAR  
+---
 
-### 🧩 **Coordonnées**
-- **Group** : `com.ganatan`  
-- **Artifact** : `springboot-starter`  
-- **Name** : `springboot-starter`  
-- **Description** : `Demo project for Spring Boot`  
-- **Package Name** : `com.ganatan.starter`
+## 🏗️ Configuration du projet
 
-### 📦 **Dépendances à ajouter**
-- **Spring Web**
+- Project : Maven
+- Language : Java
+- Spring Boot : 4.0.2
+- Java : 25
+- Packaging : JAR
 
-### 📥 Génération
-Cliquer sur **Generate** pour télécharger l'archive du projet.
+---
 
-Le projet peut ensuite être importé dans un IDE (Eclipse / IntelliJ).
+## 🧩 Coordonnées
+
+- Group : com.ganatan
+- Artifact : springboot-starter
+- Name : springboot-starter
+- Description : Demo project for Spring Boot
+- Package Name : com.ganatan.starter
+
+---
+
+## 📦 Dépendances
+
+- Spring Web
+
+---
+
+## 📥 Génération du projet
+
+Cliquer sur Generate pour télécharger l’archive ZIP.
+Importer le projet dans Eclipse ou IntelliJ.
+
+---
+
+## ⚙️ Paramétrage Maven
+
+### pom.xml
+
+Ajouter ou vérifier :
+
+<artifactId>springboot-starter</artifactId>
+<version>1.0.0</version>
+<name>springboot-starter</name>
+<description>Demo project for Spring Boot</description>
+<url/>
+
+---
+
+## ⚙️ Configuration Spring Boot
+
+### application.properties
+
+spring.application.name=springboot-starter
+server.port=3000
+
+---
+
+## ▶️ Lancement
+
+mvn spring-boot:run
+
+---
+
