@@ -53,14 +53,16 @@ Ajouter ou vérifier :
 <description>Demo project for Spring Boot</description>
 <url/>
 ```
-
 ---
+
 ## ⚙️ Configuration Spring Boot
 
 ### application.properties
 
+```text
 spring.application.name=springboot-starter
 server.port=3000
+```
 
 ---
 
