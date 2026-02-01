@@ -19,6 +19,7 @@
 
 ### Tools
 - [Git](./git/README.md)
+- [GitLab](./gitlab/README.md)
 - [Intellij](./Intellij/README.md)
 - [Tomcat](./tomcat/tomcat.md)
 - [Windows](./windows/windows.md)
