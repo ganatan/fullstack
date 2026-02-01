@@ -1,56 +1,53 @@
 # gitlab-init.md
 
-## Create group
-
-```
-Groups
-→ New group
-→ Create top-level group
-Name: EXAMPLE01
-Visibility: Private
-```
-
----
-
 ## Create repository
 
-```
-Group EXAMPLE01
-→ New project
-→ Create blank project
-Name: c4-SF-0949-EXAMPLE01
-Visibility: Private
-```
+Menu:
+- En haut à droite de GitLab → bouton **+**
+- **New project**
+- **Create blank project**
+
+Paramètres :
+- Project name: test-EXAMPLE01
+- Visibility: Private
 
 ---
 
 ## Add maintainer
 
-```
-Group EXAMPLE01
-→ Members
-→ Invite members
-Username: <gitlab-username>
-Role: Maintainer
-```
+Menu:
+- Ouvrir le projet `test-EXAMPLE01`
+- Menu gauche → **Settings**
+- **General**
+- Descendre jusqu’à **Project members**
+- **Invite members**
+
+Paramètres :
+- Username: <gitlab-username>
+- Role: Maintainer
 
 ---
 
 ## Remove member
 
-```
-Group EXAMPLE01
-→ Members
-→ ⋯
-→ Remove member
-```
+Menu:
+- Projet `test-EXAMPLE01`
+- **Settings**
+- **General**
+- **Project members**
+
+Action :
+- Menu **⋯** sur le membre
+- **Remove member**
 
 ---
 
 ## Emails language
 
-```
-User Preferences
-→ Localization
-→ Language: English
-```
+Menu:
+- Avatar (en haut à droite)
+- **Preferences**
+- **Localization**
+
+Paramètre :
+- Language: English
