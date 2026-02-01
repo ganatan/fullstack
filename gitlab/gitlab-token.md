@@ -1,61 +1,169 @@
-# gitlab-token.md
+# ssh-github-gitlab.md
 
-## Generate SSH key (local machine)
+## SSH GitHub + GitLab — Résumé complet (Windows)
 
-```
-ssh-keygen -t ed25519 -C "username@gitlab"
-```
-
-Press Enter to accept default path:
-```
-~/.ssh/id_ed25519
-```
-
-(Optional) Enter a passphrase.
+Username utilisé : `usernameexample`
 
 ---
 
-## Copy public key
+## 1. Création des clés SSH
 
-```
-cat ~/.ssh/id_ed25519.pub
+### Clé SSH pour GitHub
+
+```bat
+ssh-keygen -t ed25519 -C "usernameexample@github" -f %USERPROFILE%\.ssh\id_ed25519_github
 ```
 
-Copy the full output.
+Fichiers générés :
+```
+id_ed25519_github
+id_ed25519_github.pub
+```
 
 ---
 
-## Add SSH key to GitLab (account danny)
+### Clé SSH pour GitLab
 
-Menu:
-- GitLab → Avatar (top right)
-- **Preferences**
-- **SSH Keys**
+```bat
+ssh-keygen -t ed25519 -C "usernameexample@gitlab" -f %USERPROFILE%\.ssh\id_ed25519_gitlab
+```
 
-Action:
-- Paste the public key
-- Title: danny-laptop
-- **Add key**
+Fichiers générés :
+```
+id_ed25519_gitlab
+id_ed25519_gitlab.pub
+```
 
 ---
 
-## Test SSH connection
+## 2. Ajout des clés publiques
+
+### GitHub
+
+```bat
+type %USERPROFILE%\.ssh\id_ed25519_github.pub
+```
+
+Puis :
+```
+GitHub
+→ Settings
+→ SSH and GPG keys
+→ New SSH key
+```
+
+---
+
+### GitLab
+
+```bat
+type %USERPROFILE%\.ssh\id_ed25519_gitlab.pub
+```
+
+Puis :
+```
+GitLab
+→ Avatar
+→ Preferences
+→ SSH Keys
+→ Add new key
+```
+
+---
+
+## 3. Création du fichier SSH config
+
+Créer le fichier :
 
 ```
+C:\Users\usernameexample\.ssh\config
+```
+
+Contenu exact :
+
+```text
+# GitHub
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_github
+  IdentitiesOnly yes
+
+# GitLab
+Host gitlab.com
+  HostName gitlab.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_gitlab
+  IdentitiesOnly yes
+```
+
+---
+
+## 4. Tests de connexion SSH
+
+Ouvrir un nouveau terminal.
+
+### Test GitHub
+
+```bat
+ssh -T git@github.com
+```
+
+Résultat attendu :
+```
+Hi usernameexample! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+---
+
+### Test GitLab
+
+```bat
 ssh -T git@gitlab.com
 ```
 
-Expected message:
+Résultat attendu :
 ```
-Welcome to GitLab, @danny!
+Welcome to GitLab, @usernameexample!
 ```
 
 ---
 
-## Clone repository using SSH
+## 5. Test détaillé (optionnel)
+
+```bat
+ssh -vT git@github.com
+ssh -vT git@gitlab.com
+```
+
+Chercher la ligne :
+```
+Offering public key: ...
+```
+
+---
+
+## 6. Utilisation avec Git
+
+### GitHub
+
+```bat
+git clone git@github.com:usernameexample/repo.git
+```
+
+### GitLab
+
+```bat
+git clone git@gitlab.com:usernameexample/repo.git
+```
+
+---
+
+## Résumé final
 
 ```
-git clone git@gitlab.com:fr_kata_sf/test-EXAMPLE01.git
+2 services → 2 clés
+~/.ssh/config → routage automatique
+ssh -T → validation
+SSH only → comportement prévisible
 ```
-
-SSH authentication is now active.
