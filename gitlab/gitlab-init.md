@@ -1,51 +1,46 @@
-# Initialisation d'un repository GitHub
+# gitlab-init.md
 
-## 1. Commandes à exécuter
+## Create group
 
-``` bash
-echo "# example" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/ganatan/example.git
-```
+Groups
+→ New group
+→ Create top-level group
+Name: EXAMPLE01
+Visibility: Private
 
-------------------------------------------------------------------------
+---
 
-## 2. Fichier de configuration Git (`.git/config`)
+## Create repository
 
-``` ini
-[core]
-    repositoryformatversion = 0
-    filemode = false
-    bare = false
-    logallrefupdates = true
-    symlinks = false
-    ignorecase = true
+Group EXAMPLE01
+→ New project
+→ Create blank project
+Name: c4-SF-0949-EXAMPLE01
+Visibility: Private
 
-[remote "github"]
-    url = git@github.com:ganatan/example.git
-    fetch = +refs/heads/*:refs/remotes/github/*
+---
 
-[branch "master"]
-    remote = github
-    merge = refs/heads/master
-    vscode-merge-base = origin/master
+## Add maintainer
 
-[user]
-    email = example@gmail.com
-    name = example
+Group EXAMPLE01
+→ Members
+→ Invite members
+Username: <gitlab-username>
+Role: Maintainer
 
-[branch "main"]
-    remote = github
-    merge = refs/heads/main
-```
+---
 
-------------------------------------------------------------------------
+## Remove member
 
-## 3. Push initial du dépôt
+Group EXAMPLE01
+→ Members
+→ ⋯
+→ Remove member
 
-``` bash
-git push -u github main
-```
+---
+
+## Emails language
+
+User Preferences
+→ Localization
+→ Language: English
