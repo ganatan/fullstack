@@ -1,5 +1,4 @@
 # gitlab-token.md
-
 ## Generate SSH key (local machine)
 
 ```
