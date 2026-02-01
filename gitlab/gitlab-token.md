@@ -1,8 +1,9 @@
 # gitlab-token.md
+
 ## Generate SSH key (local machine)
 
 ```
-ssh-keygen -t ed25519 -C "danny@gitlab"
+ssh-keygen -t ed25519 -C "username@gitlab"
 ```
 
 Press Enter to accept default path:
