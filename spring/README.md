@@ -2,7 +2,8 @@
 
 ## Fonctionnement
 - [Résumé](./basics/spring-resume.md)
-- [Détaillé](./basics/spring-fonctionnement.md)
+- [fonctionnement](./basics/spring-fonctionnement.md)
+- [fonctionnement Détaillé](./basics/spring-fonctionnement-detaille.md)
 
 ## SpringMVC
 - [Initialisation](./springmvc/init.md)
