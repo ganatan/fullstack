@@ -3,8 +3,9 @@
 ## SpringMVC
 - [Initialisation](./springmvc/init.md)
 
-## Concepts Java
+## Bases
 - [Java Historique](./basics/java-historique.md)
+- [Spring Historique](./basics/spring-historique.md)
 - [Beans](./basics/beans.md)
 
 ## Concepts Spring
