@@ -1,15 +1,15 @@
+### Framework
+- [Spring](./spring/README.md)
+- [Angular](./angular/README.md)
+- [NestJS](./nestjs/README.md)
+- [Spring Boot](./springboot/README.md)
+
 ### Languages
 - [Java](./java/README.md)
 - [TypeScript](./typescript/README.md)
 
 ### Framework
 - [MVP](./mvp/README.md)
-
-### Framework
-- [Angular](./angular/README.md)
-- [NestJS](./nestjs/README.md)
-- [Spring Boot](./springboot/README.md)
-- [Spring](./spring/README.md)
 
 ### Concepts
 - [DTO](./dto/dto-fonctionnement.md)
