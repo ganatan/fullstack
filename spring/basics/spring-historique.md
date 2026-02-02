@@ -1,5 +1,13 @@
 # Spring
 
+## Versions Utilisables
+
+| Java | Dernière version Spring MVC utilisable | Namespace | Tomcat cible | Statut |
+|------|--------------------------------------|-----------|--------------|--------|
+| Java 8 | Spring Framework 5.3.34 | `javax.*` | Tomcat 9 | Legacy réel (fin de vie) |
+| Java 11 | Spring Framework 5.3.34 | `javax.*` | Tomcat 9 | Legacy maintenu |
+| Java 17 | Spring Framework 6.1.x | `jakarta.*` | Tomcat 10 / 11 | Moderne (baseline) |
+| Java 21 | Spring Framework 6.1.x | `jakarta.*` | Tomcat 10 / 11 | Moderne stable |
 
 ## Historique
 
