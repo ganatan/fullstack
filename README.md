@@ -21,6 +21,7 @@
 - [Git](./git/README.md)
 - [GitLab](./gitlab/README.md)
 - [Intellij](./Intellij/README.md)
+- [Eclipse](./eclipse/README.md)
 - [Tomcat](./tomcat/tomcat.md)
 - [Windows](./windows/windows.md)
 
