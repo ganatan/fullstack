@@ -2,6 +2,8 @@
 
 ## Historique
 - [Histoire](./histoire/001-origines.md)
+- [Servlet](./histoire/002-servlet.md)
+- [Dispatcherservlet](./histoire/003-dispatcherservlet.md)
 
 ## Fonctionnement
 - [Résumé](./basics/spring-resume.md)
