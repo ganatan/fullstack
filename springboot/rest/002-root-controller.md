@@ -144,7 +144,7 @@ java -jar target/springboot-starter-1.0.0.jar
 
 Accès :
 
-http://localhost:8080/
+http://localhost:3000/
 
 ---
 
@@ -152,7 +152,7 @@ http://localhost:8080/
 
 Appel via navigateur ou curl :
 
-http://localhost:8080/
+http://localhost:3000/
 
 Réponse JSON :
 
