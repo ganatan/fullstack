@@ -1,6 +1,11 @@
+# PostgreSQL – opérations essentielles
+
+```bash
 # Test de la connection avec user postgres
 psql -h localhost -p 5432 -U postgres
+```
 
+```sql
 # Creation database
 CREATE DATABASE backend_media;
 
@@ -14,4 +19,4 @@ WHERE datname = 'backend_media';
 
 # Suppression database
 DROP DATABASE backend_media;
-
+```
