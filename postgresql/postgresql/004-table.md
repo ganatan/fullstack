@@ -1,4 +1,4 @@
-# PostgreSQL – table person (SQL pur pour pgAdmin)
+# table-simple.md
 
 ```sql
 -- Création de la table
@@ -20,27 +20,53 @@ SELECT * FROM person WHERE id = 1;
 -- Mise à jour d’un champ
 UPDATE person SET name = 'Alice Cooper' WHERE id = 1;
 
--- Renommer une colonne
-ALTER TABLE person RENAME COLUMN name TO full_name;
-
--- Supprimer une colonne
-ALTER TABLE person DROP COLUMN full_name;
-
--- Supprimer une ligne
+-- Suppression d’une ligne
 DELETE FROM person WHERE id = 2;
 
--- Supprimer toutes les lignes (structure conservée)
+-- Suppression de toutes les lignes (structure conservée)
 DELETE FROM person;
 
--- Vider la table (rapide, reset des identifiants)
+-- Vidage rapide de la table (reset des identifiants)
 TRUNCATE TABLE person;
 
--- Vider la table avec dépendances
-TRUNCATE TABLE person CASCADE;
-
--- Supprimer la table
+-- Suppression de la table
 DROP TABLE person;
 
--- Supprimer la table si elle existe
+-- Suppression de la table si elle existe
 DROP TABLE IF EXISTS person;
+
+
+
+-- Table complète avec la majorité des types PostgreSQL
+CREATE TABLE person_complex (
+  id                BIGSERIAL PRIMARY KEY,          -- identifiant
+  uuid              UUID,                            -- identifiant universel
+  name              VARCHAR(255) NOT NULL,           -- texte court
+  description       TEXT,                            -- texte long
+
+  age               INTEGER,                         -- entier
+  salary            NUMERIC(12,2),                   -- décimal précis
+  rating            REAL,                            -- flottant
+  score             DOUBLE PRECISION,                -- flottant double
+
+  is_active         BOOLEAN DEFAULT true,            -- booléen
+
+  birth_date        DATE,                            -- date
+  created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- date + heure
+  updated_at        TIMESTAMPTZ,                      -- timestamp avec timezone
+  login_time        TIME,                            -- heure seule
+
+  email             VARCHAR(255) UNIQUE,             -- unique
+  status            VARCHAR(50) DEFAULT 'NEW',       -- valeur métier
+
+  tags              TEXT[],                          -- tableau
+  metadata          JSON,                            -- JSON non typé
+  metadata_b        JSONB,                            -- JSON indexable
+
+  ip_address        INET,                            -- IP
+  mac_address       MACADDR,                         -- MAC
+  website           VARCHAR(255),                    -- URL
+
+  binary_data       BYTEA                            -- données binaires
+);
 ```
