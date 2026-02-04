@@ -1,11 +1,11 @@
 ### MCP
-- [Java](./java/README.md)
-- [Spring](./spring/README.md)
 - [Spring Boot](./springboot/README.md)
+- [Java](./java/README.md)
 - [postgresql](./postgresql/README.md)
-- [Intellij](./Intellij/README.md)
-- [Eclipse](./eclipse/README.md)
 - [Tomcat](./tomcat/tomcat.md)
+- [Eclipse](./eclipse/README.md)
+- [Intellij](./Intellij/README.md)
+- [Spring](./spring/README.md)
 
 ### Tools
 - [Angular](./angular/README.md)
