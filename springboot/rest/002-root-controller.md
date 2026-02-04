@@ -7,6 +7,15 @@ Il fournit un JSON de présentation permettant de valider rapidement que l’app
 
 ---
 
+## ⚙️ Configuration Spring Boot
+
+### application.properties
+
+```text
+spring.application.name=springboot-starter
+server.port=3000
+```
+
 ## Refactor préalable (noms et cohérence)
 
 Avant d’ajouter le contrôleur, standardiser les noms de classes.
