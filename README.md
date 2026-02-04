@@ -1,6 +1,7 @@
 ### MCP
 - [Spring Boot](./springboot/README.md)
 - [Java](./java/README.md)
+- [SQL](./sql/README.md)
 - [postgresql](./postgresql/README.md)
 - [Tomcat](./tomcat/tomcat.md)
 - [Eclipse](./eclipse/README.md)
