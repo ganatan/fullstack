@@ -1,13 +1,8 @@
-# Documentation Springboot
-
-## Essentiels
-- [Commandes](./commandes.md)
-- [pom.xml](./pom-xml.md)
-- [application.properties](./application.properties.md)
-
+# Springboot
 
 ## Java
-- [Installation](./java-installation.md)
+- [Installation Java 21](./installation/java21-installation.md)
+- [Installation Java 25](./installation/java25-installation.md)
 
 ## Init
 - [Initialisation](./rest/001-springboot-initializr.md)
@@ -16,6 +11,11 @@
 - [Controller REST - ContinentController](./rest/004-continent-controller.md)
 
 - [Spring Data](./rest/005-spring-data.md)
+
+## Essentiels
+- [Commandes](./commandes.md)
+- [pom.xml](./pom-xml.md)
+- [application.properties](./application.properties.md)
 
 ## Basics
 
