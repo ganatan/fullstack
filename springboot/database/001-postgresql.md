@@ -270,12 +270,10 @@ public class PersonService {
     this.repository = repository;
   }
 
-  @Transactional(readOnly = true)
   public List<PersonEntity> findAll() {
     return repository.findAll();
   }
 
-  @Transactional(readOnly = true)
   public Optional<PersonEntity> findById(Long id) {
     return repository.findById(id);
   }
