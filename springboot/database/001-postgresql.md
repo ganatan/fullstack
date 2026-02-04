@@ -373,34 +373,3 @@ public class PersonController {
 ```
 
 
-## Réponses HTTP possibles
-
-### GET /persons
-- 200 OK
-  - Body: `PersonResponseDto[]`
-
-### GET /persons/{id}
-- 200 OK
-  - Body: `PersonResponseDto`
-- 404 Not Found
-
-### POST /persons
-- 201 Created
-  - Body: `PersonResponseDto`
-- 400 Bad Request
-  - name manquant ou vide
-
-### PUT /persons/{id}
-- 200 OK
-  - Body: `PersonResponseDto`
-- 400 Bad Request
-  - name manquant ou vide
-- 404 Not Found
-
-### DELETE /persons/{id}
-- 204 No Content
-- 404 Not Found
-
-### Erreurs techniques possibles
-- 500 Internal Server Error
-  - erreur Hibernate / PostgreSQL
