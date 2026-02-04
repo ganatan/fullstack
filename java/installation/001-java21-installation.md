@@ -29,7 +29,7 @@ Accès directs par version :
 
 Sélectionner le package suivant :
 
-- jdk-25_windows-x64_bin.msi
+- jdk-21_windows-x64_bin.msi
 
 ---
 
@@ -49,7 +49,7 @@ Non recommandé pour un environnement de développement maîtrisé.
 
 Choisir un répertoire dédié :
 
-D:\hal\Java\jdk-25\
+D:\hal\Java\jdk-21\
 
 Avantages :
 - coexistence de plusieurs versions de Java
