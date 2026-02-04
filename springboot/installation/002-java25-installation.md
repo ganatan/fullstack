@@ -51,12 +51,6 @@ Choisir un répertoire dédié :
 
 D:\hal\Java\jdk-25\
 
-Avantages :
-- coexistence de plusieurs versions de Java
-- contrôle explicite des mises à jour
-- configuration propre des variables d’environnement
-- aucun conflit avec des installations système
-
 ---
 
 ## Vérification de l’installation
