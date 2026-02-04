@@ -1,49 +1,46 @@
-# PostgreSQL – table person (essentiel)
+# PostgreSQL – table person (SQL pur pour pgAdmin)
 
 ```sql
-# Se connecter à la base
-\c backend_media
-
-# Créer la table
+-- Création de la table
 CREATE TABLE person (
   id   BIGSERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL
 );
 
-# Lister les tables
-\dt
-
-# Voir la structure de la table
-\d person
-
-# Insérer des lignes
+-- Insertion de données
 INSERT INTO person (name) VALUES ('Alice');
 INSERT INTO person (name) VALUES ('Bob');
 
-# Lire toutes les lignes
+-- Lecture de toutes les lignes
 SELECT * FROM person;
 
-# Lire avec filtre
+-- Lecture avec filtre
 SELECT * FROM person WHERE id = 1;
 
-# Mettre à jour un champ (name)
+-- Mise à jour d’un champ
 UPDATE person SET name = 'Alice Cooper' WHERE id = 1;
 
-# Supprimer une ligne
+-- Renommer une colonne
+ALTER TABLE person RENAME COLUMN name TO full_name;
+
+-- Supprimer une colonne
+ALTER TABLE person DROP COLUMN full_name;
+
+-- Supprimer une ligne
 DELETE FROM person WHERE id = 2;
 
-# Supprimer toutes les lignes (garde la table)
+-- Supprimer toutes les lignes (structure conservée)
 DELETE FROM person;
 
-# Vider toutes les lignes (plus rapide, reset id)
+-- Vider la table (rapide, reset des identifiants)
 TRUNCATE TABLE person;
 
-# Vider toutes les lignes + dépendances (si FK)
+-- Vider la table avec dépendances
 TRUNCATE TABLE person CASCADE;
 
-# Supprimer la table
+-- Supprimer la table
 DROP TABLE person;
 
-# Supprimer la table si elle existe
+-- Supprimer la table si elle existe
 DROP TABLE IF EXISTS person;
 ```
