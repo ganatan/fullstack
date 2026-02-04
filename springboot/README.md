@@ -5,7 +5,9 @@
 - [Installation Java 25](./installation/002-java25-installation.md)
 
 ## Init
-- [Initialisation](./rest/001-springboot-initializr.md)
+- [Initialisation Java 21](./initialisation/001-springboot-initializr-java21.md)
+- [Initialisation Java 25](./initialisation/002-springboot-initializr-java25.md)
+
 - [Root Controller - RootController](./rest/002-root-controller.md)
 - [Test - CheckStyle](./rest/003-test-checkstyle.md)
 - [Controller REST - ContinentController](./rest/004-continent-controller.md)
