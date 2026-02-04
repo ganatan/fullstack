@@ -39,5 +39,8 @@ TRUNCATE TABLE person;
 -- Suppression de la table
 DROP TABLE person;
 
+-- Suppression de la table et de tous les éléments qui lui sont liés
+DROP TABLE person CASCADE;
+
 -- Suppression de la table si elle existe
 DROP TABLE IF EXISTS person;
