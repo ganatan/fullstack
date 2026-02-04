@@ -1,4 +1,4 @@
-# 002-versions-java.md
+# Versions
 
 ## Chronologie Java – dates précises et gouvernance
 

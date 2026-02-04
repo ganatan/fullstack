@@ -3,6 +3,7 @@
 ## Historique
 - [Histoire](./histoire/001-origines.md)
 - [Versions](./histoire/002-versions.md)
+- [Synthese](./histoire/003-synthese.md)
 
 ## Bases
 - [while](./bases/001-while.md)
