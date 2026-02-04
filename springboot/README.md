@@ -8,6 +8,10 @@
 - [Controller REST - ContinentController](./rest/004-continent-controller.md)
 - [Spring Data](./rest/005-spring-data.md)
 
+- [Reponses HTTP](./rest/006-responses-http.md)
+- [Database Postgresql](./database/001-postgresql.md)
+
+
 ## Java 25
 - [Installation Java 25](./installation/002-java25-installation.md)
 - [Initialisation Springboot 25](./initialisation/002-springboot-initializr-java25.md)
