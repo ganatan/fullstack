@@ -23,6 +23,7 @@
 - [Reponses HTTP](./crud/reponses-http.md)
 
 ### Tools
+- [Kafka](./kafka/README.md)
 - [Git](./git/README.md)
 - [GitLab](./gitlab/README.md)
 - [Intellij](./Intellij/README.md)

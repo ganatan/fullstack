@@ -1,5 +1,8 @@
 # Java
 
+## Historique
+- [Histoire](./histoire/001-origines.md)
+
 ## Bases
 - [while](./bases/001-while.md)
 - [switch](./bases/002-switch.md)
