@@ -1,8 +1,8 @@
 # Springboot
 
 ## Java
-- [Installation Java 21](./installation/java21-installation.md)
-- [Installation Java 25](./installation/java25-installation.md)
+- [Installation Java 21](./installation/001-java21-installation.md)
+- [Installation Java 25](./installation/002-java25-installation.md)
 
 ## Init
 - [Initialisation](./rest/001-springboot-initializr.md)
