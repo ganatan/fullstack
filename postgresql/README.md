@@ -9,6 +9,7 @@
 - [Table Contraintes Index](./postgresql/006-table-contraintes-index.md)
 - [Table Clés Etrangeres](./postgresql/007-table-cle-etrangere.md)
 - [Table Colonnes](./postgresql/008-table-colonnes.md)
+- [Table Types](./postgresql/009-table-types.md)
+- [Requetes](./postgresql/010-table-requete-complexe.md)
 
-- [Requetes](./postgresql/007-requetes-finales.md)
 
