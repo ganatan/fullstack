@@ -1,6 +1,13 @@
 # table-simple.md
 
 ```sql
+
+-- Liste des tables du schéma courant
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_type = 'BASE TABLE';
+
 -- Création de la table
 CREATE TABLE person (
   id   BIGSERIAL PRIMARY KEY,
