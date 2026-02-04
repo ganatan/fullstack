@@ -4,6 +4,7 @@
 - [Histoire](./histoire/001-origines.md)
 - [Versions](./histoire/002-versions.md)
 - [Synthese](./histoire/003-synthese.md)
+- [Framework](./histoire/004-framework.md)
 
 ## Bases
 - [while](./bases/001-while.md)
