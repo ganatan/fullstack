@@ -1,12 +1,5 @@
 # RootController
 
-## Objectif
-
-Le `RootController` expose un endpoint HTTP à la racine de l’application.
-Il fournit un JSON de présentation permettant de valider rapidement que l’application est opérationnelle.
-
----
-
 ## ⚙️ Configuration Spring Boot
 
 ### application.properties
