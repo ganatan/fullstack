@@ -1,6 +1,6 @@
-# SQL vs NoSQL — Référence documentaire
+# SQL vs NoSQL
 
-## Historique et dates clés (idées par ligne)
+## Historique
 
 1. 1970 : Edgar F. Codd formalise le modèle relationnel (IBM).
 2. Années 1970–80 : premières bases relationnelles industrielles.
