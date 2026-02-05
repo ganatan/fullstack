@@ -1,5 +1,5 @@
 # Postgresql
 
 ## Installation
-- [Installation](./mongodb/001-installation.md)
+- [Installation](./installation/001-installation.md)
 
