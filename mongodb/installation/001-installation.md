@@ -6,7 +6,7 @@
 
   Télécharger la version "MongoDB Community Server".
 
-  mongodb-windows-x86_64-8.2.1-signed.msi
+  mongodb-windows-x86_64-8.2.4-signed.msi
   
     Complete
     Run service as Network Service user

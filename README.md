@@ -13,7 +13,6 @@
 - [SQL / NoSQL](./database/sql-nosql.md)
 - [Angular](./angular/README.md)
 - [NestJS](./nestjs/README.md)
-- [Mongodb](./mongodb/README.md)
 - [TypeScript](./typescript/README.md)
 - [MVP](./mvp/README.md)
 - [DTO](./dto/dto-fonctionnement.md)
