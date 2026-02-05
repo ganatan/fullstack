@@ -9,9 +9,7 @@ spring.application.name=springboot-starter
 server.port=3000
 ```
 
-## Refactor préalable (noms et cohérence)
-
-Avant d’ajouter le contrôleur, standardiser les noms de classes.
+## Refactor 
 
 ### Application
 
