@@ -151,7 +151,7 @@ Réponse JSON :
 {
   "application": "springboot-starter",
   "status": "running",
-  "java": "25.0.x"
+  "java": "21.0.x"
 }
 ```
 
