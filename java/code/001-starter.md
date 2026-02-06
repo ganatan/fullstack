@@ -1,4 +1,4 @@
-# 001-starter.md
+# Java Starter
 
 ## Installation Java
 
@@ -48,9 +48,3 @@ javac Main.java
 java Main
 ```
 
-## Conseils
-
-Toujours commencer simple.
-Java = classes + objets.
-Le point d’entrée est toujours main().
-Apprendre Java sans framework d’abord.
