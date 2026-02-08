@@ -91,4 +91,3 @@ C’est la preuve que CQRS + event-driven fonctionnent réellement.
 - les contrats sont versionnés et consommés par les repos
 - la CI produit des rapports et bloque en cas d’échec
 
-Ce socle devient ensuite réutilisable tel quel pour le domaine **Credit** (avec DB2 et durcissement progressif).
