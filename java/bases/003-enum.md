@@ -1,4 +1,4 @@
-# enum – cas essentiels (Java)
+# enum
 
 Tous les exemples sont exécutables directement dans un contrôleur Spring Boot.
 

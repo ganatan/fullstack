@@ -1,4 +1,4 @@
-# class – Java (exhaustif)
+# class
 
 ---
 

@@ -4,6 +4,7 @@
 - [SQL](./sql/README.md)
 - [postgresql](./postgresql/README.md)
 - [mongodb](./mongodb/README.md)
+- [Kubernetes](./kubernetes/README.md)
 - [Tomcat](./tomcat/tomcat.md)
 - [Eclipse](./eclipse/README.md)
 - [Intellij](./Intellij/README.md)
@@ -25,3 +26,7 @@
 - [Windows](./windows/windows.md)
 - [aws](./aws/README.md)
 
+
+
+### Media
+- [Media](./media/README.md)

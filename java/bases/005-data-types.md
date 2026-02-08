@@ -1,4 +1,4 @@
-# Java – data types (essentiel)
+# Java – data types
 
 ---
 
