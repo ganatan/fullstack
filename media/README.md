@@ -126,5 +126,3 @@ Une plateforme démontrant :
 - MongoDB read‑model
 - Kafka messaging
 
-Cette application constitue le socle technique pour la déclinaison
-du domaine **Credit** avec DB2 et contraintes métier supplémentaires.
