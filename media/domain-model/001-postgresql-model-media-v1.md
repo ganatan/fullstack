@@ -17,6 +17,12 @@ backend_media
 ## Script SQL minimal
 
 ```sql
+# Lister toutes les bases
+\l
+
+# Afficher la base courante
+SELECT current_database();
+
 create database backend_media;
 
 \c backend_media
