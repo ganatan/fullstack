@@ -1,4 +1,6 @@
-# application.properties
+# application-properties.md
+
+# application.properties — configuration essentielle Spring Boot
 
 ## Exemple minimal
 
@@ -8,78 +10,114 @@ spring.application.name=springboot-starter
 spring.profiles.active=dev
 ```
 
-Cet exemple montre la configuration de base d’une application Spring Boot :
+Configuration minimale d’une application Spring Boot :
 - port HTTP
 - nom de l’application
 - profil actif
 
 ---
 
-## Port HTTP
+## Serveur
 
+### Port HTTP
+
+```properties
 server.port=3000
+```
 
 Définit le port du serveur embarqué (Tomcat).
 
 ---
 
-## Nom de l’application
+### Encodage
 
-spring.application.name=springboot-starter
-
-Utilisé pour les logs, le monitoring et les environnements distribués.
-
----
-
-## Profil actif
-
-spring.profiles.active=dev
-
-Permet de charger :
-application-dev.properties
-
----
-
-## Encodage
-
+```properties
 server.servlet.encoding.charset=UTF-8
 server.servlet.encoding.enabled=true
 server.servlet.encoding.force=true
+```
 
 Garantit un encodage UTF-8 pour les requêtes et réponses HTTP.
 
 ---
 
-## Logs (niveau global)
+### Gestion des erreurs
 
-logging.level.root=INFO
+```properties
+server.error.include-stacktrace=never
+```
 
----
-
-## Logs applicatifs
-
-logging.level.com.ganatan=DEBUG
+Empêche l’exposition des stacktraces HTTP.
 
 ---
 
-## Désactivation bannière
+## Application
 
+### Nom de l’application
+
+```properties
+spring.application.name=springboot-starter
+```
+
+Utilisé pour :
+- logs
+- monitoring
+- environnements distribués
+
+---
+
+### Profil actif
+
+```properties
+spring.profiles.active=dev
+```
+
+Charge automatiquement :
+
+application-dev.properties
+
+---
+
+### Bannière Spring Boot
+
+```properties
 spring.main.banner-mode=off
+```
+
+Désactive la bannière au démarrage.
 
 ---
 
-## Timezone JVM
+### Timezone JSON
 
+```properties
 spring.jackson.time-zone=UTC
+```
+
+Standardise la sérialisation JSON.
+
+---
+
+## Logs
+
+### Niveau global
+
+```properties
+logging.level.root=INFO
+```
+
+### Logs applicatifs
+
+```properties
+logging.level.com.ganatan=DEBUG
+```
 
 ---
 
 ## Actuator (si présent)
 
+```properties
 management.endpoints.web.exposure.include=health,info
+```
 
----
-
-## Désactiver stacktrace HTTP
-
-server.error.include-stacktrace=never
+Expose les endpoints essentiels.
