@@ -34,12 +34,19 @@ Caractéristiques :
 Format hiérarchique basé sur YAML.
 
 Exemple :
+
+```yaml
 server:
   port: 8080
 
 spring:
+  application:
+    name: media-api
   datasource:
     url: jdbc:postgresql://localhost:5432/backend_media
+    username: postgres
+    password: postgres
+```
 
 Caractéristiques :
 - configuration structurée
