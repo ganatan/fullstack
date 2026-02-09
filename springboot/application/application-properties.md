@@ -4,9 +4,11 @@
 
 ## Exemple minimal
 
+```properties
 server.port=3000
 spring.application.name=springboot-starter
 spring.profiles.active=dev
+```
 
 Cet exemple montre la configuration de base d’une application Spring Boot :
 - port HTTP

@@ -23,7 +23,7 @@
 - [pom.xml](./pom-xml.md)
 - [application.properties vs application.yml](./application/application-type.md)
 - [application.properties](./application/application-properties.md)
-- [application.yml](./application/application-yml.md)
+- [application.yml](./application/application-yaml.md)
 
 ## Basics
 
