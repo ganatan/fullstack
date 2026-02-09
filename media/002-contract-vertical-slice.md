@@ -20,7 +20,7 @@ La slice V1 doit prouver :
 - publication Kafka
 - consommation worker + idempotence
 - projection Mongo read-model
-- lecture via query-service
+- lecture via media-view
 - consommation par 2 frontends Angular (admin/user)
 - outillage CI (tests + rapports)
 
@@ -30,11 +30,11 @@ La slice V1 doit prouver :
 Cas d’usage : **Admin crée un Media → User le consulte**
 
 Flux :
-1. frontend-admin appelle `command-service` (POST)
-2. `command-service` valide + écrit en SQL
-3. `command-service` publie l’event `MediaCreated.v1` sur Kafka
-4. `projection-worker` consomme, applique idempotence, met à jour Mongo
-5. `query-service` expose `GET /media/{id}` depuis Mongo
+1. frontend-admin appelle `media-api` (POST)
+2. `media-api` valide + écrit en SQL
+3. `media-api` publie l’event `MediaCreated.v1` sur Kafka
+4. `media-worker` consomme, applique idempotence, met à jour Mongo
+5. `media-view` expose `GET /media/{id}` depuis Mongo
 6. frontend-user affiche le media
 
 C’est la preuve que CQRS + event-driven fonctionnent réellement.
@@ -56,19 +56,19 @@ C’est la preuve que CQRS + event-driven fonctionnent réellement.
 - ajouter `VERSIONING.md` (règles v1/v2)
 - ajouter `README.md` (génération clients)
 
-### Étape 2 — `command-service` (write path)
+### Étape 2 — `media-api` (write path)
 - implémenter l’API de création
 - persister en PostgreSQL
 - publier l’événement Kafka
 - ajouter tests + rapports (JUnit + coverage)
 
-### Étape 3 — `projection-worker` (async)
+### Étape 3 — `media-worker` (async)
 - consommer l’événement Kafka
 - gérer idempotence (eventId)
 - projeter dans Mongo (read-model)
 - prévoir DLQ/retry (au minimum au niveau infra)
 
-### Étape 4 — `query-service` (read path)
+### Étape 4 — `media-view` (read path)
 - implémenter `GET /media/{id}` sur Mongo
 - ajouter recherche/pagination en V2
 
