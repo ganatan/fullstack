@@ -1,12 +1,28 @@
-# markdown-exemples-code.md
+# markdown-cheatsheet.md
 
-# Exemples de blocs de code en Markdown
+# Markdown — afficher du code (cheatsheet)
 
-Voici comment afficher du code directement copiable dans une documentation Markdown.
+Objectif :
+comprendre comment écrire du Markdown pour afficher du code copiable
+dans la documentation technique.
 
 ---
 
 ## application.properties
+
+### Ce que tu écris dans le fichier .md
+
+````md
+## application.properties
+
+```properties
+server.port=8080
+spring.application.name=media-api
+spring.datasource.url=jdbc:postgresql://localhost:5432/backend_media
+```
+````
+
+### Ce que Markdown affiche
 
 ```properties
 server.port=8080
@@ -18,11 +34,23 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/backend_media
 
 ## SQL
 
+### Ce que tu écris
+
+````md
 ```sql
 create table media (
   id bigserial primary key,
-  name varchar(255) not null,
-  release_date date not null
+  name varchar(255) not null
+);
+```
+````
+
+### Ce qui s’affiche
+
+```sql
+create table media (
+  id bigserial primary key,
+  name varchar(255) not null
 );
 ```
 
@@ -30,27 +58,36 @@ create table media (
 
 ## Java
 
-```java
-@RestController
-@RequestMapping("/media")
-public class MediaController {
+### Ce que tu écris
 
-  @GetMapping
-  public String hello() {
-    return "media";
-  }
-}
+````md
+```java
+public class Media {}
+```
+````
+
+### Ce qui s’affiche
+
+```java
+public class Media {}
 ```
 
 ---
 
-## application.yml
+## Règle à retenir
 
-```yaml
-server:
-  port: 8080
+Pour afficher du code en Markdown :
 
-spring:
-  application:
-    name: media-api
 ```
+```langage
+code
+```
+```
+
+Exemples de langages :
+- sql
+- java
+- properties
+- yaml
+- json
+- bash
