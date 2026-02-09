@@ -1,4 +1,4 @@
-# 003-contract-definition-v1.md
+# 004-contract-definition-v1.md
 
 ## Contract Definition V1 — Media
 
@@ -11,6 +11,13 @@ La V1 repose sur trois contrats :
 
 Ces contrats sont définis dans le repository `media-contracts`.
 
+Le modèle de données de référence est :
+
+Media
+- id (bigint)
+- name (string)
+- release_date (date)
+
 ---
 
 ## Command API (write)
@@ -20,14 +27,17 @@ Endpoint :
 POST /admin/media
 
 Request :
-- name
-- release_date
+- name (string)
+- release_date (date)
 
 Response :
-- id
+- id (integer / int64)
 
 Responsabilité :
 permettre la création d’un Media dans le write model (PostgreSQL).
+
+Le Media est persistant dans la table :
+media
 
 ---
 
@@ -38,9 +48,9 @@ Endpoint :
 GET /media/{id}
 
 Response :
-- id
-- name
-- release_date
+- id (integer / int64)
+- name (string)
+- release_date (date)
 
 Responsabilité :
 exposer le read-model depuis MongoDB.
@@ -50,7 +60,6 @@ exposer le read-model depuis MongoDB.
 ## Event Kafka
 
 Event :
-
 MediaCreated.v1
 
 Envelope :
@@ -58,14 +67,14 @@ Envelope :
 - eventType
 - occurredAt
 - correlationId
-- aggregateId
+- aggregateId (media id)
 - version
 - payload
 
 Payload :
-- id
-- name
-- release_date
+- id (integer / int64)
+- name (string)
+- release_date (date)
 
 Responsabilité :
 propager la création d’un Media vers le projection-worker.
@@ -79,10 +88,12 @@ Les trois contrats doivent rester cohérents :
 Command API → SQL → Event → Mongo → Query API
 
 Les champs doivent être identiques entre :
-- la table SQL
+- la table SQL media
 - l’event payload
 - le document Mongo
 - la réponse Query API
+
+Les champs techniques (creation_date, update_date) restent internes au write model.
 
 ---
 
@@ -91,5 +102,6 @@ Les champs doivent être identiques entre :
 À la fin de cette étape :
 - les contrats V1 sont définis
 - ils correspondent à la vertical slice
+- ils sont alignés avec PostgreSQL
 - ils peuvent être versionnés (v1.0.0)
 - ils servent de base à l’implémentation backend
