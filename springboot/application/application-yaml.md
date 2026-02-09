@@ -1,8 +1,6 @@
-# application-yaml.md
+# application.yml
 
-# application.yml — configuration essentielle Spring Boot
-
-## Exemple minimal
+## Exemple
 
 ```yaml
 server:

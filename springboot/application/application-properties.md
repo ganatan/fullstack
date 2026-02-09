@@ -1,8 +1,6 @@
-# application-properties.md
-
 # application.properties — configuration essentielle Spring Boot
 
-## Exemple minimal
+## Exemple
 
 ```properties
 server.port=3000
