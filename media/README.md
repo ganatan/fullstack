@@ -9,4 +9,4 @@
 
 ### Media Details
 - [DomainModel](./domain-model/001-postgresql-model-media-v1.md)
-- [Contract & Définitions](./contract-definition/001-postgresql-model-media-v1.md)
+- [Contract & Définitions](./contract-definition/001-contract-definition.md)
