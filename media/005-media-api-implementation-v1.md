@@ -97,7 +97,54 @@ Créer un controller qui expose :
 
 ---
 
-## 8) Test manuel (Swagger)
+
+## 8) Activation CORS (Swagger / Angular)
+
+Swagger Editor et Angular exécutent les appels depuis un navigateur.
+Le navigateur bloque les requêtes cross-origin si l’API n’autorise pas CORS.
+
+Il faut donc ajouter une configuration CORS globale.
+
+---
+
+Créer le fichier :
+
+src/main/java/com/ganatan/mediaapi/config/CorsConfig.java
+
+```java
+package com.ganatan.mediaapi.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class CorsConfig implements WebMvcConfigurer {
+
+ @Override
+ public void addCorsMappings(CorsRegistry registry) {
+  registry.addMapping("/**")
+    .allowedOrigins("https://editor.swagger.io", "http://localhost:4200")
+    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+    .allowedHeaders("*");
+ }
+}
+```
+
+---
+
+## Vérification
+
+Redémarrer l’application Spring Boot.
+
+Tester :
+POST /admin/media via Swagger Editor.
+
+Résultat attendu :
+
+HTTP 201
+
+## 9) Test manuel (Swagger)
 
 Dans ton YAML OpenAPI, ajouter :
 
@@ -122,7 +169,7 @@ Résultat attendu :
 
 ---
 
-## 9) Vérification DB
+## 10) Vérification DB
 
 Vérifier en SQL :
 
