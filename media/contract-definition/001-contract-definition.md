@@ -1,4 +1,4 @@
-# 001-contract-definition.md
+# Contract Definition
 
 # Contrat OpenAPI — media-api (V1)
 
