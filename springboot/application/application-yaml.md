@@ -1,85 +1,150 @@
-# application-properties.md
+# application-yaml.md
 
-# application.properties – essentiel Spring Boot
+# application.yml — configuration essentielle Spring Boot
 
 ## Exemple minimal
 
-server.port=3000
-spring.application.name=springboot-starter
-spring.profiles.active=dev
+```yaml
+server:
+  port: 3000
 
-Cet exemple montre la configuration de base d’une application Spring Boot :
+spring:
+  application:
+    name: springboot-starter
+  profiles:
+    active: dev
+```
+
+Configuration minimale d’une application Spring Boot :
 - port HTTP
 - nom de l’application
 - profil actif
 
 ---
 
-## Port HTTP
+## Serveur
 
-server.port=3000
+### Port HTTP
+
+```yaml
+server:
+  port: 3000
+```
 
 Définit le port du serveur embarqué (Tomcat).
 
 ---
 
-## Nom de l’application
+### Encodage
 
-spring.application.name=springboot-starter
-
-Utilisé pour les logs, le monitoring et les environnements distribués.
-
----
-
-## Profil actif
-
-spring.profiles.active=dev
-
-Permet de charger :
-application-dev.properties
-
----
-
-## Encodage
-
-server.servlet.encoding.charset=UTF-8
-server.servlet.encoding.enabled=true
-server.servlet.encoding.force=true
+```yaml
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+```
 
 Garantit un encodage UTF-8 pour les requêtes et réponses HTTP.
 
 ---
 
-## Logs (niveau global)
+### Gestion des erreurs
 
-logging.level.root=INFO
+```yaml
+server:
+  error:
+    include-stacktrace: never
+```
 
----
-
-## Logs applicatifs
-
-logging.level.com.ganatan=DEBUG
-
----
-
-## Désactivation bannière
-
-spring.main.banner-mode=off
+Empêche l’exposition des stacktraces HTTP.
 
 ---
 
-## Timezone JVM
+## Application
 
-spring.jackson.time-zone=UTC
+### Nom de l’application
+
+```yaml
+spring:
+  application:
+    name: springboot-starter
+```
+
+Utilisé pour :
+- logs
+- monitoring
+- environnements distribués
+
+---
+
+### Profil actif
+
+```yaml
+spring:
+  profiles:
+    active: dev
+```
+
+Charge automatiquement :
+
+application-dev.yml
+
+---
+
+### Bannière Spring Boot
+
+```yaml
+spring:
+  main:
+    banner-mode: off
+```
+
+Désactive la bannière au démarrage.
+
+---
+
+### Timezone JSON
+
+```yaml
+spring:
+  jackson:
+    time-zone: UTC
+```
+
+Standardise la sérialisation JSON.
+
+---
+
+## Logs
+
+### Niveau global
+
+```yaml
+logging:
+  level:
+    root: INFO
+```
+
+### Logs applicatifs
+
+```yaml
+logging:
+  level:
+    com.ganatan: DEBUG
+```
 
 ---
 
 ## Actuator (si présent)
 
-management.endpoints.web.exposure.include=health,info
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+```
 
----
-
-## Désactiver stacktrace HTTP
-
-server.error.include-stacktrace=never
+Expose les endpoints essentiels.
