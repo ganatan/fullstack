@@ -1,6 +1,4 @@
-# application-properties.md
-
-# application.properties – essentiel Spring Boot
+# application.properties
 
 ## Exemple minimal
 
