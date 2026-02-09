@@ -1,19 +1,11 @@
-# 002-plan.md
-
-# Plan de construction — Plateforme Media
-
-Ce document décrit les étapes de construction de la plateforme Media
-dans un ordre simple et progressif.
-
-L’objectif est de construire une vertical slice fonctionnelle
-avant d’ajouter du fonctionnel ou de la complexité.
+# Plan
 
 ---
 
 ## Étape 1 — Architecture
 
 Document :
-001-objectifs.md
+objectifs.md
 
 Contient :
 - vision de la plateforme

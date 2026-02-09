@@ -1,5 +1,3 @@
-# 003-domain-model.md
-
 # Domain Model — Media (V1)
 
 Modélisation de données minimale pour la vertical slice V1.
