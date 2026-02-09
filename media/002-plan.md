@@ -24,7 +24,27 @@ Contient :
 
 ---
 
-## Étape 2 — Contracts
+## Étape 2 — Modélisation de données
+
+Document :
+003-domain-model.md
+
+Contenu :
+- entité Media
+- champs métier
+- structure de référence commune
+
+Objectif :
+définir le modèle de données utilisé par :
+- PostgreSQL
+- Kafka
+- MongoDB
+- OpenAPI
+- Angular
+
+---
+
+## Étape 3 — Contracts
 
 Créer le repo :
 
@@ -41,7 +61,7 @@ définir les interfaces avant d’implémenter.
 
 ---
 
-## Étape 3 — Vertical slice V1
+## Étape 4 — Vertical slice V1
 
 Cas d’usage :
 Admin crée un Media → User le consulte.
@@ -68,7 +88,7 @@ Admin crée un Media → User le consulte.
 
 ---
 
-## Étape 4 — Front minimal
+## Étape 5 — Front minimal
 
 frontend-admin :
 création d’un media
@@ -81,7 +101,7 @@ client API généré depuis OpenAPI
 
 ---
 
-## Étape 5 — Infrastructure dev
+## Étape 6 — Infrastructure dev
 
 Repo :
 media-infra
@@ -94,7 +114,7 @@ Contient :
 
 ---
 
-## Étape 6 — CI/CD
+## Étape 7 — CI/CD
 
 Pipeline :
 - build
@@ -114,7 +134,7 @@ Déploiement :
 
 Une vertical slice fonctionnelle permettant :
 
-POST /media  
+POST /media
 GET /media/{id}
 
 avec projection Mongo via Kafka.
