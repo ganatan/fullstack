@@ -5,9 +5,6 @@ Construire une plateforme fullstack production‑ready basée sur :
 Angular 21, Java 21, Spring Boot 3.5, Kafka, PostgreSQL, MongoDB,
 Kubernetes, GitLab CI/CD, SonarQube, Xray et ArgoCD.
 
-L’application **Media** sert de référence technique publique pour
-démontrer une architecture entreprise simple, cohérente et réutilisable.
-
 ---
 
 ## Architecture générale
@@ -31,6 +28,7 @@ Trois services Spring Boot :
 
 Principes :
 - SQL = source de vérité
+- PostgreSQL = write model
 - MongoDB = read‑model
 - Kafka = journal d’événements
 - services stateless
@@ -42,11 +40,11 @@ Principes :
 
 Trois projets Angular :
 
-- **media-frontend-admin**
+- **frontend-admin**
   - écriture / administration
-- **media-frontend-user**
+- **frontend-user**
   - consultation / recherche
-- **media-frontend-shared-lib**
+- **frontend-lib**
   - composants UI
   - modèles DTO
   - client API généré depuis OpenAPI
@@ -56,22 +54,22 @@ Trois projets Angular :
 
 ## Organisation multi‑repo
 
-media-frontend-admin
-media-frontend-user
-media-frontend-shared-lib
+frontend-admin
+frontend-user
+frontend-lib
 media-api
 media-worker
 media-view
 media-contracts
-media-infra-gitops
+media-infra
 
 ---
 
 ## Contracts
 
 Le repo **media-contracts** contient :
-- OpenAPI command‑api
-- OpenAPI query‑api
+- OpenAPI media‑api
+- OpenAPI media‑view
 - schémas d’événements Kafka
 - versioning des contrats
 
@@ -81,7 +79,7 @@ Approche contract‑first.
 
 ## Infrastructure
 
-Le repo **media-infra-gitops** contient :
+Le repo **media-infra** contient :
 - manifests Kubernetes
 - configuration ArgoCD
 - environnement dev
@@ -109,9 +107,9 @@ Déploiement :
 
 ## Flux applicatif
 
-Admin → command‑service → PostgreSQL
-→ Kafka → projection‑worker → MongoDB
-→ query‑service → User
+Admin → media‑api → PostgreSQL
+→ Kafka → media‑worker → MongoDB
+→ media‑view → User
 
 ---
 
