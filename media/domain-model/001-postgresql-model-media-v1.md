@@ -1,4 +1,4 @@
-# 006-postgresql-model-media-v1.md
+# Postgresql-model-media-v1
 
 # Modèle PostgreSQL — Media (V1)
 
