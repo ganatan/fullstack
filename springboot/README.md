@@ -21,9 +21,9 @@
 ## Essentiels
 - [Commandes](./commandes.md)
 - [pom.xml](./pom-xml.md)
-- [application.properties vs application.yml](./application-type.md)
-- [application.properties](./application-properties.md)
-- [application.yml](./application-yml.md)
+- [application.properties vs application.yml](./application/application-type.md)
+- [application.properties](./application/application-properties.md)
+- [application.yml](./application/application-yml.md)
 
 ## Basics
 
