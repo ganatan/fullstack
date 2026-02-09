@@ -35,5 +35,6 @@
 
 ## Features
 - [Actuator](./features/001-actuator.md)
+- [CORS](./features/002-cors.md)
 
 
