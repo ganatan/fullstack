@@ -11,7 +11,7 @@
 - [Spring](./spring/README.md)
 
 ### Tools
-- [Markdown](./Markdown/README.md)
+- [Markdown](./markdown/README.md)
 - [SQL / NoSQL](./database/sql-nosql.md)
 - [Angular](./angular/README.md)
 - [NestJS](./nestjs/README.md)
