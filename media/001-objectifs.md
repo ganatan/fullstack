@@ -16,15 +16,15 @@ démontrer une architecture entreprise simple, cohérente et réutilisable.
 
 Trois services Spring Boot :
 
-- **media-command-service**
+- **media-api**
   - API REST d’écriture
   - persistance PostgreSQL
   - publication d’événements Kafka
-- **media-projection-worker**
+- **media-worker**
   - consommation Kafka
   - projection vers MongoDB (read‑model)
   - idempotence et gestion d’erreurs
-- **media-query-service**
+- **media-view**
   - API REST de lecture
   - recherche et pagination
   - MongoDB
@@ -59,9 +59,9 @@ Trois projets Angular :
 media-frontend-admin
 media-frontend-user
 media-frontend-shared-lib
-media-command-service
-media-projection-worker
-media-query-service
+media-api
+media-worker
+media-view
 media-contracts
 media-infra-gitops
 
