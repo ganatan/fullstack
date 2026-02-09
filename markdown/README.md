@@ -32,6 +32,44 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/backend_media
 
 ---
 
+## application.yml
+
+### Ce que tu écris dans le fichier .md
+
+````md
+## application.yml
+
+```yaml
+server:
+  port: 8080
+
+spring:
+  application:
+    name: media-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/backend_media
+    username: postgres
+    password: postgres
+```
+````
+
+### Ce que Markdown affiche
+
+```yaml
+server:
+  port: 8080
+
+spring:
+  application:
+    name: media-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/backend_media
+    username: postgres
+    password: postgres
+```
+
+---
+
 ## SQL
 
 ### Ce que tu écris
