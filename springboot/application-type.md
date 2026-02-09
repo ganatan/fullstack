@@ -15,8 +15,12 @@
 Format clé-valeur simple.
 
 Exemple :
+
+```properties
 server.port=8080
+spring.application.name=media-api
 spring.datasource.url=jdbc:postgresql://localhost:5432/backend_media
+```
 
 Caractéristiques :
 - format historique Java
