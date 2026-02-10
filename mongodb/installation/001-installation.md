@@ -1,82 +1,101 @@
+# 001-installation.md
 
-# Installation de Mongodb
-  
-  https://www.mongodb.com/try/download/community
+# Installation MongoDB (local Windows)
 
+Guide rapide pour installer MongoDB Community Server, MongoDB Shell
+(mongosh), et utiliser Compass pour inspecter la base.
 
-  Télécharger la version "MongoDB Community Server".
+------------------------------------------------------------------------
 
-  mongodb-windows-x86_64-8.2.4-signed.msi
-  
-    Complete
-    Run service as Network Service user
+# Installation MongoDB Server
 
-    D:\hal\MongoDB\Server\8.2\data\
-    D:\hal\MongoDB\Server\8.2\log\
+Télécharger MongoDB Community Server :
+https://www.mongodb.com/try/download/community
 
-# Principes
-  Compass = GUI MongoDB    
+Exemple : mongodb-windows-x86_64-8.2.4-signed.msi
 
-  Clique Add new connection.
-  Dans URI mets au choix:
-    Sans auth: mongodb://localhost:27017
-    Avec auth admin: mongodb://admin:admin@localhost:27017/?authSource=admin
+Installation : - Complete - Run service as Network Service user
 
-# Utilitaires
-  mongosh = le shell officiel de MongoDB.
+Répertoires conseillés : Data :
+D:`\hal`{=tex}`\MongoDB`{=tex}`\Server`{=tex}\\8.2`\data`{=tex}\
+Logs : D:`\hal`{=tex}`\MongoDB`{=tex}`\Server`{=tex}\\8.2`\log`{=tex}\
 
-# Creation d'une collection
-  use("ganatan")
+Vérifier que MongoDB fonctionne : net start MongoDB
 
-  db.createCollection("media_example", {
-    validator: {
-      $jsonSchema: {
-        bsonType: "object",
-        required: ["name", "release_date", "movie"],
-        properties: {
-          name: { bsonType: "string" },
-          release_date: { bsonType: "date" },
-          movie: { bsonType: "bool" },
-          boxoffice: { bsonType: "decimal" }
-        }
-      }
-    }
-  })
+MongoDB écoute par défaut sur : localhost:27017
 
-# Suppression d'une collection
-  use("ganatan")
-  db.media_example.drop()
+------------------------------------------------------------------------
 
-# Vider une collection
-  use("ganatan")
-  db.media_example.deleteMany({})  
+# Installation MongoDB Shell (mongosh)
 
-# Insertion d'un record  
-  use("ganatan")
+Depuis MongoDB 6+, le shell est séparé du serveur.
 
-  db.media_example.insertOne({
-    name: "Iron Man",
-    release_date: new Date("2008-05-02"),
-    movie: true,
-    boxoffice: NumberDecimal("583000000.00")
-  })
+Télécharger : https://www.mongodb.com/try/download/shell
 
-# Recherche
-  use("ganatan")
+Choisir : MongoDB Shell --- Windows x64 MSI
 
-  db.media_example.find({ name: "Iron Man" })
-  db.media_example.find({ name: { $regex: "^iron", $options: "i" } })
+Installation standard.
 
-  db.media_example.find({ release_date: new Date("2008-05-02") })
-  db.media_example.find({ release_date: { $gte: new Date("2008-01-01"), $lt: new Date("2009-01-01") } })
+Vérification : mongosh
 
-  db.media_example.find({ movie: true })
-  db.media_example.find({ movie: false })
+Résultat attendu : test\>
 
-  db.media_example.find({ boxoffice: NumberDecimal("583000000.00") })
-  db.media_example.find({ boxoffice: { $gt: NumberDecimal("500000000") } })
+Connexion explicite : mongosh "mongodb://localhost:27017"
 
-  db.media_example.find({}, { projection: { _id: 0, name: 1, release_date: 1, movie: 1, boxoffice: 1 } })
-  db.media_example.find().sort({ release_date: 1 })
-  db.media_example.find().sort({ boxoffice: -1 })
+------------------------------------------------------------------------
 
+# Principes MongoDB
+
+MongoDB est une base de données orientée documents.
+
+Structure : - Database - Collection - Document (JSON/BSON)
+
+Exemple document :
+
+{ "name": "Iron Man", "release_date": "2008-05-02", "movie": true,
+"boxoffice": 583000000 }
+
+------------------------------------------------------------------------
+
+# Outils MongoDB
+
+## Compass
+
+Interface graphique MongoDB.
+
+Usage : - visualiser les bases - visualiser les collections - inspecter
+les documents - tester des requêtes - debug
+
+Connexion locale : mongodb://localhost:27017
+
+Compass = inspection visuelle.
+
+------------------------------------------------------------------------
+
+## mongosh
+
+Client CLI MongoDB.
+
+Usage : - créer des bases - créer des collections - insérer des
+documents - requêter - tester rapidement
+
+Exemple : use("media")
+
+db.media_projection.insertOne({ title: "Interstellar", type: "MOVIE" })
+
+db.media_projection.find()
+
+mongosh = interaction directe avec la base.
+
+------------------------------------------------------------------------
+
+# Résumé
+
+MongoDB Server → moteur de base de données
+
+mongosh → shell de commande MongoDB
+
+Compass → interface graphique MongoDB
+
+Dans une architecture CQRS : - worker écrit dans MongoDB - view lit
+MongoDB - Compass sert au debug - mongosh sert aux tests rapides
