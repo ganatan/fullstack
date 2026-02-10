@@ -15,6 +15,7 @@ infra/kafka/compose.yml
 
 ## compose.yml
 
+```yaml
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -52,6 +53,7 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
     depends_on:
       - kafka
+```
 
 ---
 
