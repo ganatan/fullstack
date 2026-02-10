@@ -32,6 +32,29 @@ spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.Str
 
 ---
 
+## application.yml
+
+```yml
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    consumer:
+      group-id: media-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    listener:
+      missing-topics-fatal: false
+```
+
+---
+
 ## Producer
 
 ```java
