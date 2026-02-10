@@ -1,188 +1,156 @@
-# 001-installation.md
+# 002-mongosh-media.md
 
-# Installation MongoDB (local Windows)
+# Utilisation de mongosh avec le domaine media
 
-Guide rapide pour installer MongoDB Community Server, utiliser Compass et mongosh,
-et effectuer les premières opérations CRUD.
+Guide rapide pour créer une base MongoDB, une collection de projection
+`media_projection` et manipuler les données utilisées par `media-worker`
+et `media-view`.
 
----
+------------------------------------------------------------------------
 
-# Installation
+# Connexion
 
-Télécharger MongoDB Community Server :
-https://www.mongodb.com/try/download/community
+Lancer le shell MongoDB :
 
-Exemple :
-mongodb-windows-x86_64-8.2.4-signed.msi
+    mongosh
 
-Installation :
-- Complete
-- Run service as Network Service user
+Ou :
 
-Répertoires conseillés :
-- Data : `D:\hal\MongoDB\Server\8.2\data\`
-- Logs : `D:\hal\MongoDB\Server\8.2\log\`
+    mongosh "mongodb://localhost:27017"
 
----
+------------------------------------------------------------------------
 
-# Principes
+# Base media
 
-MongoDB est une base de données orientée documents.
+Créer / sélectionner la base :
 
-Structure :
-- Database
-- Collection
-- Document (JSON/BSON)
-
-Exemple document :
-
-```json
-{
-  "name": "Iron Man",
-  "release_date": "2008-05-02",
-  "movie": true,
-  "boxoffice": 583000000.00
-}
+``` javascript
+use("media")
 ```
 
----
+MongoDB crée la base automatiquement au premier insert.
 
-# Outils
+------------------------------------------------------------------------
 
-## Compass
-GUI MongoDB officielle.
+# Collection media_projection
 
-Ajouter une connexion :
+Collection utilisée comme **read model CQRS**.
 
-Sans authentification :
-```
-mongodb://localhost:27017
+``` javascript
+db.createCollection("media_projection")
 ```
 
-Avec authentification admin :
-```
-mongodb://admin:admin@localhost:27017/?authSource=admin
-```
+------------------------------------------------------------------------
 
----
+# Insertion d'un media
 
-## mongosh
+Simulation d'un événement produit par `media-worker`.
 
-Shell officiel MongoDB.
-
----
-
-# Création d'une collection
-
-```javascript
-use("ganatan")
-
-db.createCollection("media_example", {
-  validator: {
-    $jsonSchema: {
-      bsonType: "object",
-      required: ["name", "release_date", "movie"],
-      properties: {
-        name: { bsonType: "string" },
-        release_date: { bsonType: "date" },
-        movie: { bsonType: "bool" },
-        boxoffice: { bsonType: "decimal" }
-      }
-    }
-  }
+``` javascript
+db.media_projection.insertOne({
+  mediaId: 1,
+  title: "Inception",
+  type: "MOVIE",
+  releaseYear: 2010
 })
 ```
 
----
+------------------------------------------------------------------------
 
-# Suppression d'une collection
+# Lecture des projections
 
-```javascript
-use("ganatan")
-db.media_example.drop()
+Utilisé par `media-view`.
+
+``` javascript
+db.media_projection.find()
 ```
 
----
+Version lisible :
 
-# Vider une collection
-
-```javascript
-use("ganatan")
-db.media_example.deleteMany({})
+``` javascript
+db.media_projection.find().pretty()
 ```
 
----
-
-# Insertion
-
-```javascript
-use("ganatan")
-
-db.media_example.insertOne({
-  name: "Iron Man",
-  release_date: new Date("2008-05-02"),
-  movie: true,
-  boxoffice: NumberDecimal("583000000.00")
-})
-```
-
----
+------------------------------------------------------------------------
 
 # Requêtes
 
-## Par nom
-```javascript
-db.media_example.find({ name: "Iron Man" })
-db.media_example.find({ name: { $regex: "^iron", $options: "i" } })
+## Par identifiant
+
+``` javascript
+db.media_projection.find({ mediaId: 1 })
 ```
 
-## Par date
-```javascript
-db.media_example.find({ release_date: new Date("2008-05-02") })
-db.media_example.find({
-  release_date: {
-    $gte: new Date("2008-01-01"),
-    $lt: new Date("2009-01-01")
-  }
-})
-```
+## Par type
 
-## Booléen
-```javascript
-db.media_example.find({ movie: true })
-db.media_example.find({ movie: false })
-```
-
-## Decimal
-```javascript
-db.media_example.find({ boxoffice: NumberDecimal("583000000.00") })
-db.media_example.find({ boxoffice: { $gt: NumberDecimal("500000000") } })
-```
-
-## Projection
-```javascript
-db.media_example.find({}, {
-  projection: {
-    _id: 0,
-    name: 1,
-    release_date: 1,
-    movie: 1,
-    boxoffice: 1
-  }
-})
+``` javascript
+db.media_projection.find({ type: "MOVIE" })
 ```
 
 ## Tri
-```javascript
-db.media_example.find().sort({ release_date: 1 })
-db.media_example.find().sort({ boxoffice: -1 })
+
+``` javascript
+db.media_projection.find().sort({ releaseYear: -1 })
 ```
 
----
+------------------------------------------------------------------------
+
+# Mise à jour
+
+``` javascript
+db.media_projection.updateOne(
+  { mediaId: 1 },
+  { $set: { title: "Inception (Updated)" } }
+)
+```
+
+------------------------------------------------------------------------
+
+# Suppression
+
+``` javascript
+db.media_projection.deleteOne({ mediaId: 1 })
+```
+
+------------------------------------------------------------------------
+
+# Vider la collection
+
+``` javascript
+db.media_projection.deleteMany({})
+```
+
+------------------------------------------------------------------------
+
+# Supprimer la collection
+
+``` javascript
+db.media_projection.drop()
+```
+
+------------------------------------------------------------------------
+
+# Architecture Ganatan media
+
+Flux réel :
+
+    frontend-admin → media-api → PostgreSQL
+                                      ↓
+                                    Kafka
+                                      ↓
+                                media-worker → MongoDB
+                                      ↓
+    frontend-user → media-view → MongoDB
+
+MongoDB contient uniquement : - projections - read models - données
+optimisées pour la lecture
+
+Jamais la source de vérité.
+
+------------------------------------------------------------------------
 
 # Résumé
 
-MongoDB :
-- stocke des documents JSON
-- collections sans schéma strict (optionnel via validator)
-- très adapté aux read models et projections CQRS
+mongosh permet de : - créer une base - créer une collection - insérer
+des projections - requêter MongoDB - tester rapidement un read model
+CQRS
