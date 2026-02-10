@@ -1,12 +1,32 @@
-# markdown-cheatsheet.md
-
-# Markdown — afficher du code (cheatsheet)
+# Markdown — afficher du code
 
 Objectif :
 comprendre comment écrire du Markdown pour afficher du code copiable
 dans la documentation technique.
 
----
+
+
+## Comandes bash
+
+### Ce que tu écris dans le fichier .md
+
+````md
+## Commandes bash
+
+```bash
+curl -X POST "http://localhost:3000/kafka?topic=media-events&key=1" \
+  -H "Content-Type: text/plain" \
+  -d "hello"
+```
+````
+
+### Ce que Markdown affiche
+
+```bash
+curl -X POST "http://localhost:3000/kafka?topic=media-events&key=1" \
+  -H "Content-Type: text/plain" \
+  -d "hello"
+```
 
 ## application.properties
 

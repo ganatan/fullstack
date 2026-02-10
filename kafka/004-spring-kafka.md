@@ -58,32 +58,74 @@ spring:
 ## Producer
 
 ```java
+package com.ganatan.mediaapi.kafka;
+
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
 @Service
 public class KafkaProducerService {
 
- private final KafkaTemplate<String, String> kafkaTemplate;
+  private final KafkaTemplate<String, String> kafkaTemplate;
 
- public KafkaProducerService(KafkaTemplate<String, String> kafkaTemplate) {
-  this.kafkaTemplate = kafkaTemplate;
- }
+  public KafkaProducerService(KafkaTemplate<String, String> kafkaTemplate) {
+    this.kafkaTemplate = kafkaTemplate;
+  }
 
- public void send(String topic, String message) {
-  kafkaTemplate.send(topic, message);
- }
+  public void send(String message) {
+    kafkaTemplate.send("media-events", message);
+  }
 }
 ```
 
 ---
 
-## Consumer
+## Controller
 
 ```java
-@Component
-public class KafkaConsumerService {
+package com.ganatan.mediaapi.kafka;
 
- @KafkaListener(topics = "media-events", groupId = "media-group")
- public void listen(String message) {
-  System.out.println(message);
- }
+import com.ganatan.mediaapi.domain.MediaEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/kafka")
+public class KafkaController {
+
+  private final KafkaProducerService producer;
+
+  public KafkaController(KafkaProducerService producer) {
+    this.producer = producer;
+  }
+
+  @GetMapping
+  public Map<String, Object> getAll() {
+    String message = "Kafka Send Message on Get";
+    producer.send( message);
+    return Map.of(
+      "kafka", "send message"
+    );
+  }
+
+  @PostMapping
+  public void send(@RequestBody String message) {
+    producer.send(message);
+  }
 }
+```
+
+## Commande POST
+
+```bash
+curl -X POST "http://localhost:3000/kafka?topic=media-events&key=1" \
+  -H "Content-Type: text/plain" \
+  -d "hello"
 ```
