@@ -42,7 +42,7 @@ Télécharger : https://www.mongodb.com/try/download/shell
 
 Exemple :
 
-    mongodb-compass-1.49.1-win32-x64.exe
+    mongosh-2.6.0-x64.msi
     
 Choisir :
 
