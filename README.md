@@ -1,5 +1,6 @@
 ### MCP
 - [Spring Boot](./springboot/README.md)
+- [Kafka](./kafka/README.md)
 - [Java](./java/README.md)
 - [SQL](./sql/README.md)
 - [postgresql](./postgresql/README.md)
@@ -21,7 +22,6 @@
 - [OpenAPI](./openapi/openapi-fonctionnement.md)
 - [CRUD](./crud/crud-fonctionnement.md)
 - [Reponses HTTP](./crud/reponses-http.md)
-- [Kafka](./kafka/README.md)
 - [Git](./git/README.md)
 - [GitLab](./gitlab/README.md)
 - [Windows](./windows/windows.md)
