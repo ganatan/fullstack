@@ -3,4 +3,5 @@
 - [Historique](./002-historique.md)
 - [Kafka en local](./003-kafka-local.md)
 - [Spring Kafka](./004-spring-kafka.md)
-- [Media Event](./005-media-event.md)
+- [Messages Kafka](./005-messages-kafka.md)
+- [Media Event](./006-media-event.md)
