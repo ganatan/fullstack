@@ -2,8 +2,9 @@
 
 # Installation MongoDB (local Windows)
 
-Guide rapide pour installer MongoDB Community Server, MongoDB Shell
-(mongosh), et utiliser Compass pour inspecter la base.
+Guide rapide pour installer **MongoDB Community Server**, **MongoDB
+Shell (mongosh)** et utiliser **MongoDB Compass** pour inspecter la
+base.
 
 ------------------------------------------------------------------------
 
@@ -12,17 +13,24 @@ Guide rapide pour installer MongoDB Community Server, MongoDB Shell
 Télécharger MongoDB Community Server :
 https://www.mongodb.com/try/download/community
 
-Exemple : mongodb-windows-x86_64-8.2.4-signed.msi
+Exemple :
+
+    mongodb-windows-x86_64-8.2.4-signed.msi
 
 Installation : - Complete - Run service as Network Service user
 
-Répertoires conseillés : Data :
-D:`\hal`{=tex}`\MongoDB`{=tex}`\Server`{=tex}\\8.2`\data`{=tex}\
-Logs : D:`\hal`{=tex}`\MongoDB`{=tex}`\Server`{=tex}\\8.2`\log`{=tex}\
+Répertoires conseillés :
 
-Vérifier que MongoDB fonctionne : net start MongoDB
+    Data : D:\hal\MongoDB\Server\8.2\data\
+    Logs : D:\hal\MongoDB\Server\8.2\log\
 
-MongoDB écoute par défaut sur : localhost:27017
+Vérifier que MongoDB fonctionne :
+
+    net start MongoDB
+
+MongoDB écoute par défaut sur :
+
+    localhost:27017
 
 ------------------------------------------------------------------------
 
@@ -32,15 +40,23 @@ Depuis MongoDB 6+, le shell est séparé du serveur.
 
 Télécharger : https://www.mongodb.com/try/download/shell
 
-Choisir : MongoDB Shell --- Windows x64 MSI
+Choisir :
+
+    MongoDB Shell — Windows x64 MSI
 
 Installation standard.
 
-Vérification : mongosh
+Vérification :
 
-Résultat attendu : test\>
+    mongosh
 
-Connexion explicite : mongosh "mongodb://localhost:27017"
+Résultat attendu :
+
+    test>
+
+Connexion explicite :
+
+    mongosh "mongodb://localhost:27017"
 
 ------------------------------------------------------------------------
 
@@ -52,8 +68,14 @@ Structure : - Database - Collection - Document (JSON/BSON)
 
 Exemple document :
 
-{ "name": "Iron Man", "release_date": "2008-05-02", "movie": true,
-"boxoffice": 583000000 }
+``` json
+{
+  "name": "Iron Man",
+  "release_date": "2008-05-02",
+  "movie": true,
+  "boxoffice": 583000000
+}
+```
 
 ------------------------------------------------------------------------
 
@@ -66,7 +88,9 @@ Interface graphique MongoDB.
 Usage : - visualiser les bases - visualiser les collections - inspecter
 les documents - tester des requêtes - debug
 
-Connexion locale : mongodb://localhost:27017
+Connexion locale :
+
+    mongodb://localhost:27017
 
 Compass = inspection visuelle.
 
@@ -79,11 +103,18 @@ Client CLI MongoDB.
 Usage : - créer des bases - créer des collections - insérer des
 documents - requêter - tester rapidement
 
-Exemple : use("media")
+Exemple :
 
-db.media_projection.insertOne({ title: "Interstellar", type: "MOVIE" })
+``` javascript
+use("media")
+
+db.media_projection.insertOne({
+  title: "Interstellar",
+  type: "MOVIE"
+})
 
 db.media_projection.find()
+```
 
 mongosh = interaction directe avec la base.
 
@@ -91,11 +122,14 @@ mongosh = interaction directe avec la base.
 
 # Résumé
 
-MongoDB Server → moteur de base de données
+MongoDB Server\
+→ moteur de base de données
 
-mongosh → shell de commande MongoDB
+mongosh\
+→ shell de commande MongoDB
 
-Compass → interface graphique MongoDB
+Compass\
+→ interface graphique MongoDB
 
 Dans une architecture CQRS : - worker écrit dans MongoDB - view lit
 MongoDB - Compass sert au debug - mongosh sert aux tests rapides
