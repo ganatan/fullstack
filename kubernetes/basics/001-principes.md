@@ -1,4 +1,3 @@
-# 001-principes.md
 # Kubernetes — Principes
 
 ---
