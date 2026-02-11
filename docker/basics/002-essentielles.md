@@ -131,12 +131,20 @@ docker run -p 8080:80 my-app
 
 # Nettoyage
 
-Supprimer tous les containers :
+Supprimer tous les containers windows:
+```bash
+for /f %i in ('docker ps -aq') do docker rm -f %i
+```
+Supprimer toutes les images Linux:
+```bash
+for /f %i in ('docker images -q') do docker rmi -f %i
+```
+
+Supprimer tous les containers Linux:
 ```bash
 docker rm $(docker ps -a -q)
 ```
-
-Supprimer toutes les images :
+Supprimer toutes les images Linux:
 ```bash
 docker rmi $(docker images -q)
 ```
