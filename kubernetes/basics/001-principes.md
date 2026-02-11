@@ -37,12 +37,13 @@ Stack locale minimale recommandée :
 
 Architecture locale :
 
+```bash
 Windows
  └─ WSL2
      └─ Docker
          └─ k3d cluster
              └─ Kubernetes
-
+```
 ---
 
 
@@ -135,7 +136,7 @@ Cluster
 ---
 
 # Cycle de vie d’une application
-
+```bash
 Developer → YAML → kubectl apply
             ↓
         Kubernetes
@@ -145,11 +146,12 @@ Developer → YAML → kubectl apply
            Pods
             ↓
         Containers
-
+```
 ---
 
 # Objets principaux Kubernetes
 
+```bash
 Pod
 Deployment
 Service
@@ -157,11 +159,13 @@ Ingress
 ConfigMap
 Secret
 Namespace
+```
 
 ---
 
 # Couche réseau simplifiée
 
+```bash
 Internet
    ↓
 Ingress
@@ -169,7 +173,7 @@ Ingress
 Service
    ↓
 Pods
-
+```
 ---
 
 # Résumé
