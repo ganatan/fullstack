@@ -1,17 +1,43 @@
+# 001-principes.md
 # Kubernetes — Principes
+
+---
 
 ## Historique
 
-- 2013 — Google développe Borg (orchestration interne)
+- 2013 — Google développe Borg (orchestration interne de containers à grande échelle)
 - 2014 — Annonce publique de Kubernetes par Google
-- 2015 — Kubernetes 1.0 + entrée dans la CNCF
-- 2016 — Adoption avec Docker
-- 2017 — Standard d’orchestration cloud-native
-- 2018 — Support AWS, Azure, GCP
-- 2019 — Montée du GitOps (ArgoCD)
-- 2020 — Standard microservices en entreprise
-- 2021 — Adoption massive secteur bancaire et industrie
-- 2023 — Base des plateformes DevOps modernes
+- 2015 — Kubernetes 1.0 et intégration à la CNCF
+- 2016 — Adoption massive avec Docker
+- 2017 — Kubernetes devient le standard cloud‑native
+- 2018 — Support officiel AWS (EKS), Azure (AKS), GCP (GKE)
+- 2019 — Montée du GitOps (ArgoCD, Flux)
+- 2020 — Kubernetes devient le runtime standard des microservices
+- 2021 — Adoption généralisée en entreprise (banque, industrie)
+- 2023 — Kubernetes devient la base des plateformes DevOps modernes
+
+---
+
+## Prérequis pour travailler avec Kubernetes en local
+
+Avant d’utiliser Kubernetes en local, il faut comprendre la chaîne d’exécution.
+
+WSL2 fournit un environnement Linux léger sur Windows permettant d’exécuter
+Docker et Kubernetes correctement.
+
+winget permet d’installer rapidement les outils CLI nécessaires.
+
+k3d permet de créer un cluster Kubernetes local en utilisant Docker comme runtime.
+
+Stack locale minimale recommandée :
+
+- WSL2
+- Docker Desktop
+- kubectl
+- k3d
+
+Cette combinaison reproduit un environnement Kubernetes réel
+sans nécessiter de machine virtuelle lourde.
 
 ---
 
@@ -19,31 +45,40 @@
 
 Kubernetes est un orchestrateur de containers basé sur un modèle déclaratif.
 
-Le développeur décrit l’état désiré dans des fichiers YAML.
+Le développeur décrit l’état désiré du système dans des fichiers YAML.
 Le control plane maintient cet état en permanence.
 
-Un cluster Kubernetes contient plusieurs nodes.
-Les applications tournent dans des Pods.
-Un Pod contient un ou plusieurs containers.
+Un cluster Kubernetes est composé de nodes.
+Chaque node exécute des Pods.
 
-Un Deployment gère la réplication, les mises à jour et le rollback.
+Un Pod est l’unité minimale d’exécution.
+Il contient un ou plusieurs containers partageant réseau et stockage.
 
-Un Service expose les Pods dans le cluster.
-Un Ingress expose l’application vers l’extérieur.
+Un Deployment gère :
+- la réplication
+- les mises à jour progressives
+- les rollbacks
 
-Kubernetes surveille les containers avec liveness et readiness probes.
-En cas de crash, Kubernetes redémarre automatiquement le container.
+Un Service fournit une adresse réseau stable aux Pods.
+Il permet le load balancing interne.
 
-Le scaling horizontal est basé sur le nombre de replicas.
+Un Ingress expose les services HTTP vers l’extérieur du cluster.
 
-La configuration est externalisée avec ConfigMap.
-Les données sensibles sont stockées dans Secret.
+Kubernetes surveille les containers via :
+- liveness probe
+- readiness probe
 
-Le scheduler place les Pods sur les nodes.
+Si un container tombe, Kubernetes le recrée automatiquement.
+
+Le scaling horizontal repose sur les replicas.
+Le scheduler place les Pods sur les nodes disponibles.
+
+ConfigMap externalise la configuration.
+Secret stocke les données sensibles.
+
 Le kubelet exécute les containers sur chaque node.
 etcd stocke l’état du cluster.
+kubectl permet d’interagir avec le cluster.
 
-kubectl est l’outil CLI pour piloter Kubernetes.
-
-Kubernetes permet de rendre les applications portables entre environnements
-et constitue la base des architectures microservices modernes.
+Kubernetes rend les applications portables,
+résilientes et facilement déployables dans des architectures microservices.
