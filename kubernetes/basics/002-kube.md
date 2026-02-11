@@ -68,7 +68,7 @@ k3d version
 
 # Création d’un cluster Kubernetes local
 
-k3d cluster create cats-lab --agents 2
+k3d cluster create media-kube --agents 2
 
 Vérifier le cluster :
 ```bash
@@ -129,7 +129,7 @@ kubectl delete deployment nginx
 
 Supprimer le cluster :
 ```bash
-k3d cluster delete media-lab
+k3d cluster delete media-kube
 ```
 
 ---
