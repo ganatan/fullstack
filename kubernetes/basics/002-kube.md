@@ -8,17 +8,23 @@
 ## Installer WSL2
 
 Activer WSL :
+```bash
 wsl --install
+```
 
 Redémarrer la machine.
 
 Vérifier :
+```bash
 wsl --status
+```
 
 Installer une distribution Linux (Ubuntu recommandé) depuis le Microsoft Store.
 
 Définir WSL2 par défaut :
+```
 wsl --set-default-version 2
+```
 
 ---
 
@@ -31,7 +37,9 @@ Dans les paramètres Docker :
 Settings → General → Enable WSL2 based engine
 
 Vérifier :
+```bash
 docker version
+```
 
 ---
 
