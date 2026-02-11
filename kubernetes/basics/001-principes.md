@@ -117,6 +117,7 @@ flowchart TD
 
 # Modèle d’exécution Kubernetes
 
+```bash
 Cluster
 │
 ├── Node
@@ -130,7 +131,7 @@ Cluster
     ├── Scheduler
     ├── Controller Manager
     └── etcd
-
+```
 ---
 
 # Cycle de vie d’une application
