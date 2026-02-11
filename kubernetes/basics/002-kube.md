@@ -1,16 +1,41 @@
 # 002-kube.md
-
 # Kubernetes en local — Installation et utilisation
-
-## Pré-requis
-
-Installer Docker Desktop (WSL2 activé)
-Installer kubectl
-Installer k3d
 
 ---
 
-## Installation kubectl (Windows via winget)
+# Installation de l’environnement (Windows)
+
+## Installer WSL2
+
+Activer WSL :
+wsl --install
+
+Redémarrer la machine.
+
+Vérifier :
+wsl --status
+
+Installer une distribution Linux (Ubuntu recommandé) depuis le Microsoft Store.
+
+Définir WSL2 par défaut :
+wsl --set-default-version 2
+
+---
+
+## Installer Docker Desktop
+
+Télécharger :
+https://www.docker.com/products/docker-desktop
+
+Dans les paramètres Docker :
+Settings → General → Enable WSL2 based engine
+
+Vérifier :
+docker version
+
+---
+
+## Installer kubectl
 
 winget install -e --id Kubernetes.kubectl
 
@@ -19,7 +44,7 @@ kubectl version --client
 
 ---
 
-## Installation k3d
+## Installer k3d
 
 winget install k3d
 
@@ -28,7 +53,7 @@ k3d version
 
 ---
 
-## Création d’un cluster Kubernetes local
+# Création d’un cluster Kubernetes local
 
 k3d cluster create cats-lab --agents 2
 
@@ -38,7 +63,7 @@ kubectl get pods -A
 
 ---
 
-## Déployer une application de test (nginx)
+# Déployer une application de test (nginx)
 
 kubectl create deployment nginx --image=nginx
 kubectl expose deployment nginx --port=80 --type=NodePort
@@ -50,7 +75,7 @@ kubectl get svc
 
 ---
 
-## Accéder au service
+# Accéder au service
 
 kubectl port-forward service/nginx 8080:80
 
@@ -59,7 +84,7 @@ http://localhost:8080
 
 ---
 
-## Commandes utiles
+# Commandes utiles
 
 Voir les pods :
 kubectl get pods
@@ -78,7 +103,7 @@ k3d cluster delete cats-lab
 
 ---
 
-## Objectif
+# Objectif
 
 Comprendre le cycle :
 Cluster → Deployment → Pod → Service
