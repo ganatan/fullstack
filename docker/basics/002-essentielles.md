@@ -1,68 +1,120 @@
 # Docker
-## Commandes essentielles 
+## Commandes essentielles
 
 Docker permet d’exécuter une application dans un container isolé.
 
-Image = application packagée
-Container = application en cours d’exécution
+Image = application packagée  
+Container = application en cours d’exécution  
 
 ---
 
 # Vérifier Docker
 
+```bash
 docker version
 docker info
+```
 
 ---
 
 # Images
 
 Lister les images :
+```bash
 docker images
+docker image ls
+```
 
 Télécharger une image :
+```bash
 docker pull nginx
+docker pull nginx:latest
+```
 
 Supprimer une image :
+```bash
 docker rmi nginx
+docker rmi -f nginx
+```
+
+Construire une image :
+```bash
+docker build -t my-app .
+docker build -t my-app:1.0.0 .
+```
+
+Tagger une image :
+```bash
+docker tag my-app:1.0.0 my-app:latest
+```
 
 ---
 
 # Containers
 
-Lancer un container nginx :
+Créer et lancer un container :
+```bash
 docker run -p 8080:80 nginx
+```
 
 Lancer en arrière-plan :
+```bash
 docker run -d -p 8080:80 nginx
+```
+
+Nommer un container :
+```bash
+docker run --name my-nginx -d -p 8080:80 nginx
+```
 
 Lister les containers :
+```bash
 docker ps
 docker ps -a
+docker container ls
+```
 
-Stopper un container :
-docker stop <container>
+Arrêter un container :
+```bash
+docker stop my-nginx
+```
+
+Redémarrer un container :
+```bash
+docker restart my-nginx
+```
 
 Supprimer un container :
-docker rm <container>
+```bash
+docker rm my-nginx
+docker rm -f my-nginx
+```
 
 Logs :
-docker logs <container>
+```bash
+docker logs my-nginx
+docker logs -f my-nginx
+```
 
 Entrer dans un container :
-docker exec -it <container> sh
+```bash
+docker exec -it my-nginx sh
+```
 
 ---
 
 # Dockerfile
 
 Construire une image :
+```bash
 docker build -t my-app .
+```
 
 Dockerfile minimal :
-
+```dockerfile
 FROM nginx
 COPY . /usr/share/nginx/html
+```
 
 ---
 
@@ -70,14 +122,36 @@ COPY . /usr/share/nginx/html
 
 Application → Dockerfile → Image → Container
 
+```bash
 docker build -t my-app .
 docker run -p 8080:80 my-app
+```
+
+---
+
+# Nettoyage
+
+Supprimer tous les containers :
+```bash
+docker rm $(docker ps -a -q)
+```
+
+Supprimer toutes les images :
+```bash
+docker rmi $(docker images -q)
+```
+
+Supprimer les ressources inutilisées :
+```bash
+docker system prune -a
+```
 
 ---
 
 # Résumé
 
-docker build = crée une image
-docker run = lance un container
-docker ps = liste les containers
+docker build = crée une image  
+docker run = lance un container  
+docker ps = liste les containers  
+docker images = liste les images  
 docker logs = debug
