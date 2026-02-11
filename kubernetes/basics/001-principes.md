@@ -44,8 +44,6 @@ Windows
          └─ k3d cluster
              └─ Kubernetes
 ```
----
-
 
 ---
 
