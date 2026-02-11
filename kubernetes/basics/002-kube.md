@@ -1,5 +1,4 @@
-# 002-kube.md
-# Kubernetes en local — Installation et utilisation
+# Kubernetes — Installation et utilisation
 
 ---
 
