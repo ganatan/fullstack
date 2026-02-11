@@ -1,8 +1,6 @@
-# 001-principes.md
-
 # Kubernetes — Principes
 
-## Historique — dates clés
+## Historique
 
 - 2013 — Google développe Borg (orchestration interne)
 - 2014 — Annonce publique de Kubernetes par Google
