@@ -2,5 +2,6 @@
 
 ###  Principes
 - [Principes](./basics/001-principes.md)
-- [Commandes](./basics/002-commandes.md)
+- [Essentielles](./basics/002-essentielles.md)
+- [Commandes](./basics/003-commandes.md)
 
