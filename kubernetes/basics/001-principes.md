@@ -31,13 +31,21 @@ k3d permet de créer un cluster Kubernetes local en utilisant Docker comme runti
 
 Stack locale minimale recommandée :
 
-- WSL2
-- Docker Desktop
-- kubectl
-- k3d
+- WSL2 → environnement Linux
+- Docker Desktop → runtime containers
+- kubectl → CLI Kubernetes
+- k3d → cluster Kubernetes local
 
-Cette combinaison reproduit un environnement Kubernetes réel
-sans nécessiter de machine virtuelle lourde.
+Architecture locale :
+
+Windows
+ └─ WSL2
+     └─ Docker
+         └─ k3d cluster
+             └─ Kubernetes
+
+---
+
 
 ---
 
@@ -82,3 +90,90 @@ kubectl permet d’interagir avec le cluster.
 
 Kubernetes rend les applications portables,
 résilientes et facilement déployables dans des architectures microservices.
+
+
+---
+
+# Architecture Kubernetes (vue globale)
+
+```mermaid
+flowchart TD
+    Dev[Developer] --> YAML[Manifests YAML]
+    YAML --> API[Kubernetes API Server]
+    API --> Scheduler
+    API --> Controller
+    API --> ETCD[(etcd)]
+
+    Scheduler --> Node1
+    Scheduler --> Node2
+
+    Node1 --> Pod1
+    Node2 --> Pod2
+
+    Pod1 --> Container1
+    Pod2 --> Container2
+```
+
+---
+
+# Modèle d’exécution Kubernetes
+
+Cluster
+│
+├── Node
+│   ├── Pod
+│   │   └── Container
+│   └── Pod
+│       └── Container
+│
+└── Control Plane
+    ├── API Server
+    ├── Scheduler
+    ├── Controller Manager
+    └── etcd
+
+---
+
+# Cycle de vie d’une application
+
+Developer → YAML → kubectl apply
+            ↓
+        Kubernetes
+            ↓
+       Deployment
+            ↓
+           Pods
+            ↓
+        Containers
+
+---
+
+# Objets principaux Kubernetes
+
+Pod
+Deployment
+Service
+Ingress
+ConfigMap
+Secret
+Namespace
+
+---
+
+# Couche réseau simplifiée
+
+Internet
+   ↓
+Ingress
+   ↓
+Service
+   ↓
+Pods
+
+---
+
+# Résumé
+
+Kubernetes maintient en permanence l’état désiré du système.
+Le cluster orchestre automatiquement les containers.
+Le développeur ne gère plus les machines mais l’état de l’application.
