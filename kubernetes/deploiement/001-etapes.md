@@ -1,4 +1,3 @@
-# 001-etapes.md
 # Kubernetes — Déployer media-api en local
 
 ---
