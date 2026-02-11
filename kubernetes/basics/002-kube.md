@@ -129,7 +129,7 @@ kubectl delete deployment nginx
 
 Supprimer le cluster :
 ```bash
-k3d cluster delete cats-lab
+k3d cluster delete media-lab
 ```
 
 ---
