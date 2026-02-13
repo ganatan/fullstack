@@ -1,8 +1,6 @@
 # Springboot
 
 ## Java 21
-- [Installation Java 25](./installation/002-java25-installation.md)
-- [Initialisation Springboot 25](./initialisation/002-springboot-initializr-java25.md)
 - [Installation Java 21](./installation/001-java21-installation.md)
 - [Initialisation Springboot 21](./initialisation/001-springboot-initializr-java21.md)
 - [Root Controller - RootController](./rest/002-root-controller.md)
