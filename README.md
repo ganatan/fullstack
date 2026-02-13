@@ -1,6 +1,6 @@
 # Index
 
-| Col 1 | Col 2 | Col 3 | Col 4 | Col 5 | Col 6 | Col 7 |
+|  |  |  | Col 4 | Col 5 | Col 6 | Col 7 |
 |---|---|---|---|---|---|---|
 | [Spring Boot](./springboot/README.md) | [Spring](./spring/README.md) | [Java](./java/README.md) | [Tomcat](./tomcat/tomcat.md) | [Angular](./angular/README.md) | [NestJS](./nestjs/README.md) | [TypeScript](./typescript/README.md) |
 | [postgresql](./postgresql/README.md) | [mongodb](./mongodb/README.md) | [Kafka](./kafka/README.md) | [Docker](./docker/README.md) | [Kubernetes](./kubernetes/README.md) | [Windows](./windows/windows.md) | [aws](./aws/README.md) |
