@@ -3,9 +3,9 @@
 | Framework | Database | Tools |
 |---|---|---|
 | [Spring Boot](./springboot/README.md) | [postgresql](./postgresql/README.md) | [Markdown](./markdown/README.md) |
-| [Spring](./spring/README.md) | [mongodb](./mongodb/README.md) | [SQL](./sql/README.md) |
-| [Java](./java/README.md) |  | [SQL / NoSQL](./database/sql-nosql.md) |
-| [Angular](./angular/README.md) |  | [TypeScript](./typescript/README.md) |
+| [Spring](./spring/README.md) | [mongodb](./mongodb/README.md) ||
+| [Java](./java/README.md) |  [SQL / NoSQL](./database/sql-nosql.md)  ||
+| [Angular](./angular/README.md) | [SQL](./sql/README.md) | [TypeScript](./typescript/README.md) |
 | [NestJS](./nestjs/README.md) |  | [OpenAPI](./openapi/openapi-fonctionnement.md) |
 | [Tomcat](./tomcat/tomcat.md) |  | [CRUD](./crud/crud-fonctionnement.md) |
 | [Kafka](./kafka/README.md) |  | [Reponses HTTP](./crud/reponses-http.md) |
