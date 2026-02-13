@@ -4,7 +4,7 @@
 - [Installation Java 21](./installation/001-java21-installation.md)
 - [Initialisation Springboot 21](./initialisation/001-springboot-initializr-java21.md)
 - [Root Controller - RootController](./rest/002-root-controller.md)
-- [Test - CheckStyle](./rest/003-test-checkstyle.md)
+- [Test - Coverage - CheckStyle](./rest/003-test-checkstyle.md)
 - [Controller REST - ContinentController](./rest/004-continent-controller.md)
 - [Spring Data](./rest/005-spring-data.md)
 - [Reponses HTTP](./rest/006-reponses-http.md)
