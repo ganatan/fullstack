@@ -38,7 +38,6 @@
 - [Map](./features-bases/004-map.md)
 - [Data Types](./features-bases/005-data-types.md)
 - [Stream](./features-bases/007-stream.md)
-
 - [For](./features-bases/006-for.md)
 - [If / Else](./features-bases/007-if-else.md)
 - [Try / Catch](./features-bases/008-try-catch.md)
