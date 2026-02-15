@@ -10,9 +10,6 @@
 - [Reponses HTTP](./rest/006-reponses-http.md)
 - [Database Postgresql](./database/001-postgresql.md)
 
-## Java 21 Testing
-- [Filters](./testing/001-filters.md)
-
 ## Java 25
 - [Installation Java 25](./installation/002-java25-installation.md)
 - [Initialisation Springboot 25](./initialisation/002-springboot-initializr-java25.md)
