@@ -1,4 +1,4 @@
-# while – tous les cas de figure (Java)
+# while
 
 Tous les exemples sont exécutables directement dans un contrôleur Spring Boot.
 

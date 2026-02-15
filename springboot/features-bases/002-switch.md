@@ -1,4 +1,4 @@
-# switch – tous les cas de figure (Java)
+# switch
 
 Tous les exemples sont exécutables directement dans un contrôleur Spring Boot.
 
