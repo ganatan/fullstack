@@ -5,14 +5,11 @@
 - [Initialisation Springboot 21](./initialisation/001-springboot-initializr-java21.md)
 - [Root Controller](./rest/002-root-controller.md)
 - [Coverage](./rest/003-test-checkstyle.md)
-- [CRUD Controller](./rest/004-continent-controller.md)
+- [CRUD Controller](./rest/004-crud-controller.md)
+- [CRUD Controller Mongodb](./rest/005-crud-controller-mongodb)
 - [Spring Data](./rest/005-spring-data.md)
 - [Reponses HTTP](./rest/006-reponses-http.md)
 - [Database Postgresql](./database/001-postgresql.md)
-
-## Java 25
-- [Installation Java 25](./installation/002-java25-installation.md)
-- [Initialisation Springboot 25](./initialisation/002-springboot-initializr-java25.md)
 
 ## Essentiels
 - [Commandes](./commandes.md)
@@ -22,7 +19,6 @@
 - [application.yml](./application/application-yaml.md)
 
 ## Basics
-
 - [Class - Interface](./basics/class-interface.md)
 - [Setters - Getters](./basics/setters-getters.md)
 - [lombok](./basics/lombok.md)
@@ -64,5 +60,10 @@
 ## Features
 - [Actuator](./features/001-actuator.md)
 - [CORS](./features/002-cors.md)
+
+## Java 25
+- [Installation Java 25](./installation/002-java25-installation.md)
+- [Initialisation Springboot 25](./initialisation/002-springboot-initializr-java25.md)
+
 
 
