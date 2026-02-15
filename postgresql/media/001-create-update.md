@@ -31,8 +31,8 @@ ALTER SEQUENCE person_id_seq RESTART WITH 1000;
 CREATE TABLE media (
   id    BIGSERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  year  INTEGER      NOT NULL,
-  UNIQUE (name, year)
+  release_date  INTEGER      NOT NULL,
+  UNIQUE (name, release_date)
 );
 
 ALTER SEQUENCE media_id_seq RESTART WITH 1000;
@@ -70,7 +70,7 @@ VALUES
   ((SELECT id FROM city WHERE name = 'Los Angeles'), 'Leonardo DiCaprio'),
   ((SELECT id FROM city WHERE name = 'Los Angeles'), 'Ryan Gosling');
 
-INSERT INTO media (name, year)
+INSERT INTO media (name, release_date)
 VALUES
   ('The Matrix', 1999),
   ('Blade Runner', 1982),
