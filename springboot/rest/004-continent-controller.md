@@ -1,20 +1,18 @@
-# CRUD REST — ContinentController (In-Memory)
+# CRUD REST – ContinentController
 
-Implémentation volontairement simple :
-- 1 seul fichier
-- aucun Service / Repository
+Implémentation simple :
+- un seul fichier
+- aucun Service
+- aucun Repository
 - stockage en mémoire
-- endpoints REST complets + tests
 
 ---
 
 ## Structure
 
 ```
-src/main/java/com/ganatan/starter/continents
-└── ContinentController.java
-
-src/test/java/com/ganatan/starter/continents
+com.ganatan.starter.api.continent
+├── ContinentController.java
 └── ContinentControllerTests.java
 ```
 
@@ -22,43 +20,47 @@ src/test/java/com/ganatan/starter/continents
 
 ## Endpoints exposés
 
-- GET    `/continents`
-- GET    `/continents/{id}`
-- POST   `/continents`
-- PUT    `/continents/{id}`
-- DELETE `/continents/{id}`
+| Méthode  | URL                   | Description           | Status succès  |
+|----------|-----------------------|-----------------------|----------------|
+| GET      | /continents           | Liste tous            | 200 OK         |
+| GET      | /continents/{id}      | Trouve par id         | 200 OK         |
+| POST     | /continents           | Crée un continent     | 201 CREATED    |
+| PUT      | /continents/{id}      | Modifie un continent  | 200 OK         |
+| DELETE   | /continents/{id}      | Supprime un continent | 204 NO CONTENT |
 
-Base URL :
-`http://localhost:8080/continents`
+Base URL : `http://localhost:8080/continents`
 
 ---
 
-## Principes
+## Principe
 
 - Le controller expose les endpoints REST
 - Les données sont stockées en mémoire dans une `List`
-- Un identifiant est généré via `AtomicInteger`
-- Le modèle `Continent` est un `record` interne
-- Erreurs REST standards via `ResponseStatusException` :
-  - 404 si ressource absente
-  - 201 sur création
-  - 204 sur suppression
-  - 400 si payload invalide
+- Un identifiant est généré automatiquement via `AtomicInteger`
+- Le modèle `Continent` est un `record` défini dans le controller
+- Aucune logique externe
 
 ---
 
-## Code complet — ContinentController.java
+## Code – ContinentController.java
 
 ```java
-package com.ganatan.starter.continents;
+package com.ganatan.starter.api.continent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -86,192 +88,229 @@ public class ContinentController {
 
   @GetMapping("/{id}")
   public Continent getContinentById(@PathVariable int id) {
-    Optional<Continent> found = findContinentById(id);
-    if (found.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-    return found.get();
+    return findContinentById(id)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Continent createContinent(@RequestBody Continent newContinent) {
-    if (newContinent == null || newContinent.name() == null || newContinent.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
     int newId = idCounter.incrementAndGet();
-    Continent created = new Continent(newId, newContinent.name().trim());
+    Continent created = new Continent(newId, newContinent.name());
     continentList.add(created);
     return created;
   }
 
   @PutMapping("/{id}")
   public Continent updateContinent(@PathVariable int id, @RequestBody Continent modified) {
-    Optional<Continent> existing = findContinentById(id);
-    if (existing.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-    if (modified == null || modified.name() == null || modified.name().isBlank()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
-    Continent updated = new Continent(existing.get().id(), modified.name().trim());
-    int position = continentList.indexOf(existing.get());
-    continentList.set(position, updated);
+    Continent existing = findContinentById(id)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    Continent updated = new Continent(existing.id(), modified.name());
+    continentList.set(continentList.indexOf(existing), updated);
     return updated;
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteContinent(@PathVariable int id) {
-    Optional<Continent> existing = findContinentById(id);
-    if (existing.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-    continentList.remove(existing.get());
+    Continent existing = findContinentById(id)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    continentList.remove(existing);
   }
 
   private Optional<Continent> findContinentById(int id) {
-    for (Continent continent : continentList) {
-      if (continent.id() == id) {
-        return Optional.of(continent);
-      }
-    }
-    return Optional.empty();
+    return continentList.stream()
+      .filter(c -> c.id() == id)
+      .findFirst();
   }
 }
 ```
 
 ---
 
-## Tests — ContinentControllerTests.java
-
-Tests MVC avec `MockMvc` :
-- vérifie les status HTTP (200/201/204/404/400)
-- vérifie le JSON retourné (liste, item, update)
-- vérifie l’évolution de la liste (create/delete)
+## Test – ContinentControllerTests.java
 
 ```java
-package com.ganatan.starter.continents;
+package com.ganatan.starter.api.continent;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-@WebMvcTest(ContinentController.class)
 class ContinentControllerTests {
 
-  @Autowired
-  private MockMvc mvc;
+  private ContinentController controller;
+
+  @BeforeEach
+  void setUp() {
+    controller = new ContinentController();
+  }
+
+  // --- GET /continents ---
 
   @Test
-  void getAll_shouldReturnInitialSixContinents() throws Exception {
-    mvc.perform(get("/continents"))
-      .andExpect(status().isOk())
-      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-      .andExpect(jsonPath("$", hasSize(6)))
-      .andExpect(jsonPath("$[0].id", is(1)))
-      .andExpect(jsonPath("$[0].name", is("Africa")));
+  void getAllContinents_shouldReturnSixContinents() {
+    List<ContinentController.Continent> result = controller.getAllContinents();
+    assertNotNull(result);
+    assertEquals(6, result.size());
   }
 
   @Test
-  void getById_shouldReturnContinent_whenExists() throws Exception {
-    mvc.perform(get("/continents/1"))
-      .andExpect(status().isOk())
-      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-      .andExpect(jsonPath("$.id", is(1)))
-      .andExpect(jsonPath("$.name", is("Africa")));
+  void getAllContinents_shouldContainAfrica() {
+    List<ContinentController.Continent> result = controller.getAllContinents();
+    assertTrue(result.stream().anyMatch(c -> c.name().equals("Africa")));
   }
 
   @Test
-  void getById_shouldReturn404_whenNotExists() throws Exception {
-    mvc.perform(get("/continents/999"))
-      .andExpect(status().isNotFound());
+  void getAllContinents_shouldHaveSequentialIds() {
+    List<ContinentController.Continent> result = controller.getAllContinents();
+    for (int i = 0; i < result.size(); i++) {
+      assertEquals(i + 1, result.get(i).id());
+    }
+  }
+
+  // --- GET /continents/{id} ---
+
+  @Test
+  void getContinentById_shouldReturnContinent_whenIdExists() {
+    ContinentController.Continent result = controller.getContinentById(1);
+    assertNotNull(result);
+    assertEquals(1, result.id());
+    assertEquals("Africa", result.name());
   }
 
   @Test
-  void create_shouldReturn201_andAppendElement() throws Exception {
-    mvc.perform(post("/continents")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"id\":0,\"name\":\"Atlantis\"}"))
-      .andExpect(status().isCreated())
-      .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-      .andExpect(jsonPath("$.id", is(7)))
-      .andExpect(jsonPath("$.name", is("Atlantis")));
+  void getContinentById_shouldThrowNotFound_whenIdDoesNotExist() {
+    ResponseStatusException ex = assertThrows(
+      ResponseStatusException.class,
+      () -> controller.getContinentById(999)
+    );
+    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+  }
 
-    mvc.perform(get("/continents"))
-      .andExpect(status().isOk())
-      .andExpect(jsonPath("$", hasSize(7)))
-      .andExpect(jsonPath("$[6].id", is(7)))
-      .andExpect(jsonPath("$[6].name", is("Atlantis")));
+  // --- POST /continents ---
+
+  @Test
+  void createContinent_shouldAddContinent_andReturnWithGeneratedId() {
+    ContinentController.Continent input = new ContinentController.Continent(0, "Atlantis");
+    ContinentController.Continent result = controller.createContinent(input);
+
+    assertNotNull(result);
+    assertEquals(7, result.id());
+    assertEquals("Atlantis", result.name());
   }
 
   @Test
-  void create_shouldReturn400_whenNameMissingOrBlank() throws Exception {
-    mvc.perform(post("/continents")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"id\":0,\"name\":\"\"}"))
-      .andExpect(status().isBadRequest());
-
-    mvc.perform(post("/continents")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"id\":0}"))
-      .andExpect(status().isBadRequest());
+  void createContinent_shouldIncreaseSizeByOne() {
+    int before = controller.getAllContinents().size();
+    controller.createContinent(new ContinentController.Continent(0, "Atlantis"));
+    assertEquals(before + 1, controller.getAllContinents().size());
   }
 
   @Test
-  void update_shouldReturn200_andModifyElement() throws Exception {
-    mvc.perform(put("/continents/1")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"id\":123,\"name\":\"AFRICA\"}"))
-      .andExpect(status().isOk())
-      .andExpect(jsonPath("$.id", is(1)))
-      .andExpect(jsonPath("$.name", is("AFRICA")));
+  void createContinent_shouldIgnoreInputId_andGenerateNewOne() {
+    ContinentController.Continent input = new ContinentController.Continent(999, "Atlantis");
+    ContinentController.Continent result = controller.createContinent(input);
+    assertNotEquals(999, result.id());
+  }
 
-    mvc.perform(get("/continents/1"))
-      .andExpect(status().isOk())
-      .andExpect(jsonPath("$.id", is(1)))
-      .andExpect(jsonPath("$.name", is("AFRICA")));
+  // --- PUT /continents/{id} ---
+
+  @Test
+  void updateContinent_shouldModifyName_whenIdExists() {
+    ContinentController.Continent modified = new ContinentController.Continent(0, "Afrika");
+    ContinentController.Continent result = controller.updateContinent(1, modified);
+
+    assertEquals(1, result.id());
+    assertEquals("Afrika", result.name());
   }
 
   @Test
-  void update_shouldReturn404_whenNotExists() throws Exception {
-    mvc.perform(put("/continents/999")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"id\":0,\"name\":\"X\"}"))
-      .andExpect(status().isNotFound());
+  void updateContinent_shouldPreserveId_afterUpdate() {
+    ContinentController.Continent modified = new ContinentController.Continent(0, "Afrika");
+    ContinentController.Continent result = controller.updateContinent(1, modified);
+    assertEquals(1, result.id());
   }
 
   @Test
-  void update_shouldReturn400_whenNameBlank() throws Exception {
-    mvc.perform(put("/continents/1")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content("{\"id\":0,\"name\":\"  \"}"))
-      .andExpect(status().isBadRequest());
+  void updateContinent_shouldReflectChange_inGetAll() {
+    controller.updateContinent(1, new ContinentController.Continent(0, "Afrika"));
+    ContinentController.Continent found = controller.getContinentById(1);
+    assertEquals("Afrika", found.name());
   }
 
   @Test
-  void delete_shouldReturn204_andRemoveElement() throws Exception {
-    mvc.perform(delete("/continents/1"))
-      .andExpect(status().isNoContent());
+  void updateContinent_shouldThrowNotFound_whenIdDoesNotExist() {
+    ResponseStatusException ex = assertThrows(
+      ResponseStatusException.class,
+      () -> controller.updateContinent(999, new ContinentController.Continent(0, "Unknown"))
+    );
+    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+  }
 
-    mvc.perform(get("/continents/1"))
-      .andExpect(status().isNotFound());
+  // --- DELETE /continents/{id} ---
 
-    mvc.perform(get("/continents"))
-      .andExpect(status().isOk())
-      .andExpect(jsonPath("$", hasSize(5)));
+  @Test
+  void deleteContinent_shouldRemoveContinent_whenIdExists() {
+    int before = controller.getAllContinents().size();
+    controller.deleteContinent(1);
+    assertEquals(before - 1, controller.getAllContinents().size());
   }
 
   @Test
-  void delete_shouldReturn404_whenNotExists() throws Exception {
-    mvc.perform(delete("/continents/999"))
-      .andExpect(status().isNotFound());
+  void deleteContinent_shouldMakeIdUnavailable_afterDeletion() {
+    controller.deleteContinent(1);
+    ResponseStatusException ex = assertThrows(
+      ResponseStatusException.class,
+      () -> controller.getContinentById(1)
+    );
+    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+  }
+
+  @Test
+  void deleteContinent_shouldThrowNotFound_whenIdDoesNotExist() {
+    ResponseStatusException ex = assertThrows(
+      ResponseStatusException.class,
+      () -> controller.deleteContinent(999)
+    );
+    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+  }
+
+  // --- record Continent ---
+
+  @Test
+  void continent_record_shouldExposeNameAndId() {
+    ContinentController.Continent c = new ContinentController.Continent(42, "TestLand");
+    assertEquals(42, c.id());
+    assertEquals("TestLand", c.name());
+  }
+
+  @Test
+  void continent_record_shouldImplementEquality() {
+    ContinentController.Continent c1 = new ContinentController.Continent(1, "Africa");
+    ContinentController.Continent c2 = new ContinentController.Continent(1, "Africa");
+    assertEquals(c1, c2);
   }
 }
 ```
+
+---
+
+## Principes clés
+
+- `@RestController` + `@RequestMapping` : définit la base URL du controller
+- `@GetMapping` / `@PostMapping` / `@PutMapping` / `@DeleteMapping` : mappe les verbes HTTP
+- `@PathVariable` : extrait une variable depuis l'URL (`/continents/{id}`)
+- `@RequestBody` : désérialise le corps JSON en objet Java
+- `@ResponseStatus(HttpStatus.CREATED)` : force le code HTTP 201 sur le POST
+- `@ResponseStatus(HttpStatus.NO_CONTENT)` : force le code HTTP 204 sur le DELETE
+- `ResponseStatusException` : lève une erreur HTTP avec le status approprié
+- `AtomicInteger` : génère des ids thread-safe sans base de données
+- `record` : modèle immuable, equals/hashCode/toString générés automatiquement
+- `Optional` + `stream().filter().findFirst()` : recherche propre sans boucle explicite
+- stockage en mémoire : les données sont perdues au redémarrage
