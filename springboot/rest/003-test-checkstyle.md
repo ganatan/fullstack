@@ -123,6 +123,16 @@ target/site/jacoco/index.html
 
 ---
 
+## 🔧 Lint (Static Analysis)
+
+Run Java static code analysis with **Checkstyle**:
+
+```bash
+mvn checkstyle:check
+```
+
+---
+
 ## 4) Tests ajoutés
 
 ### 4.1 Test du RootController
