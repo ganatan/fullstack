@@ -12,10 +12,11 @@
 - [Table Types](./installation/009-table-types.md)
 - [Requetes](./installation/010-table-requete-complexe.md)
 
+## Media
+- [Creation / Data](./media/001-create-update.md)
+
 ## Springboot
 - [Spring Data](./springboot/001-spring-data-postgresql.md)
 - [Tests](./springboot/002-tests-mongodb.md)
 
-## Media
-- [Creation / Data](./mvp/001-create-update.md)
 
