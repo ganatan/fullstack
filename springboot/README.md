@@ -36,6 +36,7 @@
 - [Switch](./features-bases/002-switch.md)
 - [enum](./features-bases/003-enum.md)
 - [map](./features-bases/004-map.md)
+- [Data Types](./features-bases/005-data-types.md)
 
 ## Features
 - [Actuator](./features/001-actuator.md)
