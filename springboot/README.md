@@ -32,8 +32,8 @@
 - [IoC](./basics/ioc.md)
 
 ## Features de Base
-- [While](./features-bases/001-while)
-- [Switch](./features-bases/002-switch)
+- [While](./features-bases/001-while.md)
+- [Switch](./features-bases/002-switch.md)
 
 ## Features
 - [Actuator](./features/001-actuator.md)
