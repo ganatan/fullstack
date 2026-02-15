@@ -1,4 +1,4 @@
-# CRUD REST – MediaController (PostgreSQL) – logique dans le controller
+# CRUD REST – MediaController (PostgreSQL)
 
 Implémentation sans Service :
 - `Media` et `MediaRepository` dans leurs propres fichiers (requis par Spring)
@@ -89,42 +89,28 @@ public class Media {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "media_id")
-  private int mediaId;
+  @Column(name = "name", nullable = false, length = 255)
+  private String name;
 
-  @Column(name = "title", nullable = false)
-  private String title;
-
-  @Column(name = "type")
-  private String type;
-
-  @Column(name = "release_year")
-  private int releaseYear;
+  @Column(name = "release_date")
+  private int releaseDate;
 
   public Media() {}
 
-  public Media(Long id, int mediaId, String title, String type, int releaseYear) {
+  public Media(Long id, String name, int releaseDate) {
     this.id = id;
-    this.mediaId = mediaId;
-    this.title = title;
-    this.type = type;
-    this.releaseYear = releaseYear;
+    this.name = name;
+    this.releaseDate = releaseDate;
   }
 
   public Long getId() { return id; }
   public void setId(Long id) { this.id = id; }
 
-  public int getMediaId() { return mediaId; }
-  public void setMediaId(int mediaId) { this.mediaId = mediaId; }
+  public String getName() { return name; }
+  public void setName(String name) { this.name = name; }
 
-  public String getTitle() { return title; }
-  public void setTitle(String title) { this.title = title; }
-
-  public String getType() { return type; }
-  public void setType(String type) { this.type = type; }
-
-  public int getReleaseYear() { return releaseYear; }
-  public void setReleaseYear(int releaseYear) { this.releaseYear = releaseYear; }
+  public int getReleaseDate() { return releaseDate; }
+  public void setReleaseDate(int releaseDate) { this.releaseDate = releaseDate; }
 }
 ```
 
@@ -191,18 +177,15 @@ public class MediaController {
   @PutMapping("/{id}")
   public Media updateMedia(@PathVariable Long id, @RequestBody Media modified) {
     Media existing = findById(id);
-    existing.setMediaId(modified.getMediaId());
-    existing.setTitle(modified.getTitle());
-    existing.setType(modified.getType());
-    existing.setReleaseYear(modified.getReleaseYear());
+    existing.setName(modified.getName());
+    existing.setReleaseDate(modified.getReleaseDate());
     return mediaRepository.save(existing);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteMedia(@PathVariable Long id) {
-    Media existing = findById(id);
-    mediaRepository.delete(existing);
+    mediaRepository.delete(findById(id));
   }
 
   private Media findById(Long id) {
@@ -240,21 +223,21 @@ class MediaControllerTests {
   @InjectMocks
   private MediaController mediaController;
 
-  private Media inception;
   private Media matrix;
+  private Media bladeRunner;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    inception = new Media(1L, 1, "Inception", "MOVIE", 2010);
-    matrix = new Media(2L, 2, "The Matrix", "MOVIE", 1999);
+    matrix    = new Media(1000L, "The Matrix", 1999);
+    bladeRunner = new Media(1001L, "Blade Runner", 1982);
   }
 
   // --- GET /media ---
 
   @Test
   void getAllMedia_shouldReturnList() {
-    when(mediaRepository.findAll()).thenReturn(List.of(inception, matrix));
+    when(mediaRepository.findAll()).thenReturn(List.of(matrix, bladeRunner));
 
     List<Media> result = mediaController.getAllMedia();
 
@@ -276,14 +259,15 @@ class MediaControllerTests {
 
   @Test
   void getMediaById_shouldReturnMedia_whenIdExists() {
-    when(mediaRepository.findById(1L)).thenReturn(Optional.of(inception));
+    when(mediaRepository.findById(1000L)).thenReturn(Optional.of(matrix));
 
-    Media result = mediaController.getMediaById(1L);
+    Media result = mediaController.getMediaById(1000L);
 
     assertNotNull(result);
-    assertEquals(1L, result.getId());
-    assertEquals("Inception", result.getTitle());
-    verify(mediaRepository, times(1)).findById(1L);
+    assertEquals(1000L, result.getId());
+    assertEquals("The Matrix", result.getName());
+    assertEquals(1999, result.getReleaseDate());
+    verify(mediaRepository, times(1)).findById(1000L);
   }
 
   @Test
@@ -301,21 +285,22 @@ class MediaControllerTests {
 
   @Test
   void createMedia_shouldReturnCreatedMedia() {
-    Media input = new Media(null, 3, "Interstellar", "MOVIE", 2014);
-    Media saved = new Media(3L, 3, "Interstellar", "MOVIE", 2014);
+    Media input = new Media(null, "Alien", 1979);
+    Media saved = new Media(1002L, "Alien", 1979);
     when(mediaRepository.save(input)).thenReturn(saved);
 
     Media result = mediaController.createMedia(input);
 
     assertNotNull(result);
-    assertEquals(3L, result.getId());
-    assertEquals("Interstellar", result.getTitle());
+    assertEquals(1002L, result.getId());
+    assertEquals("Alien", result.getName());
+    assertEquals(1979, result.getReleaseDate());
     verify(mediaRepository, times(1)).save(input);
   }
 
   @Test
   void createMedia_shouldCallRepositoryOnce() {
-    Media input = new Media(null, 3, "Interstellar", "MOVIE", 2014);
+    Media input = new Media(null, "Alien", 1979);
     when(mediaRepository.save(any())).thenReturn(input);
 
     mediaController.createMedia(input);
@@ -327,22 +312,23 @@ class MediaControllerTests {
 
   @Test
   void updateMedia_shouldReturnUpdatedMedia_whenIdExists() {
-    Media modified = new Media(null, 1, "Inception Updated", "MOVIE", 2010);
-    Media updated = new Media(1L, 1, "Inception Updated", "MOVIE", 2010);
-    when(mediaRepository.findById(1L)).thenReturn(Optional.of(inception));
+    Media modified = new Media(null, "The Matrix Reloaded", 2003);
+    Media updated = new Media(1000L, "The Matrix Reloaded", 2003);
+    when(mediaRepository.findById(1000L)).thenReturn(Optional.of(matrix));
     when(mediaRepository.save(any())).thenReturn(updated);
 
-    Media result = mediaController.updateMedia(1L, modified);
+    Media result = mediaController.updateMedia(1000L, modified);
 
     assertNotNull(result);
-    assertEquals("Inception Updated", result.getTitle());
-    verify(mediaRepository, times(1)).findById(1L);
+    assertEquals("The Matrix Reloaded", result.getName());
+    assertEquals(2003, result.getReleaseDate());
+    verify(mediaRepository, times(1)).findById(1000L);
     verify(mediaRepository, times(1)).save(any());
   }
 
   @Test
   void updateMedia_shouldThrowNotFound_whenIdDoesNotExist() {
-    Media modified = new Media(null, 1, "Unknown", "MOVIE", 2000);
+    Media modified = new Media(null, "Unknown", 2000);
     when(mediaRepository.findById(999L)).thenReturn(Optional.empty());
 
     ResponseStatusException ex = assertThrows(
@@ -356,13 +342,13 @@ class MediaControllerTests {
 
   @Test
   void deleteMedia_shouldCallRepository_whenIdExists() {
-    when(mediaRepository.findById(1L)).thenReturn(Optional.of(inception));
-    doNothing().when(mediaRepository).delete(inception);
+    when(mediaRepository.findById(1000L)).thenReturn(Optional.of(matrix));
+    doNothing().when(mediaRepository).delete(matrix);
 
-    mediaController.deleteMedia(1L);
+    mediaController.deleteMedia(1000L);
 
-    verify(mediaRepository, times(1)).findById(1L);
-    verify(mediaRepository, times(1)).delete(inception);
+    verify(mediaRepository, times(1)).findById(1000L);
+    verify(mediaRepository, times(1)).delete(matrix);
   }
 
   @Test
@@ -386,10 +372,14 @@ Spring Data JPA scanne les interfaces `JpaRepository` au démarrage. Une interfa
 
 La règle : `@Entity` et `@Repository` doivent être dans des fichiers de premier niveau. La logique reste dans le controller — pas de Service.
 
+---
+
 ## Principes clés
 
-- `@Entity` + `@Table` : mappe la classe sur la table PostgreSQL
-- `@Id` + `@GeneratedValue(IDENTITY)` : id auto-incrémenté par PostgreSQL
+- `@Entity` + `@Table(name = "media")` : mappe la classe sur la table PostgreSQL
+- `@Id` + `@GeneratedValue(IDENTITY)` : id `bigint` auto-incrémenté par PostgreSQL
+- `@Column(length = 255)` : correspond à `character varying (255)` en PostgreSQL
+- `release_date` est un `int` — correspond à `integer` en PostgreSQL
 - `JpaRepository<Media, Long>` : fournit `findAll`, `findById`, `save`, `delete` sans code
 - `ddl-auto=update` : Hibernate crée la table automatiquement au premier démarrage
 - `findById()` privée dans le controller : centralise la gestion du 404
