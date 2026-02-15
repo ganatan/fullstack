@@ -34,6 +34,7 @@
 ## Features de Base
 - [While](./features-bases/001-while.md)
 - [Switch](./features-bases/002-switch.md)
+- [enum](./features-bases/003-enum.md)
 
 ## Features
 - [Actuator](./features/001-actuator.md)
