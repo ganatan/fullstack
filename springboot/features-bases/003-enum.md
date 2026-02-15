@@ -232,7 +232,7 @@ class RootControllerTests {
     Map<String, Object> result = controller.root();
 
     assertNotNull(result);
-    assertEquals(15, result.size());
+    assertEquals(16, result.size());
 
     assertEquals(APP, result.get("application"));
     assertEquals(STATUS, result.get("status"));
