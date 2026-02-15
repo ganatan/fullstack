@@ -30,9 +30,9 @@ ALTER SEQUENCE person_id_seq RESTART WITH 1000;
 
 CREATE TABLE media (
   id    BIGSERIAL PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
   year  INTEGER      NOT NULL,
-  UNIQUE (title, year)
+  UNIQUE (name, year)
 );
 
 ALTER SEQUENCE media_id_seq RESTART WITH 1000;
@@ -70,7 +70,7 @@ VALUES
   ((SELECT id FROM city WHERE name = 'Los Angeles'), 'Leonardo DiCaprio'),
   ((SELECT id FROM city WHERE name = 'Los Angeles'), 'Ryan Gosling');
 
-INSERT INTO media (title, year)
+INSERT INTO media (name, year)
 VALUES
   ('The Matrix', 1999),
   ('Blade Runner', 1982),
@@ -83,23 +83,23 @@ VALUES
 
 INSERT INTO media_person (media_id, person_id, role)
 VALUES
-  ((SELECT id FROM media WHERE title = 'The Matrix'),
+  ((SELECT id FROM media WHERE name = 'The Matrix'),
    (SELECT id FROM person WHERE name = 'Keanu Reeves'), 'Neo'),
-  ((SELECT id FROM media WHERE title = 'The Matrix'),
+  ((SELECT id FROM media WHERE name = 'The Matrix'),
    (SELECT id FROM person WHERE name = 'Laurence Fishburne'), 'Morpheus'),
-  ((SELECT id FROM media WHERE title = 'Blade Runner'),
+  ((SELECT id FROM media WHERE name = 'Blade Runner'),
    (SELECT id FROM person WHERE name = 'Harrison Ford'), 'Rick Deckard'),
-  ((SELECT id FROM media WHERE title = 'Alien'),
+  ((SELECT id FROM media WHERE name = 'Alien'),
    (SELECT id FROM person WHERE name = 'Sigourney Weaver'), 'Ellen Ripley'),
-  ((SELECT id FROM media WHERE title = 'Terminator 2: Judgment Day'),
+  ((SELECT id FROM media WHERE name = 'Terminator 2: Judgment Day'),
    (SELECT id FROM person WHERE name = 'Arnold Schwarzenegger'), 'T-800'),
-  ((SELECT id FROM media WHERE title = 'Back to the Future'),
+  ((SELECT id FROM media WHERE name = 'Back to the Future'),
    (SELECT id FROM person WHERE name = 'Michael J. Fox'), 'Marty McFly'),
-  ((SELECT id FROM media WHERE title = 'Interstellar'),
+  ((SELECT id FROM media WHERE name = 'Interstellar'),
    (SELECT id FROM person WHERE name = 'Matthew McConaughey'), 'Cooper'),
-  ((SELECT id FROM media WHERE title = 'Inception'),
+  ((SELECT id FROM media WHERE name = 'Inception'),
    (SELECT id FROM person WHERE name = 'Leonardo DiCaprio'), 'Cobb'),
-  ((SELECT id FROM media WHERE title = 'Blade Runner 2049'),
+  ((SELECT id FROM media WHERE name = 'Blade Runner 2049'),
    (SELECT id FROM person WHERE name = 'Ryan Gosling'), 'K');
 ```
 
