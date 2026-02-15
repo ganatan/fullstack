@@ -31,6 +31,8 @@
 - [lombok](./basics/lombok.md)
 - [IoC](./basics/ioc.md)
 
+## Features de Base
+- [While](./features-bases/001-while)
 
 ## Features
 - [Actuator](./features/001-actuator.md)
