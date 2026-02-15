@@ -275,7 +275,7 @@ class RootControllerTests {
     Map<String, Object> result = controller.root();
 
     assertNotNull(result);
-    assertEquals(24, result.size());
+    assertEquals(25, result.size());
 
     assertEquals(APP, result.get("application"));
     assertEquals(STATUS, result.get("status"));
