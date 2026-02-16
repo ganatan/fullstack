@@ -22,34 +22,25 @@
   - D:\hal\PostgreSQL\18
   - D:\hal\PostgreSQL\18\data
 
-### 2) Vérifier le service
-```powershell
-Get-Service postgresql*
-```
-
-### 3) Ajouter `psql` au PATH (si besoin)
-Chemin typique :
-- `C:\Program Files\PostgreSQL\<version>\bin`
-
-### 4) Test de connexion
+### 2) Test de connexion
 ```bash
 psql -h localhost -p 5432 -U postgres
 ```
 
-### 5) Vérifier la version + quitter
+### 3) Vérifier la version + quitter
 ```sql
 SELECT version();
 \q
 ```
 
-### 6) Créer un user + une base (optionnel)
+### 4) Créer un user + une base (optionnel)
 ```sql
 CREATE USER backend WITH PASSWORD 'backend';
 CREATE DATABASE backend_media OWNER backend;
 GRANT ALL PRIVILEGES ON DATABASE backend_media TO backend;
 ```
 
-### 7) Connexion avec le nouvel utilisateur
+### 5) Connexion avec le nouvel utilisateur
 ```bash
 psql -h localhost -p 5432 -U backend -d backend_media
 ```
@@ -86,26 +77,6 @@ GRANT ALL PRIVILEGES ON DATABASE backend_media TO backend;
 ### 5) Test TCP (si autorisé par `pg_hba.conf`)
 ```bash
 psql -h localhost -p 5432 -U backend -d backend_media
-```
-
----
-
-## macOS (Homebrew)
-
-### 1) Installation
-```bash
-brew update
-brew install postgresql@16
-```
-
-### 2) Démarrage
-```bash
-brew services start postgresql@16
-```
-
-### 3) Connexion
-```bash
-psql postgres
 ```
 
 ---
