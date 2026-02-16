@@ -8,9 +8,10 @@
 - [Coverage](./rest/003-test-checkstyle.md)
 - [CRUD Controller](./rest/004-crud-controller.md)
 - [CRUD Controller Mongodb](./rest/005-crud-controller-mongodb.md)
-- [CRUD Controller Postgresql](./rest/006-crud-controller-postgresql.md)
-- [Spring Data](./rest/005-spring-data.md)
-- [Reponses HTTP](./rest/006-reponses-http.md)
+- [CRUD Controller Postgresql](./rest/005-crud-controller-postgresql.md)
+- [CRUD Service Postgresql](./rest/006-crud-service-postgresql.md)
+- [Reponses HTTP](./rest/007-reponses-http.md)
+- [Spring Data](./rest/008-spring-data.md)
 - [Database Postgresql](./database/001-postgresql.md)
 
 ## Essentiels
