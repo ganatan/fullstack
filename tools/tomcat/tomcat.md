@@ -53,6 +53,11 @@ Raccourcis :
 
 ## 5. Démarrer / Arrêter Tomcat
 
+### Creer Icone Monitor Tomcat
+- D:\hal\Tomcat 10.0\bin\Tomcat9w.exe
+- D:\hal\Tomcat 10.0\bin\Tomcat10w.exe
+- D:\hal\Tomcat 10.0\bin\Tomcat11w.exe
+
 ### Via Monitor Tomcat
 - Start
 - Stop
