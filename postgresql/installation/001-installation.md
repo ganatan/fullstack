@@ -3,7 +3,6 @@
 ## Téléchargement (site officiel)
 - PostgreSQL : https://www.postgresql.org/download/
 - Windows (installer) : https://www.postgresql.org/download/windows/
-- macOS : https://www.postgresql.org/download/macosx/
 - Linux : https://www.postgresql.org/download/linux/
 
 ---
