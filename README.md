@@ -3,7 +3,7 @@
 | Framework | Tools | Database | Concepts |  |  |  |
 |---|---|---|---|---|---|---|
 | [Spring Boot](./framework/springboot/README.md) | [Eclipse](./tools/eclipse/README.md) | [postgresql](./database/postgresql/README.md) | [Reponses HTTP](./crud/reponses-http.md) | [Markdown](./tools/markdown/README.md) |  |  |
-| [Java](./java/README.md) | [Intellij](./tools/Intellij/README.md) | [mongodb](./database/mongodb/README.md) | [CRUD](./crud/crud-fonctionnement.md) | [Windows](./windows/windows.md) |  |  |
+| [Java](./framework/java/README.md) | [Intellij](./tools/Intellij/README.md) | [mongodb](./database/mongodb/README.md) | [CRUD](./crud/crud-fonctionnement.md) | [Windows](./windows/windows.md) |  |  |
 | [Kafka](./framework/kafka/README.md) | [Git](./tools/git/README.md) | [SQL](./database/sql/README.md) |  |  |  |  |
 | [Kubernetes](./kubernetes/README.md) | [GitLab](./tools/gitlab/README.md) | [SQL / NoSQL](./database/database/sql-nosql.md) |  |  |  |  |
 | [Docker](./framework/docker/README.md)| [Tomcat](./tools/tomcat/tomcat.md) | [db2](./database/db2/README.md) |  |  |  |  |
