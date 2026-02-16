@@ -62,6 +62,23 @@ services:
 
 ------------------------------------------------------------------------
 
+---
+
+## Vérification
+
+Kafka UI :
+http://localhost:8085
+
+Broker (pour apps hors Docker) :
+localhost:9092
+
+Spring Boot (dev local) :
+```properties
+spring.kafka.bootstrap-servers=localhost:9092
+```
+
+---
+
 # Scripts Windows
 
 ## scripts/kafka-up.bat
