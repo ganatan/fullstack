@@ -1,6 +1,7 @@
 # Springboot
 
 ## Java 21
+- [README](./installation/000-README.md)
 - [Installation Java 21](./installation/001-java21-installation.md)
 - [Initialisation Springboot 21](./initialisation/001-springboot-initializr-java21.md)
 - [Root Controller](./rest/002-root-controller.md)
