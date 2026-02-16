@@ -64,7 +64,7 @@ db.person.insertOne({
 
 db.media.insertOne({
   mediaId: 1000,
-  title: "Inception",
+  name: "Inception",
   releaseYear: 2010,
   persons: [{ personId: 1000, name: "Christopher Nolan" }]
 })
