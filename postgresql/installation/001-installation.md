@@ -18,10 +18,9 @@
   - Port : `5432`
   - Locale : par défaut
 
-Choisir un répertoire dédié :
-
-  D:\hal\PostgreSQL\18
-  D:\hal\PostgreSQL\18\data
+- Choisir un répertoire dédié :
+  - D:\hal\PostgreSQL\18
+  - D:\hal\PostgreSQL\18\data
 
 ### 2) Vérifier le service
 ```powershell
