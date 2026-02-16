@@ -98,6 +98,10 @@ docker run --rm -p 8080:8080 backend-media:latest
 docker run -d --name backend-media -p 8080:8080 backend-media:latest
 ```
 
+```bash
+docker run -d --name backend-media -p 3000:3000 backend-media:latest
+```
+
 ------------------------------------------------------------------------
 
 # 6) Vérifs
