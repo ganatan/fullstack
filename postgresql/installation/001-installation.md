@@ -18,6 +18,10 @@
   - Port : `5432`
   - Locale : par défaut
 
+Choisir un répertoire dédié :
+
+  D:\hal\PostgreSQL\18
+
 ### 2) Vérifier le service
 ```powershell
 Get-Service postgresql*
