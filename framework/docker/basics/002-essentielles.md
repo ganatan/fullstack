@@ -110,6 +110,10 @@ Construire une image :
 docker build -t my-app .
 ```
 
+```bash
+docker build -f Dockerfile.dev -t my-app .
+```
+
 Dockerfile minimal :
 ```dockerfile
 FROM nginx
