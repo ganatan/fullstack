@@ -1,133 +1,158 @@
-# 008-scripts.md
+# 008-scripts-kafka.md
 
-# Scripts springboot
-
-# Docker — Spring Boot (port 3000) + scripts Windows
+# Scripts Kafka (Docker Compose) + scripts Windows
 
 Structure :
 
 ```
 004-SPRINGBOOT-KAFKA/
 ├─ docker/
-│  └─ Dockerfile.kafka
+│  └─ compose.kafka.yml
 └─ scripts/
-   ├─ docker-app-build.bat
-   ├─ docker-app-clean.bat
-   ├─ docker-app-run.bat
-   ├─ docker-app-stop.bat
-   ├─ docker-list-containers.bat
-   ├─ docker-list-images.bat
-   ├─ docker-list-volumes.bat
+   ├─ kafka-up.bat
+   ├─ kafka-down.bat
+   ├─ kafka-clean.bat
+   ├─ kafka-ps.bat
+   ├─ kafka-logs-kafka.bat
+   ├─ kafka-logs-ui.bat
+   ├─ kafka-open-ui.bat
+   └─ kafka-shell.bat
 ```
 
 ------------------------------------------------------------------------
 
-# Dockerfile
+# Docker Compose
 
-## docker/Dockerfile.backend-springboot
+## docker/compose.kafka.yml
 
-```dockerfile
-FROM maven:3.9.9-eclipse-temurin-21 AS builder
-WORKDIR /app
-COPY . .
-RUN mvn -DskipTests=false clean package
+```yml
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: ganatan-kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://0.0.0.0:9092,CONTROLLER://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
 
-FROM eclipse-temurin:21-jre
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 3000
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0"
-ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: ganatan-kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    depends_on:
+      - kafka
 ```
 
 ------------------------------------------------------------------------
 
 # Scripts Windows
 
-## scripts/docker-app-build.bat
+## scripts/kafka-up.bat
 
 ```bat
 @echo off
-docker build -f docker\Dockerfile.backend-springboot -t backend-springboot .
+docker compose -f docker\compose.kafka.yml up -d
 pause
 ```
 
-## scripts/docker-app-run.bat
+## scripts/kafka-down.bat
 
 ```bat
 @echo off
-docker run -d --name backend-springboot -p 3000:3000 backend-springboot
+docker compose -f docker\compose.kafka.yml down
 pause
 ```
 
-## scripts/docker-app-stop.bat
+## scripts/kafka-clean.bat
 
 ```bat
 @echo off
-docker stop backend-springboot
-docker rm backend-springboot
+docker compose -f docker\compose.kafka.yml down -v --remove-orphans
 pause
 ```
 
-## scripts/docker-app-clean.bat
+## scripts/kafka-ps.bat
 
 ```bat
 @echo off
-docker rm -f backend-springboot
-docker rmi -f backend-springboot
+docker compose -f docker\compose.kafka.yml ps
 pause
 ```
 
-## scripts/docker-list-containers.bat
+## scripts/kafka-logs-kafka.bat
 
 ```bat
 @echo off
-docker ps -a
+docker compose -f docker\compose.kafka.yml logs -f --tail=200 kafka
 pause
 ```
 
-## scripts/docker-list-images.bat
+## scripts/kafka-logs-ui.bat
 
 ```bat
 @echo off
-docker images
+docker compose -f docker\compose.kafka.yml logs -f --tail=200 kafka-ui
 pause
 ```
 
-## scripts/docker-list-volumes.bat
+## scripts/kafka-open-ui.bat
 
 ```bat
 @echo off
-docker volume ls
-pause
+start http://localhost:8085
+```
+
+## scripts/kafka-shell.bat
+
+```bat
+@echo off
+docker exec -it ganatan-kafka bash
 ```
 
 ------------------------------------------------------------------------
 
 # Workflow
 
-Depuis la racine du projet :
+Démarrer :
 
 ```bash
-scripts\docker-app-build.bat
-scripts\docker-app-run.bat
+scripts\kafka-up.bat
+scripts\kafka-ps.bat
+scripts\kafka-open-ui.bat
 ```
 
 Logs :
 
 ```bash
-docker logs backend-springboot
-docker logs -f backend-springboot
+scripts\kafka-logs-kafka.bat
+scripts\kafka-logs-ui.bat
 ```
 
-Stop / remove :
+Arrêter :
 
 ```bash
-scripts\docker-app-stop.bat
+scripts\kafka-down.bat
 ```
 
-Clean complet :
+Reset complet :
 
 ```bash
-scripts\docker-app-clean.bat
+scripts\kafka-clean.bat
 ```
