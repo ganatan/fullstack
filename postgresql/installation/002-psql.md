@@ -1,4 +1,4 @@
-# PostgreSQL – opérations essentielles
+# PostgreSQL
 
 ```bash
 # Test de la connection avec user postgres

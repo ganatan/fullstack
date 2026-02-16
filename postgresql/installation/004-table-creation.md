@@ -1,4 +1,4 @@
-# table-simple.md
+# Table Creation
 
 ```sql
 -- Création de la table simple

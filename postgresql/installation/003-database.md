@@ -1,4 +1,4 @@
-# PostgreSQL – commandes DATABASE (essentiel complet)
+# PostgreSQL – commandes DATABASE
 
 ```bash
 # Connexion au serveur PostgreSQL

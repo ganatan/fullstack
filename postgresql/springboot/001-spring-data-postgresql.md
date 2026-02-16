@@ -361,6 +361,13 @@ class MediaControllerTests {
     );
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
   }
+
+  @Test
+  void media_setId_shouldUpdateId() {
+    Media media = new Media(null, "Alien", 1979);
+    media.setId(42L);
+    assertEquals(42L, media.getId());
+  }  
 }
 ```
 
