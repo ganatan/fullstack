@@ -13,7 +13,7 @@
 ### 1) Installer
 - Télécharger l’installer Windows depuis le site officiel
 - Lancer l’installation
-  - Components : PostgreSQL Server, pgAdmin 4, Command Line Tools
+  - Components : PostgreSQL Server, pgAdmin 4, Command Line Tools, Stack Builder
   - Mot de passe du compte `postgres`
   - Port : `5432`
   - Locale : par défaut
@@ -21,6 +21,7 @@
 Choisir un répertoire dédié :
 
   D:\hal\PostgreSQL\18
+  D:\hal\PostgreSQL\18\data
 
 ### 2) Vérifier le service
 ```powershell
