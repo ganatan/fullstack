@@ -1,16 +1,10 @@
-# 002-mongosh-media.md
+# 002-shell-mongodb.md
 
-# Utilisation de mongosh avec le domaine media
-
-Guide rapide pour créer une base MongoDB, une collection de projection
-`media_projection` et manipuler les données utilisées par `media-worker`
-et `media-view`.
+# mongosh — base backend_media + données minimales
 
 ------------------------------------------------------------------------
 
 # Connexion
-
-Lancer le shell MongoDB :
 
     mongosh
 
@@ -20,137 +14,79 @@ Ou :
 
 ------------------------------------------------------------------------
 
-# Base media
+# Base
 
-Créer / sélectionner la base :
-
-``` javascript
-use("media")
-```
-
-MongoDB crée la base automatiquement au premier insert.
-
-------------------------------------------------------------------------
-
-# Collection media_projection
-
-Collection utilisée comme **read model CQRS**.
-
-``` javascript
-db.createCollection("media_projection")
+```javascript
+use("backend_media")
 ```
 
 ------------------------------------------------------------------------
 
-# Insertion d'un media
+# Collections
 
-Simulation d'un événement produit par `media-worker`.
+```javascript
+db.createCollection("country")
+db.createCollection("city")
+db.createCollection("person")
+db.createCollection("media")
+```
 
-``` javascript
-db.media_projection.insertOne({
-  mediaId: 1,
+------------------------------------------------------------------------
+
+# Index
+
+```javascript
+db.country.createIndex({ countryId: 1 }, { unique: true })
+db.city.createIndex({ cityId: 1 }, { unique: true })
+db.person.createIndex({ personId: 1 }, { unique: true })
+db.media.createIndex({ mediaId: 1 }, { unique: true })
+db.media.createIndex({ releaseYear: -1 })
+```
+
+------------------------------------------------------------------------
+
+# Données (seed)
+
+```javascript
+db.country.insertOne({ countryId: 1000, code: "FR", name: "France" })
+
+db.city.insertOne({
+  cityId: 1000,
+  name: "Paris",
+  country: { countryId: 1000, code: "FR", name: "France" }
+})
+
+db.person.insertOne({
+  personId: 1000,
+  name: "Christopher Nolan",
+  city: { cityId: 1000, name: "Paris", country: { countryId: 1000, code: "FR", name: "France" } }
+})
+
+db.media.insertOne({
+  mediaId: 1000,
   title: "Inception",
-  type: "MOVIE",
-  releaseYear: 2010
+  releaseYear: 2010,
+  persons: [{ personId: 1000, name: "Christopher Nolan" }]
 })
 ```
 
 ------------------------------------------------------------------------
 
-# Lecture des projections
+# Lecture
 
-Utilisé par `media-view`.
-
-``` javascript
-db.media_projection.find()
-```
-
-Version lisible :
-
-``` javascript
-db.media_projection.find().pretty()
+```javascript
+db.media.find()
+db.media.find({ mediaId: 1000 })
+db.media.find().sort({ releaseYear: -1 })
 ```
 
 ------------------------------------------------------------------------
 
-# Requêtes
+# Reset
 
-## Par identifiant
-
-``` javascript
-db.media_projection.find({ mediaId: 1 })
+```javascript
+db.media.deleteMany({})
+db.person.deleteMany({})
+db.city.deleteMany({})
+db.country.deleteMany({})
 ```
-
-## Par type
-
-``` javascript
-db.media_projection.find({ type: "MOVIE" })
-```
-
-## Tri
-
-``` javascript
-db.media_projection.find().sort({ releaseYear: -1 })
-```
-
-------------------------------------------------------------------------
-
-# Mise à jour
-
-``` javascript
-db.media_projection.updateOne(
-  { mediaId: 1 },
-  { $set: { title: "Inception (Updated)" } }
-)
-```
-
-------------------------------------------------------------------------
-
-# Suppression
-
-``` javascript
-db.media_projection.deleteOne({ mediaId: 1 })
-```
-
-------------------------------------------------------------------------
-
-# Vider la collection
-
-``` javascript
-db.media_projection.deleteMany({})
-```
-
-------------------------------------------------------------------------
-
-# Supprimer la collection
-
-``` javascript
-db.media_projection.drop()
-```
-
-------------------------------------------------------------------------
-
-# Architecture Ganatan media
-
-Flux réel :
-
-    frontend-admin → media-api → PostgreSQL
-                                      ↓
-                                    Kafka
-                                      ↓
-                                media-worker → MongoDB
-                                      ↓
-    frontend-user → media-view → MongoDB
-
-MongoDB contient uniquement : - projections - read models - données
-optimisées pour la lecture
-
-Jamais la source de vérité.
-
-------------------------------------------------------------------------
-
-# Résumé
-
-mongosh permet de : - créer une base - créer une collection - insérer
-des projections - requêter MongoDB - tester rapidement un read model
-CQRS
