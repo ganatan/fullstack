@@ -10,5 +10,5 @@
 | [Spring](./spring/README.md) | [aws](./framework/aws/README.md) |  |  |  |  |  |
 |  |  |  |  |  |  |  |
 | [Media](./media/README.md) | [MVP](./mvp/README.md) | [OpenAPI](./openapi/openapi-fonctionnement.md) | [DTO](./dto/dto-fonctionnement.md) |  |  |  |
-| [Angular](./angular/README.md) | [TypeScript](./typescript/README.md) | [NestJS](./nestjs/README.md) | |  |  |  |
+| [Angular](./angular/README.md) | [TypeScript](./tools/typescript/README.md) | [NestJS](./nestjs/README.md) | |  |  |  |
 |  |  |  |  |  |  |  |
