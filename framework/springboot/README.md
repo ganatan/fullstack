@@ -14,6 +14,10 @@
 - [Spring Data](./rest/008-spring-data.md)
 - [Database Postgresql](./database/001-postgresql.md)
 
+## Features Metier
+- [External API](./features-metiers/001-springboot-external-api.md)
+
+
 ## Essentiels
 - [Commandes](./commandes.md)
 - [pom.xml](./pom-xml.md)
