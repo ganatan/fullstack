@@ -2,7 +2,7 @@
 
 # Installation
 
-## docker-compose.sonarqube.yml
+## compose.sonarqube.yml
 
 ```yaml
 services:
@@ -26,7 +26,7 @@ volumes:
 ## Démarrer
 
 ```bash
-docker compose -f docker-compose.sonarqube.yml up -d
+docker compose -f compose.sonarqube.yml up -d
 ```
 
 ---
