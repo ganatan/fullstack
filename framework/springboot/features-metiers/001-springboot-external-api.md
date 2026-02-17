@@ -1,11 +1,16 @@
 # 005-springboot-external-api.md — springboot-starter-external-api
 
-## Nom du controller
+## Objectif
 
-- **ExternalApiController** : nom stable, indépendant de la techno HTTP (RestClient aujourd’hui, autre demain).
-- **ExternalRestClientController** : OK si tu assumes que l’implémentation fait partie du contrat du code.
+Exposer `GET /api/albums` qui appelle `https://jsonplaceholder.typicode.com/albums` et retourne un JSON transformé.
 
-Dans ce starter : **ExternalApiController**.
+---
+
+## Naming
+
+Controller : **ExternalApiController** (intention fonctionnelle, pas la techno HTTP)
+
+Package : `com.ganatan.starter.api.external`
 
 ---
 
@@ -30,10 +35,10 @@ Dans ce starter : **ExternalApiController**.
 
 ## Controller
 
-`src/main/java/com/ganatan/starter/api/ExternalApiController.java`
+`src/main/java/com/ganatan/starter/api/external/ExternalApiController.java`
 
 ```java
-package com.ganatan.starter.api;
+package com.ganatan.starter.api.external;
 
 import java.util.List;
 import java.util.Map;
@@ -71,12 +76,35 @@ public class ExternalApiController {
 
 ---
 
-## Test (100% couverture du controller)
+## Bean RestClient
 
-`src/test/java/com/ganatan/starter/api/ExternalApiControllerTest.java`
+`src/main/java/com/ganatan/starter/config/RestClientConfig.java`
 
 ```java
-package com.ganatan.starter.api;
+package com.ganatan.starter.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
+
+@Configuration
+public class RestClientConfig {
+
+    @Bean
+    public RestClient restClient() {
+        return RestClient.create();
+    }
+}
+```
+
+---
+
+## Test
+
+`src/test/java/com/ganatan/starter/api/external/ExternalApiControllerTest.java`
+
+```java
+package com.ganatan.starter.api.external;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -131,27 +159,14 @@ class ExternalApiControllerTest {
 
 ---
 
-## Bean RestClient (obligatoire)
+## Configuration (optionnelle)
 
-`spring-boot-starter-web` ne crée pas automatiquement un `RestClient` bean. Ajoute un bean minimal :
+Si tu veux imposer un port :
 
-`src/main/java/com/ganatan/starter/config/RestClientConfig.java`
+`src/main/resources/application.properties`
 
-```java
-package com.ganatan.starter.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestClient;
-
-@Configuration
-public class RestClientConfig {
-
-    @Bean
-    public RestClient restClient() {
-        return RestClient.create();
-    }
-}
+```properties
+server.port=3000
 ```
 
 ---
