@@ -19,7 +19,7 @@
 
 ## Tests
 - [Demarrage](./tests/001-commandes.md)
-- [Syntaxe](./tests/002-test-syntaxe.md)
+- [Syntaxe](./tests/002-tests-syntaxe.md)
 
 ## Essentiels
 - [Commandes](./commandes.md)
