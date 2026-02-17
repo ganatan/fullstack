@@ -21,6 +21,7 @@
 - [Demarrage](./tests/001-commandes.md)
 - [Principes](./tests/002-principes.md)
 - [Syntaxe JUnit](./tests/003-junit.md)
+- [Syntaxe AssertJ](./tests/004-assertj.md)
 
 ## Essentiels
 - [Commandes](./commandes.md)
