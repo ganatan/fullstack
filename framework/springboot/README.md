@@ -20,7 +20,7 @@
 ## Tests
 - [Demarrage](./tests/001-commandes.md)
 - [Principes](./tests/002-principes.md)
-- [Syntaxe](./tests/003-tests-syntaxe.md)
+- [Syntaxe JUnit](./tests/003-junit.md)
 
 ## Essentiels
 - [Commandes](./commandes.md)
