@@ -17,6 +17,8 @@
 ## Features Metier
 - [External API](./features-metiers/001-springboot-external-api.md)
 
+## Tests
+- [Commandes](./tests/001-commandes.md)
 
 ## Essentiels
 - [Commandes](./commandes.md)
