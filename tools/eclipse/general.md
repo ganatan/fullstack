@@ -37,6 +37,10 @@ Dans **Project Explorer** :
 
 ### Terminal
 - Window → Show View → Other...
+- Cherche Terminal
+- Ouvre Terminal (ou Terminal View)
+- Dans la vue Terminal : icône Open a Terminal (prise/+)
+ → choisis le shell (cmd / PowerShell / Git Bash / WSL)
 
 ### Options au premier lancement
 - **Exclude Eclipse IDE**
