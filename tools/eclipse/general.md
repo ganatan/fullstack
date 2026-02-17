@@ -35,6 +35,9 @@ Dans **Project Explorer** :
   D:\chendra\10-eclipse\workspace
   ```
 
+### Terminal
+- Window → Show View → Other...
+
 ### Options au premier lancement
 - **Exclude Eclipse IDE**
 - Sélection du **Settings**
