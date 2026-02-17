@@ -7,7 +7,8 @@ Exposer `GET /api/albums` qui appelle `https://jsonplaceholder.typicode.com/albu
 ---
 ## Test
 Un seul Test
-    mvn -Dtest=ExternalApiControllerTests test
+
+mvn -Dtest=ExternalApiControllerTests test
 
 ---
 
