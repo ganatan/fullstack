@@ -5,6 +5,11 @@
 Exposer `GET /api/albums` qui appelle `https://jsonplaceholder.typicode.com/albums` et retourne un JSON transformé.
 
 ---
+## Test
+Un seul Test
+    mvn -Dtest=ExternalApiControllerTests test
+
+---
 
 ## Naming
 
