@@ -119,83 +119,59 @@ app.kafka.consumer.enabled=false
 ```java
 package com.ganatan.starter.api.kafka;
 
-import java.time.Instant;
-import java.util.Map;
-import java.util.UUID;
-
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class KafkaController {
+import java.util.Map;
 
-    private static final String TOPIC = "media.events.v1";
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+@ExtendWith(MockitoExtension.class)
+class KafkaControllerTest {
 
-    public KafkaController(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+    @Mock
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @InjectMocks
+    private KafkaController controller;
+
+    @Test
+    void kafka_shouldSendToTopicAndReturnRawType() {
+        Map<String, Object> result = controller.kafka();
+
+        verify(kafkaTemplate).send(eq("media.events.v1"), eq("test-key"), eq("message"));
+        assertThat(result).containsEntry("topic", "media.events.v1")
+                          .containsEntry("sent", true)
+                          .containsEntry("type", "raw");
     }
 
-    @GetMapping("/kafka")
-    public Map<String, Object> kafka() {
-        kafkaTemplate.send(TOPIC, "test-key", "message");
-        return Map.of("topic", TOPIC, "sent", true, "type", "raw");
+    @Test
+    void kafkaModel_shouldSendJsonAndReturnModelType() {
+        Map<String, Object> result = controller.kafkaModel();
+
+        verify(kafkaTemplate).send(eq("media.events.v1"), eq("test-key"), anyString());
+        assertThat(result).containsEntry("topic", "media.events.v1")
+                          .containsEntry("key", "test-key")
+                          .containsEntry("sent", true)
+                          .containsEntry("type", "model");
     }
 
-    @GetMapping("/kafka/model")
-    public Map<String, Object> kafkaModel() {
-        String key = "test-key";
-        String json = """
-            {
-              "eventId": "%s",
-              "eventType": "TestEvent",
-              "schemaVersion": 1,
-              "occurredAt": "%s",
-              "producer": "starter-api",
-              "payload": {
-                "message": "hello"
-              }
-            }
-            """.formatted(UUID.randomUUID(), Instant.now().toString());
+    @Test
+    void kafkaMedia_shouldSendJsonAndReturnMediaType() {
+        Map<String, Object> result = controller.kafkaMedia();
 
-        kafkaTemplate.send(TOPIC, key, json);
-
-        return Map.of(
-            "topic", TOPIC,
-            "key", key,
-            "sent", true,
-            "type", "model"
-        );
-    }
-
-    @GetMapping("/kafka/media")
-    public Map<String, Object> kafkaMedia() {
-        String key = "1001";
-        String json = """
-            {
-              "eventId": "%s",
-              "eventType": "MediaCreated",
-              "schemaVersion": 1,
-              "occurredAt": "%s",
-              "producer": "media-api",
-              "payload": {
-                "id": 1001,
-                "name": "Alien",
-                "release_date": "1979-05-25"
-              }
-            }
-            """.formatted(UUID.randomUUID(), Instant.now().toString());
-
-        kafkaTemplate.send(TOPIC, key, json);
-
-        return Map.of(
-            "topic", TOPIC,
-            "key", key,
-            "sent", true,
-            "type", "media"
-        );
+        verify(kafkaTemplate).send(eq("media.events.v1"), eq("1001"), anyString());
+        assertThat(result).containsEntry("topic", "media.events.v1")
+                          .containsEntry("key", "1001")
+                          .containsEntry("sent", true)
+                          .containsEntry("type", "media");
     }
 }
 ```
