@@ -170,5 +170,5 @@ Lancer l’analyse (token requis) :
 
 ```bash
 mvn clean test
-mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=TON_TOKEN
+mvn clean verify sonar:sonar -Dsonar.projectKey=springboot-starter -Dsonar.host.url=http://localhost:9000 -Dsonar.login="TON_TOKEN"
 ```
