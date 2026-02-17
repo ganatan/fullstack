@@ -22,6 +22,10 @@
 - [Principes](./tests/002-principes.md)
 - [Syntaxe JUnit](./tests/003-junit.md)
 - [Syntaxe AssertJ](./tests/004-assertj.md)
+- [Syntaxe Mockito](./tests/005-mockito.md)
+- [Syntaxe Spring Test](./tests/006-spring-test.md)
+- [Syntaxe JSONassert](./tests/007-jsonassert.md)
+- [Syntaxe Testcontainers](./tests/008-testcontainers.md)
 
 ## Essentiels
 - [Commandes](./commandes.md)
