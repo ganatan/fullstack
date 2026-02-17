@@ -1,27 +1,4 @@
-# 001-commandes.md — Spring Boot (Maven) — Commandes
-
-## Démarrage simple
-
-### 1) Lancer l’application (Maven)
-
-```bash
-mvn spring-boot:run
-```
-
-### 2) Lancer l’application (Jar)
-
-```bash
-mvn -DskipTests package
-java -jar target/*.jar
-```
-
-### 3) Changer le port (optionnel)
-
-```bash
-mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=3000
-```
-
----
+# Spring Boot Tests
 
 ## Tests
 
@@ -47,22 +24,6 @@ mvn -Dtest=ExternalApiControllerTests#tru test
 
 ```bash
 mvn test jacoco:report
-```
-
----
-
-## Vérification rapide HTTP (si ton app tourne)
-
-### Endpoint simple
-
-```bash
-curl -i http://localhost:3000/actuator/health
-```
-
-### Endpoint métier (exemple)
-
-```bash
-curl -s http://localhost:3000/api/albums
 ```
 
 ---

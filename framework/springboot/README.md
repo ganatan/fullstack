@@ -18,7 +18,8 @@
 - [External API](./features-metiers/001-springboot-external-api.md)
 
 ## Tests
-- [Commandes](./tests/001-commandes.md)
+- [Demarrage](./tests/001-commandes.md)
+- [Syntaxe](./tests/002-test-syntaxe.md)
 
 ## Essentiels
 - [Commandes](./commandes.md)
