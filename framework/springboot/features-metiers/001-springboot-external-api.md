@@ -48,7 +48,7 @@ package com.ganatan.starter.api.external;
 
 import java.util.List;
 import java.util.Map;
-
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
@@ -60,8 +60,8 @@ public class ExternalApiController {
 
     private final RestClient restClient;
 
-    public ExternalApiController(RestClient restClient) {
-        this.restClient = restClient;
+    public ExternalApiController(RestClient.Builder restClientBuilder) {
+        this.restClient = restClientBuilder.build();
     }
 
     @GetMapping("/api/albums")
@@ -69,12 +69,14 @@ public class ExternalApiController {
         List<Map<String, Object>> albums = restClient.get()
             .uri(ALBUMS_URL)
             .retrieve()
-            .body(List.class);
+            .body(new ParameterizedTypeReference<>() {});
+
+        List<Map<String, Object>> items = albums != null ? albums : List.of();
 
         return Map.of(
             "source", "jsonplaceholder",
-            "count", albums == null ? 0 : albums.size(),
-            "items", albums == null ? List.of() : albums
+            "count", items.size(),
+            "items", items
         );
     }
 }
@@ -97,8 +99,8 @@ import org.springframework.web.client.RestClient;
 public class RestClientConfig {
 
     @Bean
-    public RestClient restClient() {
-        return RestClient.create();
+    public RestClient restClient(RestClient.Builder builder) {
+        return builder.build();
     }
 }
 ```
@@ -107,56 +109,57 @@ public class RestClientConfig {
 
 ## Test
 
-`src/test/java/com/ganatan/starter/api/external/ExternalApiControllerTest.java`
+`src/test/java/com/ganatan/starter/api/external/ExternalApiControllerTests.java`
 
 ```java
 package com.ganatan.starter.api.external;
-
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RestClientTest(ExternalApiController.class)
-class ExternalApiControllerTest {
+class ExternalApiControllerTests {
 
     @Autowired
-    private MockMvc mockMvc;
+    private ExternalApiController controller;
 
     @Autowired
     private MockRestServiceServer server;
 
     @Test
-    void getAlbums_should_call_external_api_and_wrap_response() throws Exception {
+    void getAlbums_ok() {
         server.expect(requestTo("https://jsonplaceholder.typicode.com/albums"))
-            .andExpect(method(HttpMethod.GET))
             .andRespond(withSuccess("""
-                [
-                  {"userId": 1, "id": 1, "title": "a"},
-                  {"userId": 1, "id": 2, "title": "b"}
-                ]
+                [{"id":1,"title":"Album 1"},{"id":2,"title":"Album 2"}]
                 """, MediaType.APPLICATION_JSON));
 
-        mockMvc.perform(get("/api/albums"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.source").value("jsonplaceholder"))
-            .andExpect(jsonPath("$.count").value(2))
-            .andExpect(jsonPath("$.items[0].id").value(1))
-            .andExpect(jsonPath("$.items[0].title").value("a"))
-            .andExpect(jsonPath("$.items[1].id").value(2))
-            .andExpect(jsonPath("$.items[1].title").value("b"));
+        var result = controller.getAlbums();
+
+        assertThat(result.get("source")).isEqualTo("jsonplaceholder");
+        assertThat(result.get("count")).isEqualTo(2);
+
+        server.verify();
+    }
+
+    @Test
+    void getAlbums_nullBody_returns_empty() {
+        server.expect(requestTo("https://jsonplaceholder.typicode.com/albums"))
+            .andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+
+        var result = controller.getAlbums();
+
+        assertThat(result.get("source")).isEqualTo("jsonplaceholder");
+        assertThat(result.get("count")).isEqualTo(0);
+        assertThat(result.get("items")).isEqualTo(java.util.List.of());
 
         server.verify();
     }
