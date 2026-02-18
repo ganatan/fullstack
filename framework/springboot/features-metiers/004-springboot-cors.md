@@ -1,5 +1,31 @@
 # 004-springboot-cors.md — springboot-starter-cors
 
+## Test immédiat (avant toute config)
+
+But : vérifier si ton API renvoie déjà un header CORS.
+
+1) GET avec Origin :
+
+```bash
+curl -i http://localhost:3000/api/ping -H "Origin: http://localhost:4200"
+```
+
+- Si tu vois `Access-Control-Allow-Origin: http://localhost:4200` → CORS OK
+- Si tu ne vois pas `Access-Control-Allow-Origin` → pas de CORS (un navigateur bloquera)
+
+2) Preflight (simulate navigateur) :
+
+```bash
+curl -i -X OPTIONS http://localhost:3000/api/ping \
+  -H "Origin: http://localhost:4200" \
+  -H "Access-Control-Request-Method: GET"
+```
+
+- Si tu vois `Access-Control-Allow-Origin` et `Access-Control-Allow-Methods` → preflight OK
+- Sinon → preflight KO
+
+---
+
 ## Règle (5 lignes)
 
 - Le navigateur bloque par défaut les appels **cross-origin** (même si le backend répond).
@@ -12,13 +38,13 @@
 
 ## Objectif
 
-Autoriser un frontend (ex: `http://localhost:4200`) à appeler l’API :
+Autoriser `http://localhost:4200` à appeler :
 
 - `GET /api/ping`
 
 CORS attendu :
-- `Origin: http://localhost:4200` → OK (préflight + GET)
-- autre origin → refusé par le navigateur
+- `Origin: http://localhost:4200` → OK (preflight + GET)
+- autre origin → pas de `Access-Control-Allow-Origin`
 
 ---
 
@@ -93,7 +119,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
 ---
 
-## Test
+## Test (MockMvc)
 
 `src/test/java/com/ganatan/starter/api/cors/CorsControllerTests.java`
 
@@ -124,8 +150,7 @@ class CorsControllerTests {
                 .header("Origin", "http://localhost:4200")
                 .header("Access-Control-Request-Method", "GET"))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:4200"))
-                .andExpect(header().string("Vary", org.hamcrest.Matchers.containsString("Origin")));
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:4200"));
     }
 
     @Test
@@ -150,25 +175,28 @@ class CorsControllerTests {
 
 ---
 
-## Tester en ligne de commande
+## Re-tester en curl (après config)
 
-Preflight (simulate navigateur) :
-
-```bash
-curl -i -X OPTIONS http://localhost:3000/api/ping   -H "Origin: http://localhost:4200"   -H "Access-Control-Request-Method: GET"
-```
-
-GET avec Origin autorisée :
+GET :
 
 ```bash
 curl -i http://localhost:3000/api/ping -H "Origin: http://localhost:4200"
 ```
 
-GET avec Origin non autorisée :
+Attendu :
+- `Access-Control-Allow-Origin: http://localhost:4200`
+
+Preflight :
 
 ```bash
-curl -i http://localhost:3000/api/ping -H "Origin: http://evil.local"
+curl -i -X OPTIONS http://localhost:3000/api/ping \
+  -H "Origin: http://localhost:4200" \
+  -H "Access-Control-Request-Method: GET"
 ```
+
+Attendu :
+- `Access-Control-Allow-Origin: http://localhost:4200`
+- `Access-Control-Allow-Methods: ...`
 
 ---
 
