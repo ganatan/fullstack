@@ -1,6 +1,15 @@
-# Scripts ELK (Elasticsearch + Logstash + Kibana) (Docker Compose) + scripts Windows
+# 004-SPRINGBOOT-ELK — ELK local (Elasticsearch + Logstash + Kibana) — Docker Compose + scripts Windows
 
-Structure :
+## Objectif
+
+- Démarrer ELK en local via Docker Compose
+- Envoyer un événement JSON à Logstash (HTTP)
+- Vérifier l’indexation dans Elasticsearch
+- Ouvrir Kibana pour visualiser
+
+---
+
+## Structure
 
 ```
 004-SPRINGBOOT-ELK/
@@ -21,13 +30,15 @@ Structure :
    └─ elk-shell-es.bat
 ```
 
-------------------------------------------------------------------------
+---
 
-# Docker Compose
+## Docker Compose
 
-## docker/compose.elk.yml
+### `docker/compose.elk.yml`
 
-Images Elastic officielles : citeturn0search1turn0search7turn0search12
+- Elasticsearch : `http://localhost:9200`
+- Kibana : `http://localhost:5601`
+- Logstash HTTP input : `http://localhost:5000`
 
 ```yml
 services:
@@ -70,20 +81,23 @@ volumes:
   elk_es_data:
 ```
 
-------------------------------------------------------------------------
+---
 
-# Logstash pipeline (minimal)
+## Logstash pipeline (minimal, JSON)
 
-## docker/logstash/pipeline/logstash.conf
+### `docker/logstash/pipeline/logstash.conf`
+
+- Input HTTP sur `5000`
+- Parse JSON (important)
+- Output vers Elasticsearch (index journalier)
 
 ```conf
 input {
   http {
     port => 5000
+    additional_codecs => { "application/json" => "json" }
+    response_code => 200
   }
-}
-
-filter {
 }
 
 output {
@@ -91,17 +105,15 @@ output {
     hosts => ["http://elasticsearch:9200"]
     index => "ganatan-logs-%{+YYYY.MM.dd}"
   }
-  stdout {
-    codec => rubydebug
-  }
+  stdout { codec => rubydebug }
 }
 ```
 
-------------------------------------------------------------------------
+---
 
-# Scripts Windows
+## Scripts Windows
 
-## scripts/elk-up.bat
+### `scripts/elk-up.bat`
 
 ```bat
 @echo off
@@ -109,7 +121,7 @@ docker compose -f docker\compose.elk.yml up -d
 pause
 ```
 
-## scripts/elk-down.bat
+### `scripts/elk-down.bat`
 
 ```bat
 @echo off
@@ -117,9 +129,7 @@ docker compose -f docker\compose.elk.yml down
 pause
 ```
 
-## scripts/elk-clean.bat
-
-Reset total (volumes + orphelins) :
+### `scripts/elk-clean.bat`
 
 ```bat
 @echo off
@@ -127,7 +137,7 @@ docker compose -f docker\compose.elk.yml down -v --remove-orphans
 pause
 ```
 
-## scripts/elk-ps.bat
+### `scripts/elk-ps.bat`
 
 ```bat
 @echo off
@@ -135,7 +145,7 @@ docker compose -f docker\compose.elk.yml ps
 pause
 ```
 
-## scripts/elk-logs-es.bat
+### `scripts/elk-logs-es.bat`
 
 ```bat
 @echo off
@@ -143,7 +153,7 @@ docker compose -f docker\compose.elk.yml logs -f --tail=200 elasticsearch
 pause
 ```
 
-## scripts/elk-logs-kibana.bat
+### `scripts/elk-logs-kibana.bat`
 
 ```bat
 @echo off
@@ -151,7 +161,7 @@ docker compose -f docker\compose.elk.yml logs -f --tail=200 kibana
 pause
 ```
 
-## scripts/elk-logs-logstash.bat
+### `scripts/elk-logs-logstash.bat`
 
 ```bat
 @echo off
@@ -159,46 +169,82 @@ docker compose -f docker\compose.elk.yml logs -f --tail=200 logstash
 pause
 ```
 
-## scripts/elk-open-kibana.bat
+### `scripts/elk-open-kibana.bat`
 
 ```bat
 @echo off
 start http://localhost:5601
 ```
 
-## scripts/elk-shell-es.bat
+### `scripts/elk-shell-es.bat`
 
 ```bat
 @echo off
 docker exec -it ganatan-elasticsearch bash
 ```
 
-------------------------------------------------------------------------
+---
 
-# Workflow
+## Workflow (test immédiat)
 
-Démarrer :
+### 1) Démarrer
 
-```bash
+```bat
 scripts\elk-up.bat
 scripts\elk-ps.bat
 scripts\elk-open-kibana.bat
 ```
 
-Envoyer un log via HTTP (PowerShell) :
+### 2) Vérifier Elasticsearch
+
+```bash
+curl -s http://localhost:9200
+```
+
+### 3) Envoyer un log JSON vers Logstash (PowerShell)
 
 ```powershell
-Invoke-RestMethod -Method Post -Uri http://localhost:5000 -ContentType "application/json" -Body "{\"message\":\"hello elk\",\"service\":\"media-api\"}"
+Invoke-RestMethod -Method Post -Uri http://localhost:5000 `
+  -ContentType "application/json" `
+  -Body "{"@timestamp":"2026-02-18T10:00:00Z","level":"INFO","service":"media-api","message":"hello elk","traceId":"abc123"}"
 ```
+
+### 4) Vérifier l’indexation dans Elasticsearch
+
+Lister les index :
+
+```bash
+curl -s "http://localhost:9200/_cat/indices?v"
+```
+
+Rechercher les derniers documents :
+
+```bash
+curl -s "http://localhost:9200/ganatan-logs-*/_search?pretty" ^
+  -H "Content-Type: application/json" ^
+  -d "{"size":10,"sort":[{"@timestamp":{"order":"desc"}}],"query":{"match_all":{}}}"
+```
+
+### 5) Kibana (voir les logs)
+
+- http://localhost:5601
+- Stack Management → Data Views → Create data view
+  - Pattern : `ganatan-logs-*`
+  - Timestamp : `@timestamp`
+- Discover
+
+---
+
+## Arrêt / reset
 
 Arrêter :
 
-```bash
+```bat
 scripts\elk-down.bat
 ```
 
-Reset complet :
+Reset total :
 
-```bash
+```bat
 scripts\elk-clean.bat
 ```
