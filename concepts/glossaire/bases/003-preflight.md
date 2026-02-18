@@ -1,4 +1,4 @@
-# 003-preflight.md — Preflight CORS — très simple
+# Preflight CORS
 
 ## C’est quoi
 
