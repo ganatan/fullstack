@@ -204,9 +204,7 @@ curl -s http://localhost:9200
 ### 3) Envoyer un log JSON vers Logstash (PowerShell)
 
 ```powershell
-Invoke-RestMethod -Method Post -Uri http://localhost:5000 `
-  -ContentType "application/json" `
-  -Body "{"@timestamp":"2026-02-18T10:00:00Z","level":"INFO","service":"media-api","message":"hello elk","traceId":"abc123"}"
+Invoke-RestMethod -Method Post -Uri "http://localhost:5000" -ContentType "application/json" -Body '{"@timestamp":"2026-02-18T10:00:00Z","level":"INFO","service":"media-api","message":"hello elk","traceId":"abc123"}'
 ```
 
 ### 4) Vérifier l’indexation dans Elasticsearch
