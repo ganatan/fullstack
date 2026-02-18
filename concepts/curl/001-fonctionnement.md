@@ -44,14 +44,23 @@ curl http://localhost:3000/api/files
 
 ---
 
+## Règle simple (méthode HTTP)
+
+- Par défaut : `curl <URL>` = **GET**
+- `curl -F ... <URL>` = **POST** (multipart/form-data)
+- `curl -d ... <URL>` = **POST** (body)
+- `curl -X <METHODE> <URL>` = méthode forcée
+
+---
+
 ## Options (celles vues dans tes commandes)
 
 | Option | Signification | À quoi ça sert |
 |---|---|---|
-| `-F` | `--form` | Envoie des champs **multipart/form-data** (formulaire, upload, etc.) |
-| `-s` | `--silent` | Mode silencieux (pas de progression, sortie plus “propre”) |
-| `-O` | `--remote-name` | Sauvegarde la réponse dans un fichier (nom “remote”) |
-| `-J` | `--remote-header-name` | Avec `-O`, utilise le nom donné par `Content-Disposition` |
+| `-F` | `--form` | Envoie un formulaire **multipart/form-data** → **POST automatique** |
+| `-s` | `--silent` | Silencieux (pas de progression) |
+| `-O` | `--remote-name` | Sauvegarde la réponse dans un fichier |
+| `-J` | `--remote-header-name` | Avec `-O`, utilise le nom fourni par `Content-Disposition` |
 | `-X` | `--request` | Force la méthode HTTP (GET/POST/PUT/DELETE, etc.) |
 
 ---
@@ -68,13 +77,13 @@ curl -X DELETE http://localhost:3000/api/files/<ID>
 ### Explication rapide
 
 - `curl -F "file=@./document.pdf" http://localhost:3000/api/files/pdf`  
-  Upload : envoie `document.pdf` au serveur, qui le stocke et renvoie un JSON avec un `id`.
+  **POST** : upload du PDF, réponse JSON contenant un `id`.
 
 - `curl -s http://localhost:3000/api/files`  
-  Liste : récupère la liste des fichiers (le `-s` enlève la barre de progression).
+  **GET** : liste des fichiers (sortie silencieuse).
 
 - `curl -OJ http://localhost:3000/api/files/<ID>/content`  
-  Download : télécharge le PDF `<ID>` et l’enregistre sur ton disque avec le nom donné par le serveur.
+  **GET** : télécharge le PDF `<ID>` et l’enregistre avec le nom donné par le serveur.
 
 - `curl -X DELETE http://localhost:3000/api/files/<ID>`  
-  Delete : supprime le fichier `<ID>` côté serveur (on force la méthode DELETE).
+  **DELETE** : supprime le fichier `<ID>` côté serveur.
