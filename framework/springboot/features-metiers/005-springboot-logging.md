@@ -1,12 +1,12 @@
-# 006-springboot-logging-json.md — springboot-starter-logging-json (Logback prod)
+# springboot-starter-logging-json — Logback prod
 
 ## Règle (5 lignes)
 
 - En prod, tu veux des logs **JSON** pour ingestion ELK / Loki / Datadog.
 - Logback est le logger par défaut Spring Boot (via SLF4J).
 - Le JSON se fait proprement avec **logstash-logback-encoder**.
-- On garde du log “lisible” en dev, et du JSON en prod via `logback-spring.xml`.
-- Tester = démarrer avec `--spring.profiles.active=prod` et vérifier une ligne JSON.
+- On garde du log lisible en dev, et du JSON en prod via `logback-spring.xml`.
+- Les profils Spring permettent de switcher automatiquement selon l'environnement.
 
 ---
 
@@ -42,6 +42,8 @@ Endpoint de démo :
   <scope>test</scope>
 </dependency>
 ```
+
+> ⚠️ Vérifier la compatibilité de `logstash-logback-encoder` avec ta version de Spring Boot. Version stable recommandée : `7.4` ou `8.x` selon ta version de Logback.
 
 ---
 
@@ -88,7 +90,6 @@ public class LoggingController {
         <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
       </encoder>
     </appender>
-
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
     </root>
@@ -102,30 +103,19 @@ public class LoggingController {
             <fieldName>@timestamp</fieldName>
             <timeZone>UTC</timeZone>
           </timestamp>
-          <logLevel>
-            <fieldName>level</fieldName>
-          </logLevel>
-          <threadName>
-            <fieldName>thread</fieldName>
-          </threadName>
-          <loggerName>
-            <fieldName>logger</fieldName>
-          </loggerName>
+          <logLevel><fieldName>level</fieldName></logLevel>
+          <threadName><fieldName>thread</fieldName></threadName>
+          <loggerName><fieldName>logger</fieldName></loggerName>
           <message/>
           <mdc/>
           <arguments/>
           <stackTrace/>
           <pattern>
-            <pattern>
-              {
-                "service":"${APP_NAME}"
-              }
-            </pattern>
+            <pattern>{"service":"${APP_NAME}"}</pattern>
           </pattern>
         </providers>
       </encoder>
     </appender>
-
     <root level="INFO">
       <appender-ref ref="JSON_CONSOLE"/>
     </root>
@@ -149,15 +139,15 @@ spring.application.name=springboot-starter
 
 ## Test
 
-But : vérifier qu’en profil `prod` le log contient un JSON (présence de champs clés).
-
 `src/test/java/com/ganatan/starter/api/logging/LoggingControllerProdJsonTests.java`
+
+> ℹ️ `@SpringBootTest` + `@ActiveProfiles("prod")` démarre le contexte complet avec le profil prod. Pour un starter isolé, pas de problème.
 
 ```java
 package com.ganatan.starter.api.logging;
 
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -165,8 +155,6 @@ import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -188,10 +176,10 @@ class LoggingControllerProdJsonTests {
                 .andExpect(content().string("ok"));
 
         String out = output.getOut();
-        assertThat(out).contains(""level":"INFO"");
-        assertThat(out).contains(""logger":"com.ganatan.starter.api.logging.LoggingController"");
-        assertThat(out).contains(""message":"demo-log message=hello user=mulder"");
-        assertThat(out).contains(""service":"springboot-starter"");
+        assertThat(out).contains("\"level\":\"INFO\"");
+        assertThat(out).contains("\"logger\":\"com.ganatan.starter.api.logging.LoggingController\"");
+        assertThat(out).contains("\"message\":\"demo-log message=hello user=mulder\"");
+        assertThat(out).contains("\"service\":\"springboot-starter\"");
     }
 }
 ```
@@ -218,7 +206,7 @@ Appel :
 curl -s http://localhost:3000/api/log
 ```
 
-Attendu en prod : une ligne JSON dans la console, avec `@timestamp`, `level`, `logger`, `message`, `service`.
+Attendu en prod : une ligne JSON avec `@timestamp`, `level`, `logger`, `message`, `service`.
 
 ---
 
@@ -227,3 +215,11 @@ Attendu en prod : une ligne JSON dans la console, avec `@timestamp`, `level`, `l
 ```bash
 mvn -Dtest=LoggingControllerProdJsonTests test
 ```
+
+---
+
+## Aller plus loin
+
+- **MDC** (Mapped Diagnostic Context) : propager un `requestId` ou `userId` dans tous les logs d'une requête.
+- **`logging.level`** dans `application.properties` : ajuster les niveaux par package (ex: `logging.level.com.ganatan=DEBUG`).
+- **Micrometer Tracing** : corrélation des traces avec Grafana / Jaeger.
