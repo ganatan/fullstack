@@ -9,7 +9,7 @@
 | [Docker](./framework/docker/README.md)| [Tomcat](./tools/tomcat/tomcat.md) | [db2](./database/db2/README.md) |  |  |  |  |
 | [Spring](./spring/README.md) | [aws](./framework/aws/README.md) |  |  |  |  |  |
 | [ELK](./framework/elk/README.md) | [SONARQUBE](./framework/sonarqube/README.md) |  |  |  |  |  |
-| [PROMETHEUS](./framework/prometheus/README.md) |  |  |  |  |  |  |
+| [PROMETHEUS](./framework/prometheus/README.md) | [XRAY](./framework/xray/README.md) |  |  |  |  |  |
 | [REDIS](./framework/redis/README.md) |  |  |  |  |  |  |
 |  |  |  |  |  |  |  |
 | [Media](./media/README.md) | [MVP](./mvp/README.md) | [OpenAPI](./openapi/openapi-fonctionnement.md) | [DTO](./concepts/dto/dto-fonctionnement.md) |  |  |  |
