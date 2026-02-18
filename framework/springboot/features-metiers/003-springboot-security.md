@@ -1,5 +1,15 @@
 # 003-springboot-security.md — springboot-starter-security (Basic Auth)
 
+## Règle (5 lignes)
+
+- Avec Spring Security activé, **toutes les requêtes HTTP** passent d’abord par la **SecurityFilterChain**.
+- Si une route est **permitAll()**, la requête continue vers le controller.
+- Sinon, Spring exige une **authentification** : sans credentials → **401**.
+- Mauvais credentials → **401**.
+- Autorisé → le controller est exécuté et renvoie la réponse.
+
+---
+
 ## Objectif
 
 - `GET /api/public` : accessible sans authentification
