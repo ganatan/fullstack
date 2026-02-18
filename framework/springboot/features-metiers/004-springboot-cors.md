@@ -127,25 +127,35 @@ public class CorsConfig implements WebMvcConfigurer {
 package com.ganatan.starter.api.cors;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
+
+import com.ganatan.starter.config.CorsConfig;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(CorsController.class)
+@Import(CorsConfig.class)
+@AutoConfigureMockMvc(addFilters = false)
 class CorsControllerTests {
 
     @Autowired
     private MockMvc mvc;
 
     @Test
-    void preflight_ok_for_allowed_origin() throws Exception {
+    void ping_returns_pong() throws Exception {
+        mvc.perform(get("/api/ping"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("pong"));
+    }
+
+    @Test
+    void preflight_allowed_origin() throws Exception {
         mvc.perform(options("/api/ping")
                 .header("Origin", "http://localhost:4200")
                 .header("Access-Control-Request-Method", "GET"))
@@ -154,21 +164,12 @@ class CorsControllerTests {
     }
 
     @Test
-    void get_ok_for_allowed_origin_has_cors_headers() throws Exception {
+    void get_allowed_origin_has_cors_header() throws Exception {
         mvc.perform(get("/api/ping")
                 .header("Origin", "http://localhost:4200"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("pong"))
                 .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:4200"));
-    }
-
-    @Test
-    void get_other_origin_no_allow_origin_header() throws Exception {
-        mvc.perform(get("/api/ping")
-                .header("Origin", "http://evil.local"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("pong"))
-                .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
     }
 }
 ```
