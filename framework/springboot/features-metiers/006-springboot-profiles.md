@@ -1,12 +1,12 @@
-# 007-springboot-profiles-yml.md — springboot-starter-profiles (application.yml dev/prod)
+# springboot-starter-profiles (application.yml + application.properties)
 
 ## Règle (5 lignes)
 
 - Un **profile** Spring Boot active une config différente : `dev`, `prod`, etc.
 - Le profile actif est `spring.profiles.active`.
-- `application.yml` peut contenir **plusieurs documents** séparés par `---` (un par profile).
-- Les clés définies dans un profile **override** celles du bloc “default”.
-- Tester = démarrer en `dev` puis en `prod` et vérifier que l’app renvoie une valeur différente.
+- En YAML, tu peux mettre plusieurs blocs séparés par `---` (un par profile).
+- En properties, tu utilises `application-dev.properties` / `application-prod.properties`.
+- Tester = lancer en `dev` puis en `prod` et vérifier que `/api/profile` change.
 
 ---
 
@@ -37,45 +37,7 @@
 
 ---
 
-## Configuration (application.yml avec profiles)
-
-`src/main/resources/application.yml`
-
-```yml
-server:
-  port: 3000
-
-app:
-  profile-name: default
-
-spring:
-  application:
-    name: springboot-starter
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: dev
-
-app:
-  profile-name: dev
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-app:
-  profile-name: prod
-```
-
----
-
-## Controller
+## Controller (commun aux 2 approches)
 
 `src/main/java/com/ganatan/starter/api/profiles/ProfileController.java`
 
@@ -104,7 +66,69 @@ public class ProfileController {
 
 ---
 
-## Test
+# Option A — application.yml (multi-documents)
+
+`src/main/resources/application.yml`
+
+```yml
+server:
+  port: 3000
+
+spring:
+  application:
+    name: springboot-starter
+
+app:
+  profile-name: default
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+app:
+  profile-name: dev
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+app:
+  profile-name: prod
+```
+
+---
+
+# Option B — application.properties + fichiers par profile
+
+`src/main/resources/application.properties`
+
+```properties
+server.port=3000
+spring.application.name=springboot-starter
+app.profile-name=default
+```
+
+`src/main/resources/application-dev.properties`
+
+```properties
+app.profile-name=dev
+```
+
+`src/main/resources/application-prod.properties`
+
+```properties
+app.profile-name=prod
+```
+
+---
+
+## Test (fonctionne pour YAML ou properties)
 
 `src/test/java/com/ganatan/starter/api/profiles/ProfileControllerTests.java`
 
