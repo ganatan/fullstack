@@ -58,6 +58,7 @@ curl http://localhost:3000/api/files
 | Option | Signification | À quoi ça sert |
 |---|---|---|
 | `-F` | `--form` | Envoie un formulaire **multipart/form-data** → **POST automatique** |
+| `-d` | `--data` | Envoie un body (form ou JSON) → **POST automatique** |
 | `-s` | `--silent` | Silencieux (pas de progression) |
 | `-O` | `--remote-name` | Sauvegarde la réponse dans un fichier |
 | `-J` | `--remote-header-name` | Avec `-O`, utilise le nom fourni par `Content-Disposition` |
@@ -87,3 +88,11 @@ curl -X DELETE http://localhost:3000/api/files/<ID>
 
 - `curl -X DELETE http://localhost:3000/api/files/<ID>`  
   **DELETE** : supprime le fichier `<ID>` côté serveur.
+
+---
+
+## Exemple -d (body)
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"name":"test"}' http://localhost:3000/api/resource
+```
