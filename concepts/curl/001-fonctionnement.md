@@ -1,176 +1,174 @@
-# Fonctionnement d’un DTO
+# 001-fonctionnnement.md — curl — Installation & fonctionnement (simple)
 
-Ce document explique **ce qu’est un DTO** avec un exemple **très simple**,  
-en **JavaScript**, sans TypeScript, sans framework complexe.
+## Historique (court)
 
-Objectif : comprendre **le concept**, pas la techno.
-
----
-
-## Définition simple
-
-> **Un DTO (Data Transfer Object) est un objet volontairement construit  
-> pour représenter ce que l’API expose vers l’extérieur.**
-
-Ce n’est **pas** l’objet interne.  
-Ce n’est **pas** l’objet de la base de données.  
-C’est un **objet intermédiaire**, contrôlé.
+- 1997 : création de curl par Daniel Stenberg.
+- curl devient l’outil standard en ligne de commande pour tester des APIs HTTP/HTTPS.
 
 ---
 
-## Exemple minimal avec Express
+## Installation
 
-Fichier unique : `app.js`
+### Vérifier si curl est déjà présent
 
-```js
-const express = require('express');
-const app = express();
+```bash
+curl --version
+```
 
-app.use(express.json());
+### Windows (si absent)
 
-let continents = [
-  { id: 1, name: 'Europe', internalCode: 'EU', createdAt: '2020-01-01' },
-  { id: 2, name: 'Asia', internalCode: 'AS', createdAt: '2020-01-01' },
-];
+```powershell
+winget install curl.curl
+```
+
+### macOS (si absent)
+
+```bash
+brew install curl
+```
+
+### Linux Debian/Ubuntu
+
+```bash
+sudo apt update
+sudo apt install -y curl
 ```
 
 ---
 
-## API sans DTO
+## Commande de base
 
-```js
-app.get('/continents-without-dto', (req, res) => {
-  res.json(continents);
-});
+```bash
+curl <URL>
 ```
 
-### Appel
+Exemple :
 
-```
-GET /continents-without-dto
-```
-
-### Réponse
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Europe",
-    "internalCode": "EU",
-    "createdAt": "2020-01-01"
-  },
-  {
-    "id": 2,
-    "name": "Asia",
-    "internalCode": "AS",
-    "createdAt": "2020-01-01"
-  }
-]
-```
-
-### Problèmes
-
-- champs internes exposés
-- API couplée à la structure interne
-- toute modification interne peut casser l’API
-
----
-
-## API avec DTO
-
-```js
-app.get('/continents-with-dto', (req, res) => {
-  const continentDtos = continents.map(c => ({
-    id: c.id,
-    name: c.name,
-  }));
-
-  res.json(continentDtos);
-});
-```
-
-### Appel
-
-```
-GET /continents-with-dto
-```
-
-### Réponse
-
-```json
-[
-  { "id": 1, "name": "Europe" },
-  { "id": 2, "name": "Asia" }
-]
+```bash
+curl http://localhost:3000/api/files
 ```
 
 ---
 
-## Ce qui a changé
+## Options essentielles (API)
 
-- les données internes sont **transformées**
-- seuls les champs utiles sont exposés
-- l’API devient **indépendante** de la structure interne
+### Méthode HTTP
 
-👉 **Cette transformation est le DTO.**
-
----
-
-## DTO et mapping (point clé)
-
-Dans cet exemple, cette ligne :
-
-```js
-continents.map(c => ({ id: c.id, name: c.name }))
+```bash
+curl -X GET <URL>
+curl -X POST <URL>
+curl -X PUT <URL>
+curl -X PATCH <URL>
+curl -X DELETE <URL>
 ```
 
-fait deux choses :
-- elle **sélectionne** les champs
-- elle **reconstruit** un nouvel objet
+### Headers
 
-👉 **C’est du mapping.**
+```bash
+curl -H "Accept: application/json" <URL>
+curl -H "Content-Type: application/json" <URL>
+curl -H "Authorization: Bearer <TOKEN>" <URL>
+```
 
-> **Dès qu’on utilise un DTO, on fait forcément du mapping**,  
-> même en JavaScript pur.
+### Corps JSON
+
+```bash
+curl -X POST <URL> -H "Content-Type: application/json" -d '{"name":"test"}'
+curl -X POST <URL> -H "Content-Type: application/json" -d @payload.json
+```
+
+### Upload fichier (multipart/form-data)
+
+```bash
+curl -F "file=@./document.pdf" http://localhost:3000/api/files/pdf
+curl -F "file=@./document.pdf;type=application/pdf" http://localhost:3000/api/files/pdf
+curl -F "file=@./document.pdf;filename=mon.pdf" http://localhost:3000/api/files/pdf
+```
+
+### Download fichier
+
+```bash
+curl -o out.pdf http://localhost:3000/api/files/<ID>/content
+curl -OJ http://localhost:3000/api/files/<ID>/content
+```
+
+- `-o` écrit dans le fichier indiqué
+- `-O` utilise un nom “remote”
+- `-J` utilise le nom fourni par `Content-Disposition`
+
+### Sortie silencieuse / erreurs
+
+```bash
+curl -s <URL>
+curl -sS <URL>
+curl -f <URL>
+curl -fsS <URL>
+```
+
+- `-s` silencieux
+- `-S` affiche l’erreur même si silencieux
+- `-f` code d’erreur si HTTP 4xx/5xx
+- `-fsS` combo courant CI
+
+### Debug / inspection
+
+```bash
+curl -v <URL>
+curl -i <URL>
+curl -I <URL>
+```
+
+- `-v` verbose (requête + réponse)
+- `-i` inclut les headers dans la sortie
+- `-I` HEAD (headers seulement)
+
+### Redirections
+
+```bash
+curl -L <URL>
+```
+
+### Timeouts
+
+```bash
+curl --connect-timeout 2 --max-time 10 <URL>
+```
+
+- `--connect-timeout` délai max de connexion
+- `--max-time` délai max total
+
+### HTTPS (dev)
+
+```bash
+curl -k https://localhost:8443/api
+```
+
+- `-k` ignore la validation TLS (dev uniquement)
 
 ---
 
-## DTO en une phrase
+## Exemples pour ton API fichiers
 
-> **Un DTO, c’est ce que tu choisis de montrer.  
-> Le reste ne sort jamais.**
+### Upload
 
----
+```bash
+curl -F "file=@./document.pdf" http://localhost:3000/api/files/pdf
+```
 
-## Pourquoi c’est important
+### Lister
 
-Sans DTO :
-- fuite de données
-- API fragile
-- dette technique immédiate
+```bash
+curl -s http://localhost:3000/api/files
+```
 
-Avec DTO :
-- API stable
-- données maîtrisées
-- évolution interne sans casser les clients
+### Télécharger
 
----
+```bash
+curl -OJ http://localhost:3000/api/files/<ID>/content
+```
 
-## Lien avec les frameworks modernes
+### Supprimer
 
-- NestJS → DTO en `class`
-- Spring Boot → DTO + mapping (manuel ou MapStruct)
-- Angular → DTO côté client
-
-La **techno change**,  
-le **concept reste exactement le même**.
-
----
-
-### Conclusion
-
-Si tu comprends cet exemple Express :
-- tu comprends les DTO
-- tu comprends le mapping
-- tu comprends les questions d’entretien Spring Boot / NestJS
+```bash
+curl -X DELETE http://localhost:3000/api/files/<ID>
+```
