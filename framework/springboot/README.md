@@ -17,6 +17,7 @@
 ## Features Metier
 - [External API](./features-metiers/001-springboot-external-api.md)
 - [Files](./features-metiers/002-springboot-files.md)
+- [Security](./features-metiers/003-springboot-security.md)
 
 ## Tests
 - [Demarrage](./tests/001-commandes.md)
