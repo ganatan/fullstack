@@ -5,6 +5,11 @@
 - `GET /api/public` : accessible sans authentification
 - `GET /api/private` : nécessite une authentification (Basic Auth)
 
+Credentials :
+
+- user : `mulder`
+- password : `Trustno1`
+
 ---
 
 ## Dépendances
@@ -14,17 +19,23 @@
 ```xml
 <dependency>
   <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-security</artifactId>
-</dependency>
-
-<dependency>
-  <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-starter-web</artifactId>
 </dependency>
 
 <dependency>
   <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-starter-test</artifactId>
+  <scope>test</scope>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.security</groupId>
+  <artifactId>spring-security-test</artifactId>
   <scope>test</scope>
 </dependency>
 ```
@@ -73,8 +84,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -96,19 +105,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+    public UserDetailsService userDetailsService() {
         var user = User.builder()
-                .username("user")
-                .password(encoder.encode("password"))
+                .username("mulder")
+                .password("{noop}Trustno1")
                 .roles("USER")
                 .build();
 
         return new InMemoryUserDetailsManager(user);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
 ```
@@ -129,6 +133,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -142,7 +147,8 @@ class SecurityControllerTests {
     @Test
     void public_ok_without_credentials() throws Exception {
         mvc.perform(get("/api/public"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string("Public - accessible sans authentification"));
     }
 
     @Test
@@ -153,8 +159,15 @@ class SecurityControllerTests {
 
     @Test
     void private_ok_with_basic_auth() throws Exception {
-        mvc.perform(get("/api/private").with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic("user", "password")))
-                .andExpect(status().isOk());
+        mvc.perform(get("/api/private").with(httpBasic("mulder", "Trustno1")))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Private - authentification requise"));
+    }
+
+    @Test
+    void private_401_with_bad_password() throws Exception {
+        mvc.perform(get("/api/private").with(httpBasic("mulder", "bad")))
+                .andExpect(status().isUnauthorized());
     }
 }
 ```
@@ -166,7 +179,7 @@ class SecurityControllerTests {
 ```bash
 curl -s http://localhost:3000/api/public
 curl -i http://localhost:3000/api/private
-curl -i -u user:password http://localhost:3000/api/private
+curl -i -u mulder:Trustno1 http://localhost:3000/api/private
 ```
 
 ---
