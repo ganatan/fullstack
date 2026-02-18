@@ -174,8 +174,8 @@ class FileControllerTests {
 
 ## Utilisation
 
-1) Copier un PDF dans `./data/files/` (ex: `xxxx.pdf`)
+1) Copier un PDF dans `./data/files/` (ex: `demarrer-avec-angular.pdf`)
 
 2) Ouvrir :
 
-- `http://localhost:3000/api/files/xxxx.pdf`
+- `http://localhost:3000/api/files/demarrer-avec-angular.pdf`
