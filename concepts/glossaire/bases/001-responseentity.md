@@ -1,35 +1,50 @@
-# 001-responseentity.md — ResponseEntity (Spring) — définition + exemple
+# 001-responseentity.md — ResponseEntity (Spring) — très simple
 
-## Définition
+## C’est quoi
 
-`ResponseEntity<T>` (package `org.springframework.http`) représente la **réponse HTTP complète**.
+`ResponseEntity` sert à renvoyer une réponse HTTP en contrôlant :
 
-Il permet de contrôler explicitement :
-
-- le **status HTTP** (200, 400, 404, 500…)
-- les **headers** (Content-Type, Content-Disposition, Cache-Control…)
-- le **body** (`T` : String, JSON, Resource, byte[], etc.)
+- le **code HTTP** (200, 404, 400…)
+- les **headers**
+- le **contenu**
 
 ---
 
-## Exemple (servir un PDF en inline)
+## Sans ResponseEntity (simple)
+
+Spring renvoie **200** automatiquement.
 
 ```java
-@GetMapping("/api/files/{name}.pdf")
-public ResponseEntity<Resource> openPdf(@PathVariable String name) throws Exception {
-    Path pdf = baseDir.resolve(name + ".pdf").normalize();
-    if (!Files.exists(pdf)) {
-        return ResponseEntity.notFound().build();
-    }
-
-    Resource resource = new UrlResource(pdf.toUri());
-
-    return ResponseEntity.ok()
-            .contentType(MediaType.APPLICATION_PDF)
-            .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-            .body(resource);
+@GetMapping("/hello")
+public String hello() {
+    return "ok";
 }
 ```
 
-- Si le fichier existe : `200 OK` + `Content-Type: application/pdf` + body = PDF
-- Sinon : `404 Not Found`
+Résultat :
+- status : `200 OK`
+- body : `ok`
+
+---
+
+## Avec ResponseEntity (contrôle)
+
+Tu décides du code HTTP et du body.
+
+```java
+@GetMapping("/hello2")
+public ResponseEntity<String> hello2() {
+    return ResponseEntity.ok("ok");
+}
+```
+
+---
+
+## Exemple : renvoyer 404
+
+```java
+@GetMapping("/notfound")
+public ResponseEntity<String> notfound() {
+    return ResponseEntity.notFound().build();
+}
+```
