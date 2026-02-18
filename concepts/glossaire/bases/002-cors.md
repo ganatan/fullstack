@@ -1,4 +1,4 @@
-# 002-cors.md — CORS — très simple
+# CORS
 
 ## C’est quoi
 

@@ -1,6 +1,6 @@
-# 004-springboot-cors.md — springboot-starter-cors
+# springboot-starter-cors
 
-## Test immédiat (avant toute config)
+## Test immédiat
 
 But : vérifier si ton API renvoie déjà un header CORS.
 
