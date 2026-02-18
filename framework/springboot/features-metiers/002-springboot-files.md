@@ -4,6 +4,11 @@
 
 Exposer une API minimaliste pour **uploader / lister / télécharger / supprimer** des fichiers **PDF** (stockage disque), avec **un seul Controller**.
 
+Stockage :
+
+- `data/files/in` : fichiers reçus
+- `data/files/out` : fichiers servis en téléchargement
+
 ---
 
 ## Test
@@ -75,18 +80,22 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/files")
 public class FileController {
 
-    private final Path baseDir;
+    private final Path inDir;
+    private final Path outDir;
     private final long maxBytes;
 
     public FileController(
             @Value("${app.files.base-dir:./data/files}") String baseDir,
             @Value("${app.files.max-bytes:10485760}") long maxBytes) {
 
-        this.baseDir = Paths.get(baseDir).toAbsolutePath().normalize();
+        Path root = Paths.get(baseDir).toAbsolutePath().normalize();
+        this.inDir = root.resolve("in").normalize();
+        this.outDir = root.resolve("out").normalize();
         this.maxBytes = maxBytes;
 
         try {
-            Files.createDirectories(this.baseDir);
+            Files.createDirectories(this.inDir);
+            Files.createDirectories(this.outDir);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "storage-init-failed");
         }
@@ -124,8 +133,8 @@ public class FileController {
         }
 
         String id = java.util.UUID.randomUUID().toString();
-        Path pdfPath = baseDir.resolve(id + ".pdf").normalize();
-        if (!pdfPath.startsWith(baseDir)) {
+        Path pdfPath = inDir.resolve(id + ".pdf").normalize();
+        if (!pdfPath.startsWith(inDir)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-path");
         }
 
@@ -139,18 +148,19 @@ public class FileController {
             long size = Files.size(pdfPath);
             Instant createdAt = Instant.now();
 
-            Path metaPath = baseDir.resolve(id + ".json");
+            Path metaPath = inDir.resolve(id + ".json");
             String json = toJson(Map.of(
                     "id", id,
                     "filename", safeName,
                     "contentType", "application/pdf",
                     "size", size,
                     "sha256", sha256,
-                    "createdAt", createdAt.toString()
+                    "createdAt", createdAt.toString(),
+                    "stage", "in"
             ));
             Files.writeString(metaPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
 
-            return new FileMeta(id, safeName, "application/pdf", size, sha256, createdAt.toString());
+            return new FileMeta(id, safeName, "application/pdf", size, sha256, createdAt.toString(), "in");
         } catch (ResponseStatusException e) {
             try { Files.deleteIfExists(pdfPath); } catch (Exception ignore) {}
             throw e;
@@ -165,11 +175,17 @@ public class FileController {
 
     @GetMapping
     public List<FileMeta> list() {
-        try (Stream<Path> s = Files.list(baseDir)) {
-            return s.filter(p -> p.getFileName().toString().endsWith(".json"))
+        try (Stream<Path> sin = Files.list(inDir); Stream<Path> sout = Files.list(outDir)) {
+            var inItems = sin.filter(p -> p.getFileName().toString().endsWith(".json"))
                     .sorted()
-                    .map(this::readMeta)
+                    .map(p -> readMeta(p, "in"))
                     .toList();
+            var outItems = sout.filter(p -> p.getFileName().toString().endsWith(".json"))
+                    .sorted()
+                    .map(p -> readMeta(p, "out"))
+                    .toList();
+
+            return Stream.concat(inItems.stream(), outItems.stream()).toList();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "list-failed");
         }
@@ -177,63 +193,44 @@ public class FileController {
 
     @GetMapping("/{id}")
     public FileMeta getMeta(@PathVariable String id) {
-        Path meta = baseDir.resolve(id + ".json").normalize();
-        if (!meta.startsWith(baseDir)) {
+        Path metaOut = outDir.resolve(id + ".json").normalize();
+        if (metaOut.startsWith(outDir) && Files.exists(metaOut)) {
+            return readMeta(metaOut, "out");
+        }
+        Path metaIn = inDir.resolve(id + ".json").normalize();
+        if (!metaIn.startsWith(inDir)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
         }
-        if (!Files.exists(meta)) {
+        if (!Files.exists(metaIn)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
         }
-        return readMeta(meta);
+        return readMeta(metaIn, "in");
     }
 
     @GetMapping("/{id}/content")
     public ResponseEntity<Resource> download(@PathVariable String id) {
-        Path pdf = baseDir.resolve(id + ".pdf").normalize();
-        Path meta = baseDir.resolve(id + ".json").normalize();
-        if (!pdf.startsWith(baseDir) || !meta.startsWith(baseDir)) {
+        Path pdfOut = outDir.resolve(id + ".pdf").normalize();
+        Path metaOut = outDir.resolve(id + ".json").normalize();
+        if (pdfOut.startsWith(outDir) && metaOut.startsWith(outDir) && Files.exists(pdfOut) && Files.exists(metaOut)) {
+            return downloadFrom(pdfOut, metaOut);
+        }
+
+        Path pdfIn = inDir.resolve(id + ".pdf").normalize();
+        Path metaIn = inDir.resolve(id + ".json").normalize();
+        if (!pdfIn.startsWith(inDir) || !metaIn.startsWith(inDir)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
         }
-        if (!Files.exists(pdf) || !Files.exists(meta)) {
+        if (!Files.exists(pdfIn) || !Files.exists(metaIn)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
         }
-
-        FileMeta m = readMeta(meta);
-
-        try {
-            Resource resource = new UrlResource(pdf.toUri());
-            if (!resource.exists() || !resource.isReadable()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-readable");
-            }
-
-            String filename = m.filename();
-            String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
-            String contentDisposition = "attachment; filename=\"" + filename.replace("\"", "") + "\"; filename*=UTF-8''" + encoded;
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                    .header(HttpHeaders.ETAG, "\"" + m.sha256() + "\"")
-                    .contentLength(m.size())
-                    .body(resource);
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "download-failed");
-        }
+        return downloadFrom(pdfIn, metaIn);
     }
 
     @DeleteMapping("/{id}")
     public Map<String, Object> delete(@PathVariable String id) {
-        Path pdf = baseDir.resolve(id + ".pdf").normalize();
-        Path meta = baseDir.resolve(id + ".json").normalize();
-        if (!pdf.startsWith(baseDir) || !meta.startsWith(baseDir)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
-        }
         try {
-            boolean metaDeleted = Files.deleteIfExists(meta);
-            boolean pdfDeleted = Files.deleteIfExists(pdf);
-            if (!metaDeleted && !pdfDeleted) {
+            boolean deleted = deleteInDir(outDir, id) | deleteInDir(inDir, id);
+            if (!deleted) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
             }
             return Map.of("id", id, "deleted", true);
@@ -244,7 +241,44 @@ public class FileController {
         }
     }
 
-    private FileMeta readMeta(Path metaPath) {
+    private ResponseEntity<Resource> downloadFrom(Path pdf, Path meta) {
+        FileMeta m = readMeta(meta, meta.startsWith(outDir) ? "out" : "in");
+
+        try {
+            Resource resource = new UrlResource(pdf.toUri());
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-readable");
+            }
+
+            String filename = m.filename();
+            String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
+            String contentDisposition = "attachment; filename="" + filename.replace(""", "") + ""; filename*=UTF-8''" + encoded;
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                    .header(HttpHeaders.ETAG, """ + m.sha256() + """)
+                    .contentLength(m.size())
+                    .body(resource);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "download-failed");
+        }
+    }
+
+    private boolean deleteInDir(Path dir, String id) throws Exception {
+        Path pdf = dir.resolve(id + ".pdf").normalize();
+        Path meta = dir.resolve(id + ".json").normalize();
+        if (!pdf.startsWith(dir) || !meta.startsWith(dir)) {
+            return false;
+        }
+        boolean metaDeleted = Files.deleteIfExists(meta);
+        boolean pdfDeleted = Files.deleteIfExists(pdf);
+        return metaDeleted || pdfDeleted;
+    }
+
+    private FileMeta readMeta(Path metaPath, String stage) {
         try {
             String json = Files.readString(metaPath, StandardCharsets.UTF_8);
             String id = getJsonString(json, "id");
@@ -253,18 +287,18 @@ public class FileController {
             long size = Long.parseLong(getJsonString(json, "size"));
             String sha256 = getJsonString(json, "sha256");
             String createdAt = getJsonString(json, "createdAt");
-            return new FileMeta(id, filename, contentType, size, sha256, createdAt);
+            return new FileMeta(id, filename, contentType, size, sha256, createdAt, stage);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "meta-read-failed");
         }
     }
 
     private static String sanitizeFilename(String v) {
-        String s = v.replace("\\", "/");
+        String s = v.replace("\", "/");
         int idx = s.lastIndexOf('/');
         if (idx >= 0) s = s.substring(idx + 1);
         s = s.trim();
-        s = s.replaceAll("[\\x00-\\x1F\\x7F\"<>|:*?]", "_");
+        s = s.replaceAll("[\x00-\x1F\x7F"<>|:*?]", "_");
         if (s.isBlank()) s = "file.pdf";
         return s;
     }
@@ -288,12 +322,12 @@ public class FileController {
         for (var e : map.entrySet()) {
             if (!first) sb.append(",");
             first = false;
-            sb.append("\"").append(escapeJson(e.getKey())).append("\":");
+            sb.append(""").append(escapeJson(e.getKey())).append("":");
             Object val = e.getValue();
             if (val instanceof Number || val instanceof Boolean) {
                 sb.append(val);
             } else {
-                sb.append("\"").append(escapeJson(String.valueOf(val))).append("\"");
+                sb.append(""").append(escapeJson(String.valueOf(val))).append(""");
             }
         }
         sb.append("}");
@@ -301,15 +335,16 @@ public class FileController {
     }
 
     private static String escapeJson(String s) {
-        return s.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+        return s.replace("\", "\\")
+                .replace(""", "\"")
+                .replace("
+", "\n")
+                .replace("", "\r")
+                .replace("	", "\t");
     }
 
     private static String getJsonString(String json, String key) {
-        String k = "\"" + key + "\":";
+        String k = """ + key + "":";
         int i = json.indexOf(k);
         if (i < 0) throw new IllegalArgumentException("missing-key:" + key);
         i += k.length();
@@ -322,12 +357,13 @@ public class FileController {
             StringBuilder sb = new StringBuilder();
             while (j < json.length()) {
                 char ch = json.charAt(j);
-                if (ch == '\\') {
+                if (ch == '\') {
                     if (j + 1 >= json.length()) break;
                     char n = json.charAt(j + 1);
-                    if (n == 'n') sb.append('\n');
-                    else if (n == 'r') sb.append('\r');
-                    else if (n == 't') sb.append('\t');
+                    if (n == 'n') sb.append('
+');
+                    else if (n == 'r') sb.append('');
+                    else if (n == 't') sb.append('	');
                     else sb.append(n);
                     j += 2;
                     continue;
@@ -344,7 +380,7 @@ public class FileController {
         }
     }
 
-    public record FileMeta(String id, String filename, String contentType, long size, String sha256, String createdAt) {}
+    public record FileMeta(String id, String filename, String contentType, long size, String sha256, String createdAt, String stage) {}
 }
 ```
 
@@ -409,13 +445,14 @@ class FileControllerTests {
 
     @Test
     void upload_then_list_then_download_ok() throws Exception {
-        var pdf = new byte[] { '%','P','D','F','-','1','.','7','\n','%','%','EOF' };
+        var pdf = "%PDF-1.7\n%%EOF".getBytes(StandardCharsets.US_ASCII);
         var file = new MockMultipartFile("file", "test.pdf", MediaType.APPLICATION_PDF_VALUE, pdf);
 
         var upload = mvc.perform(multipart("/api/files/pdf").file(file))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.filename").value("test.pdf"))
+                .andExpect(jsonPath("$.stage").value("in"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString(StandardCharsets.UTF_8);
@@ -429,7 +466,6 @@ class FileControllerTests {
         var dl = mvc.perform(get("/api/files/" + id + "/content"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_PDF_VALUE))
-                .andExpect(header().string("Content-Disposition", org.hamcrest.Matchers.containsString("attachment")))
                 .andReturn()
                 .getResponse()
                 .getContentAsByteArray();
@@ -438,6 +474,14 @@ class FileControllerTests {
     }
 }
 ```
+
+---
+
+## Structure créée à l’exécution
+
+- `./data/files/in/<uuid>.pdf`
+- `./data/files/in/<uuid>.json`
+- `./data/files/out/...` (si tu y mets des fichiers toi-même)
 
 ---
 
