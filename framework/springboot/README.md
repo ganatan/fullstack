@@ -20,6 +20,7 @@
 - [Security](./features-metiers/003-springboot-security.md)
 - [CORS](./features-metiers/004-springboot-cors.md)
 - [Logging](./features-metiers/005-springboot-logging.md)
+- [Profiles](./features-metiers/006-springboot-profiles.md)
 
 ## Tests
 - [Demarrage](./tests/001-commandes.md)
