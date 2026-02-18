@@ -1,49 +1,25 @@
-# 001-starter.md — ELK (Elastic Stack) — Starter (Docker + tests)
+# 002-springboot-elk-springboot.md — ELK + Spring Boot — test minimal avec ElasticController
 
 ## Objectif
 
-- Démarrer un ELK local (Elasticsearch + Kibana + Logstash)
-- Avoir un endpoint Logstash HTTP pour pousser un log JSON
-- Vérifier dans Elasticsearch et Kibana que le log est bien indexé
-
-Index utilisé : `logs-starter`
+- Lancer Elasticsearch + Kibana en local (Docker)
+- Depuis Spring Boot : indexer un document dans Elasticsearch + faire une recherche
+- Endpoints :
+  - `GET /api/elastic/index` : crée un document dans l’index `logs-starter`
+  - `GET /api/elastic/search` : retourne les derniers documents
 
 ---
 
 ## Prérequis
 
 - Docker + Docker Compose
-- Ports libres :
-  - Elasticsearch : `9200`
-  - Kibana : `5601`
-  - Logstash HTTP input : `8088`
+- Java 21
+- Spring Boot 3.5.x
+- Ports libres : Elasticsearch `9200`, Kibana `5601`
 
 ---
 
-## Docker (Elasticsearch + Kibana + Logstash)
-
-### Fichiers
-
-```
-docker/compose.elk.yml
-docker/logstash/pipeline/logstash.conf
-scripts/elk-up.bat
-scripts/elk-down.bat
-```
-
-### scripts/elk-up.bat
-
-```bat
-@echo off
-docker compose -f docker\compose.elk.yml up -d
-```
-
-### scripts/elk-down.bat
-
-```bat
-@echo off
-docker compose -f docker\compose.elk.yml down -v
-```
+## Docker (Elasticsearch + Kibana)
 
 ### docker/compose.elk.yml
 
@@ -59,8 +35,6 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.12.2
@@ -71,130 +45,210 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.12.2
-    container_name: ganatan-logstash
-    environment:
-      - xpack.monitoring.enabled=false
-      - LS_JAVA_OPTS=-Xms256m -Xmx256m
-    ports:
-      - "8088:8088"
-      - "5044:5044"
-      - "9600:9600"
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
-    depends_on:
-      - elasticsearch
-
-volumes:
-  es_data:
 ```
 
----
+Démarrer :
 
-## Logstash pipeline
-
-`docker/logstash/pipeline/logstash.conf`
-
-- Input HTTP : `POST http://localhost:8088/log`
-- Output Elasticsearch : index `logs-starter`
-
-```conf
-input {
-  http {
-    port => 8088
-    additional_codecs => { "application/json" => "json" }
-    response_code => 200
-  }
-}
-
-filter {
-  if ![@timestamp] {
-    mutate { add_field => { "@timestamp" => "%{@timestamp}" } }
-  }
-}
-
-output {
-  elasticsearch {
-    hosts => ["http://elasticsearch:9200"]
-    index => "logs-starter"
-  }
-  stdout { codec => rubydebug }
-}
+```bash
+docker compose -f docker/compose.elk.yml up -d
 ```
 
----
-
-## Démarrage
-
-```bat
-scripts\elk-up.bat
-```
-
-Interfaces :
-- Kibana : http://localhost:5601
-- Elasticsearch : http://localhost:9200
-
----
-
-## Tests (curl)
-
-### 1) Vérifier Elasticsearch up
+Vérifier :
 
 ```bash
 curl -s http://localhost:9200
 ```
 
-### 2) Envoyer un log JSON à Logstash (HTTP input)
+Kibana :
+- http://localhost:5601
 
-```bash
-curl -i -X POST http://localhost:8088/log   -H "Content-Type: application/json"   -d "{"level":"INFO","service":"starter","message":"hello elk","traceId":"abc123"}"
-```
+---
 
-### 3) Vérifier que l’index existe
+## Dépendances Maven
 
-```bash
-curl -s "http://localhost:9200/_cat/indices?v"
-```
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
 
-Tu dois voir `logs-starter`.
-
-### 4) Rechercher les logs (Elasticsearch)
-
-```bash
-curl -s "http://localhost:9200/logs-starter/_search?pretty"   -H "Content-Type: application/json"   -d "{"query":{"match_all":{}}}"
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-test</artifactId>
+  <scope>test</scope>
+</dependency>
 ```
 
 ---
 
-## Kibana (vérif rapide)
+## Configuration
 
-1) Ouvre Kibana : http://localhost:5601  
-2) Menu : **Stack Management** → **Data Views** → **Create data view**  
-3) Name : `logs-starter*`  
-4) Timestamp field : `@timestamp` (si proposé)  
-5) Puis : **Discover** → tu dois voir tes documents
+`src/main/resources/application.properties`
 
----
-
-## Ports (rappel)
-
-| Composant | Port | Usage |
-|---|---:|---|
-| Elasticsearch | 9200 | API REST |
-| Elasticsearch | 9300 | Transport cluster |
-| Kibana | 5601 | UI |
-| Logstash | 8088 | Input HTTP (POST /log) |
-| Logstash | 5044 | Input Beats (Filebeat) |
-| Logstash | 9600 | Monitoring API |
+```properties
+server.port=3000
+app.elasticsearch.url=http://localhost:9200
+```
 
 ---
 
-## Nettoyage
+## Controller
 
-Stop + delete volumes :
+`src/main/java/com/ganatan/starter/api/elk/ElasticController.java`
 
-```bat
-scripts\elk-down.bat
+```java
+package com.ganatan.starter.api.elk;
+
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClient;
+
+@RestController
+public class ElasticController {
+
+    private static final String INDEX = "logs-starter";
+
+    private final RestClient restClient;
+
+    public ElasticController(@Value("${app.elasticsearch.url}") String baseUrl, RestClient.Builder builder) {
+        this.restClient = builder.baseUrl(baseUrl).build();
+    }
+
+    @GetMapping("/api/elastic/index")
+    public Map<String, Object> index() {
+        String id = UUID.randomUUID().toString();
+
+        Map<String, Object> doc = Map.of(
+                "@timestamp", Instant.now().toString(),
+                "level", "INFO",
+                "service", "springboot-starter",
+                "message", "hello elk",
+                "traceId", "abc123"
+        );
+
+        Map<String, Object> resp = restClient.post()
+                .uri("/" + INDEX + "/_doc/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(doc)
+                .retrieve()
+                .body(Map.class);
+
+        return Map.of(
+                "index", INDEX,
+                "id", id,
+                "result", resp
+        );
+    }
+
+    @GetMapping("/api/elastic/search")
+    public Map<String, Object> search() {
+        Map<String, Object> query = Map.of(
+                "size", 10,
+                "sort", java.util.List.of(Map.of("@timestamp", Map.of("order", "desc"))),
+                "query", Map.of("match_all", Map.of())
+        );
+
+        Map<String, Object> resp = restClient.post()
+                .uri("/" + INDEX + "/_search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(query)
+                .retrieve()
+                .body(Map.class);
+
+        return Map.of(
+                "index", INDEX,
+                "response", resp
+        );
+    }
+}
+```
+
+---
+
+## Test (1 seul test)
+
+But : vérifier que le controller appelle bien Elasticsearch sur les bonnes URLs.
+
+`src/test/java/com/ganatan/starter/api/elk/ElasticControllerTests.java`
+
+```java
+package com.ganatan.starter.api.elk;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.client.MockRestServiceServer;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.http.HttpMethod.POST;
+
+@RestClientTest(ElasticController.class)
+class ElasticControllerTests {
+
+    @Autowired
+    private ElasticController controller;
+
+    @Autowired
+    private MockRestServiceServer server;
+
+    @Test
+    void index_calls_elasticsearch_and_returns_result() {
+        server.expect(requestTo(org.hamcrest.Matchers.matchesPattern(".*/logs-starter/_doc/.*")))
+                .andExpect(method(POST))
+                .andRespond(withSuccess("{"result":"created"}", MediaType.APPLICATION_JSON));
+
+        var result = controller.index();
+
+        assertThat(result.get("index")).isEqualTo("logs-starter");
+        assertThat(result.get("id")).isNotNull();
+        assertThat(result.get("result").toString()).contains("created");
+
+        server.verify();
+    }
+}
+```
+
+---
+
+## Test rapide (manuel)
+
+Indexer :
+
+```bash
+curl -s http://localhost:3000/api/elastic/index
+```
+
+Chercher :
+
+```bash
+curl -s http://localhost:3000/api/elastic/search
+```
+
+---
+
+## Kibana (voir les documents)
+
+1) http://localhost:5601
+2) Stack Management → Data Views → Create data view
+3) Pattern : `logs-starter*`
+4) Timestamp : `@timestamp`
+5) Discover → tu vois tes docs
+
+---
+
+## Exécuter le test
+
+```bash
+mvn -Dtest=ElasticControllerTests test
 ```
