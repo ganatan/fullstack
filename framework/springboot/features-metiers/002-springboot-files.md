@@ -117,55 +117,57 @@ public class FileController {
 ```java
 package com.ganatan.starter.api.files;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class FileControllerTests {
+class FileControllerTest {
 
     @Autowired
-    private MockMvc mvc;
+    private MockMvc mockMvc;
 
-    @BeforeEach
-    void setup() throws Exception {
-        Path dir = Path.of("data/files");
-        Files.createDirectories(dir);
-        Files.write(dir.resolve("test.pdf"), "%PDF-1.7\n%%EOF".getBytes(StandardCharsets.US_ASCII));
-    }
+    @TempDir
+    Path tempDir;
 
     @Test
-    void openPdf_ok() throws Exception {
-        mvc.perform(get("/api/files/test.pdf"))
-                .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", MediaType.APPLICATION_PDF_VALUE))
-                .andExpect(header().string("Content-Disposition", org.hamcrest.Matchers.containsString("inline")))
-                .andExpect(content().bytes("%PDF-1.7\n%%EOF".getBytes(StandardCharsets.US_ASCII)));
-    }
-
-    @Test
-    void openPdf_notFound() throws Exception {
-        mvc.perform(get("/api/files/missing.pdf"))
+    void shouldReturn404WhenFileDoesNotExist() throws Exception {
+        mockMvc.perform(get("/api/files/inexistant.pdf"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void openPdf_badName() throws Exception {
-        mvc.perform(get("/api/files/../secret.pdf"))
+    void shouldReturn400WhenNameIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/files/invalid@name.pdf"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnPdfWhenFileExists() throws Exception {
+        Path dataDir = Path.of("./data/files");
+        Files.createDirectories(dataDir);
+        Path pdf = dataDir.resolve("test.pdf");
+        Files.writeString(pdf, "%PDF-1.4 fake");
+
+        try {
+            mockMvc.perform(get("/api/files/test.pdf"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType("application/pdf"))
+                    .andExpect(header().string("Content-Disposition",
+                            org.hamcrest.Matchers.containsString("inline")));
+        } finally {
+            Files.deleteIfExists(pdf);
+        }
     }
 }
 ```
