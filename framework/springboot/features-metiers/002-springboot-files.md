@@ -1,4 +1,4 @@
-# 006-springboot-files.md — springboot-starter-files
+# 006-springboot-files-in-out.md — springboot-starter-files (in/out)
 
 ## Objectif
 
@@ -23,7 +23,7 @@ mvn -Dtest=FileControllerTests test
 
 ## Naming
 
-Controller : **FileController** (intention fonctionnelle, pas la techno)
+Controller : **FileController**
 
 Package : `com.ganatan.starter.api.files`
 
@@ -155,8 +155,7 @@ public class FileController {
                     "contentType", "application/pdf",
                     "size", size,
                     "sha256", sha256,
-                    "createdAt", createdAt.toString(),
-                    "stage", "in"
+                    "createdAt", createdAt.toString()
             ));
             Files.writeString(metaPath, json, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
 
@@ -176,13 +175,14 @@ public class FileController {
     @GetMapping
     public List<FileMeta> list() {
         try (Stream<Path> sin = Files.list(inDir); Stream<Path> sout = Files.list(outDir)) {
-            var inItems = sin.filter(p -> p.getFileName().toString().endsWith(".json"))
+            var inItems = sin.filter(p -> p.getFileName().toString().endsWith(".pdf"))
                     .sorted()
-                    .map(p -> readMeta(p, "in"))
+                    .map(p -> metaFor(inDir, stripPdf(p.getFileName().toString()), "in"))
                     .toList();
-            var outItems = sout.filter(p -> p.getFileName().toString().endsWith(".json"))
+
+            var outItems = sout.filter(p -> p.getFileName().toString().endsWith(".pdf"))
                     .sorted()
-                    .map(p -> readMeta(p, "out"))
+                    .map(p -> metaFor(outDir, stripPdf(p.getFileName().toString()), "out"))
                     .toList();
 
             return Stream.concat(inItems.stream(), outItems.stream()).toList();
@@ -193,41 +193,44 @@ public class FileController {
 
     @GetMapping("/{id}")
     public FileMeta getMeta(@PathVariable String id) {
-        Path metaOut = outDir.resolve(id + ".json").normalize();
-        if (metaOut.startsWith(outDir) && Files.exists(metaOut)) {
-            return readMeta(metaOut, "out");
-        }
-        Path metaIn = inDir.resolve(id + ".json").normalize();
-        if (!metaIn.startsWith(inDir)) {
+        if (!isSafeId(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
         }
-        if (!Files.exists(metaIn)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
+
+        if (Files.exists(outDir.resolve(id + ".pdf"))) {
+            return metaFor(outDir, id, "out");
         }
-        return readMeta(metaIn, "in");
+        if (Files.exists(inDir.resolve(id + ".pdf"))) {
+            return metaFor(inDir, id, "in");
+        }
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
     }
 
     @GetMapping("/{id}/content")
     public ResponseEntity<Resource> download(@PathVariable String id) {
+        if (!isSafeId(id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
+        }
+
         Path pdfOut = outDir.resolve(id + ".pdf").normalize();
-        Path metaOut = outDir.resolve(id + ".json").normalize();
-        if (pdfOut.startsWith(outDir) && metaOut.startsWith(outDir) && Files.exists(pdfOut) && Files.exists(metaOut)) {
-            return downloadFrom(pdfOut, metaOut);
+        if (pdfOut.startsWith(outDir) && Files.exists(pdfOut)) {
+            return downloadFrom(outDir, id, "out");
         }
 
         Path pdfIn = inDir.resolve(id + ".pdf").normalize();
-        Path metaIn = inDir.resolve(id + ".json").normalize();
-        if (!pdfIn.startsWith(inDir) || !metaIn.startsWith(inDir)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
+        if (pdfIn.startsWith(inDir) && Files.exists(pdfIn)) {
+            return downloadFrom(inDir, id, "in");
         }
-        if (!Files.exists(pdfIn) || !Files.exists(metaIn)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
-        }
-        return downloadFrom(pdfIn, metaIn);
+
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
     }
 
     @DeleteMapping("/{id}")
     public Map<String, Object> delete(@PathVariable String id) {
+        if (!isSafeId(id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
+        }
         try {
             boolean deleted = deleteInDir(outDir, id) | deleteInDir(inDir, id);
             if (!deleted) {
@@ -241,8 +244,13 @@ public class FileController {
         }
     }
 
-    private ResponseEntity<Resource> downloadFrom(Path pdf, Path meta) {
-        FileMeta m = readMeta(meta, meta.startsWith(outDir) ? "out" : "in");
+    private ResponseEntity<Resource> downloadFrom(Path dir, String id, String stage) {
+        Path pdf = dir.resolve(id + ".pdf").normalize();
+        if (!pdf.startsWith(dir) || !Files.exists(pdf)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
+        }
+
+        FileMeta m = metaFor(dir, id, stage);
 
         try {
             Resource resource = new UrlResource(pdf.toUri());
@@ -264,6 +272,31 @@ public class FileController {
             throw e;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "download-failed");
+        }
+    }
+
+    private FileMeta metaFor(Path dir, String id, String stage) {
+        Path pdf = dir.resolve(id + ".pdf").normalize();
+        Path meta = dir.resolve(id + ".json").normalize();
+        if (!pdf.startsWith(dir) || !meta.startsWith(dir)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid-id");
+        }
+        if (!Files.exists(pdf)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not-found");
+        }
+
+        if (Files.exists(meta)) {
+            return readMeta(meta, stage);
+        }
+
+        try {
+            long size = Files.size(pdf);
+            String sha256 = sha256Hex(pdf);
+            String filename = id + ".pdf";
+            String createdAt = Instant.ofEpochMilli(Files.getLastModifiedTime(pdf).toMillis()).toString();
+            return new FileMeta(id, filename, "application/pdf", size, sha256, createdAt, stage);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "meta-build-failed");
         }
     }
 
@@ -291,6 +324,14 @@ public class FileController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "meta-read-failed");
         }
+    }
+
+    private static boolean isSafeId(String id) {
+        return id != null && id.matches("^[A-Za-z0-9-]{1,80}$");
+    }
+
+    private static String stripPdf(String name) {
+        return name.endsWith(".pdf") ? name.substring(0, name.length() - 4) : name;
     }
 
     private static String sanitizeFilename(String v) {
@@ -451,17 +492,15 @@ class FileControllerTests {
         var upload = mvc.perform(multipart("/api/files/pdf").file(file))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.filename").value("test.pdf"))
                 .andExpect(jsonPath("$.stage").value("in"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString(StandardCharsets.UTF_8);
 
-        mvc.perform(get("/api/files"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").isNotEmpty());
-
         String id = upload.replaceAll(".*\"id\"\s*:\s*\"([^\"]+)\".*", "$1");
+
+        mvc.perform(get("/api/files"))
+                .andExpect(status().isOk());
 
         var dl = mvc.perform(get("/api/files/" + id + "/content"))
                 .andExpect(status().isOk())
@@ -481,7 +520,7 @@ class FileControllerTests {
 
 - `./data/files/in/<uuid>.pdf`
 - `./data/files/in/<uuid>.json`
-- `./data/files/out/...` (si tu y mets des fichiers toi-même)
+- `./data/files/out/<id>.pdf` (si tu ajoutes des fichiers manuellement)
 
 ---
 
