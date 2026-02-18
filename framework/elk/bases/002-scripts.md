@@ -218,9 +218,7 @@ curl -s "http://localhost:9200/_cat/indices?v"
 Rechercher les derniers documents :
 
 ```bash
-curl -s "http://localhost:9200/ganatan-logs-*/_search?pretty" ^
-  -H "Content-Type: application/json" ^
-  -d "{"size":10,"sort":[{"@timestamp":{"order":"desc"}}],"query":{"match_all":{}}}"
+curl -s "http://localhost:9200/ganatan-logs-*/_search?pretty" -H "Content-Type: application/json" -d '{"size":10,"sort":[{"@timestamp":{"order":"desc"}}],"query":{"match_all":{}}}'
 ```
 
 ### 5) Kibana (voir les logs)
