@@ -16,7 +16,7 @@ public class Main {
     }
 
     public void show() {
-      System.out.println("00000000001");
+      System.out.println("00000000003");
     }
   }
 
@@ -24,6 +24,7 @@ public class Main {
 
     Media media = new Media("Aliens");
     System.out.println("00000000001");
+    media.show();
     System.out.println("00000000002:" + media.name);
   }
 }
