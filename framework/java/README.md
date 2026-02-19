@@ -5,7 +5,7 @@
 
 ## Programmation
 - [Starter](./code/001-java-starter.md)
-- [Starter Détails](./code/001-java-starter-details.md)
+- [Starter Détails](./code/00é-java-starter-details.md)
 
 ## Historique
 - [Histoire](./histoire/001-origines.md)
