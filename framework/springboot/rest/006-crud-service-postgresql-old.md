@@ -1,10 +1,14 @@
-# 006 – CRUD REST · MediaController (PostgreSQL)
+# CRUD REST – MediaController (PostgreSQL)
 
-Spring Boot · JPA · PostgreSQL · Tests unitaires · Coverage 100%
+Implémentation PostgreSQL :
+- `JpaRepository` pour l’accès aux données
+- `MediaController` expose les endpoints REST
+- `MediaService` contient la logique métier
+- `Media` est l’entité JPA (table `media` : `id`, `name`, `release_date`)
 
 ---
 
-## Structure du projet
+## Structure
 
 ```
 com.ganatan.starter.api.media
@@ -12,22 +16,20 @@ com.ganatan.starter.api.media
 ├── MediaRepository.java
 ├── MediaService.java
 ├── MediaController.java
-├── MediaControllerTests.java
-├── MediaServiceTests.java    ← nouveau
-└── MediaTests.java           ← nouveau
+└── MediaControllerTests.java
 ```
 
 ---
 
-## Endpoints REST
+## Endpoints exposés
 
-| Méthode | URL            | Description            | Status succès  |
-|---------|----------------|------------------------|----------------|
-| GET     | /media         | Liste tous les médias  | 200 OK         |
-| GET     | /media/{id}    | Trouve par id          | 200 OK         |
-| POST    | /media         | Crée un media          | 201 CREATED    |
-| PUT     | /media/{id}    | Modifie un media       | 200 OK         |
-| DELETE  | /media/{id}    | Supprime un media      | 204 NO CONTENT |
+| Méthode | URL            | Description        | Status succès  |
+|---------|----------------|--------------------|----------------|
+| GET     | /media         | Liste tous         | 200 OK         |
+| GET     | /media/{id}    | Trouve par id      | 200 OK         |
+| POST    | /media         | Crée un media      | 201 CREATED    |
+| PUT     | /media/{id}    | Modifie un media   | 200 OK         |
+| DELETE  | /media/{id}    | Supprime un media  | 204 NO CONTENT |
 
 Base URL : `http://localhost:3000/media`
 
@@ -237,18 +239,6 @@ public class MediaController {
 
 ---
 
-## Tests – Stratégie coverage 100%
-
-3 classes Mockito, zéro contexte Spring, zéro base de données.
-
-| Fichier                  | Mock cible        | Ce qui est couvert                                  |
-|--------------------------|-------------------|-----------------------------------------------------|
-| `MediaControllerTests`   | `MediaService`    | Tous les endpoints + cas NOT_FOUND                  |
-| `MediaServiceTests`      | `MediaRepository` | findAll, findById, create, update, delete + NOT_FOUND |
-| `MediaTests`             | aucune            | Constructeurs + 3 setters de l'entité               |
-
----
-
 ## Test – MediaControllerTests.java
 
 ```java
@@ -287,7 +277,9 @@ class MediaControllerTests {
   @Test
   void getAllMedia_shouldReturnList() {
     when(mediaService.findAll()).thenReturn(List.of(inception, matrix));
+
     List<Media> result = mediaController.getAllMedia();
+
     assertNotNull(result);
     assertEquals(2, result.size());
     verify(mediaService, times(1)).findAll();
@@ -296,13 +288,18 @@ class MediaControllerTests {
   @Test
   void getAllMedia_shouldReturnEmptyList_whenNoMedia() {
     when(mediaService.findAll()).thenReturn(List.of());
-    assertTrue(mediaController.getAllMedia().isEmpty());
+
+    List<Media> result = mediaController.getAllMedia();
+
+    assertTrue(result.isEmpty());
   }
 
   @Test
   void getMediaById_shouldReturnMedia_whenIdExists() {
     when(mediaService.findById(1L)).thenReturn(inception);
+
     Media result = mediaController.getMediaById(1L);
+
     assertNotNull(result);
     assertEquals(1L, result.getId());
     assertEquals("Inception", result.getName());
@@ -314,8 +311,11 @@ class MediaControllerTests {
   void getMediaById_shouldThrowNotFound_whenIdDoesNotExist() {
     when(mediaService.findById(999L))
       .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-      () -> mediaController.getMediaById(999L));
+
+    ResponseStatusException ex = assertThrows(
+      ResponseStatusException.class,
+      () -> mediaController.getMediaById(999L)
+    );
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
   }
 
@@ -324,7 +324,9 @@ class MediaControllerTests {
     Media input = new Media(null, "Interstellar", 2014);
     Media saved = new Media(3L, "Interstellar", 2014);
     when(mediaService.create(input)).thenReturn(saved);
+
     Media result = mediaController.createMedia(input);
+
     assertNotNull(result);
     assertEquals(3L, result.getId());
     assertEquals("Interstellar", result.getName());
@@ -337,7 +339,9 @@ class MediaControllerTests {
     Media modified = new Media(null, "Inception Updated", 2010);
     Media updated = new Media(1L, "Inception Updated", 2010);
     when(mediaService.update(1L, modified)).thenReturn(updated);
+
     Media result = mediaController.updateMedia(1L, modified);
+
     assertNotNull(result);
     assertEquals("Inception Updated", result.getName());
     assertEquals(2010, result.getReleaseDate());
@@ -349,15 +353,20 @@ class MediaControllerTests {
     Media modified = new Media(null, "Unknown", 2000);
     when(mediaService.update(eq(999L), any()))
       .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-      () -> mediaController.updateMedia(999L, modified));
+
+    ResponseStatusException ex = assertThrows(
+      ResponseStatusException.class,
+      () -> mediaController.updateMedia(999L, modified)
+    );
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
   }
 
   @Test
   void deleteMedia_shouldCallService_whenIdExists() {
     doNothing().when(mediaService).delete(1L);
+
     mediaController.deleteMedia(1L);
+
     verify(mediaService, times(1)).delete(1L);
   }
 
@@ -365,177 +374,12 @@ class MediaControllerTests {
   void deleteMedia_shouldThrowNotFound_whenIdDoesNotExist() {
     doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
       .when(mediaService).delete(999L);
-    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-      () -> mediaController.deleteMedia(999L));
+
+    ResponseStatusException ex = assertThrows(
+      ResponseStatusException.class,
+      () -> mediaController.deleteMedia(999L)
+    );
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-  }
-}
-```
-
----
-
-## Test – MediaServiceTests.java
-
-```java
-package com.ganatan.starter.api.media;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
-class MediaServiceTests {
-
-  @Mock
-  private MediaRepository mediaRepository;
-
-  @InjectMocks
-  private MediaService mediaService;
-
-  private Media inception;
-  private Media matrix;
-
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-    inception = new Media(1L, "Inception", 2010);
-    matrix = new Media(2L, "The Matrix", 1999);
-  }
-
-  @Test
-  void findAll_shouldReturnList() {
-    when(mediaRepository.findAll()).thenReturn(List.of(inception, matrix));
-    List<Media> result = mediaService.findAll();
-    assertEquals(2, result.size());
-    verify(mediaRepository, times(1)).findAll();
-  }
-
-  @Test
-  void findAll_shouldReturnEmptyList_whenNoMedia() {
-    when(mediaRepository.findAll()).thenReturn(List.of());
-    assertTrue(mediaService.findAll().isEmpty());
-  }
-
-  @Test
-  void findById_shouldReturnMedia_whenIdExists() {
-    when(mediaRepository.findById(1L)).thenReturn(Optional.of(inception));
-    Media result = mediaService.findById(1L);
-    assertNotNull(result);
-    assertEquals(1L, result.getId());
-    assertEquals("Inception", result.getName());
-    assertEquals(2010, result.getReleaseDate());
-  }
-
-  @Test
-  void findById_shouldThrowNotFound_whenIdDoesNotExist() {
-    when(mediaRepository.findById(999L)).thenReturn(Optional.empty());
-    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-      () -> mediaService.findById(999L));
-    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-  }
-
-  @Test
-  void create_shouldSaveMediaWithNullId() {
-    Media input = new Media(99L, "Interstellar", 2014);
-    Media saved = new Media(3L, "Interstellar", 2014);
-    when(mediaRepository.save(any(Media.class))).thenReturn(saved);
-    Media result = mediaService.create(input);
-    verify(mediaRepository).save(argThat(m -> m.getId() == null));
-    assertEquals(3L, result.getId());
-    assertEquals("Interstellar", result.getName());
-    assertEquals(2014, result.getReleaseDate());
-  }
-
-  @Test
-  void update_shouldReturnUpdatedMedia_whenIdExists() {
-    Media modified = new Media(null, "Inception Updated", 2011);
-    Media saved = new Media(1L, "Inception Updated", 2011);
-    when(mediaRepository.findById(1L)).thenReturn(Optional.of(inception));
-    when(mediaRepository.save(any(Media.class))).thenReturn(saved);
-    Media result = mediaService.update(1L, modified);
-    assertEquals("Inception Updated", result.getName());
-    assertEquals(2011, result.getReleaseDate());
-    verify(mediaRepository, times(1)).save(inception);
-  }
-
-  @Test
-  void update_shouldThrowNotFound_whenIdDoesNotExist() {
-    when(mediaRepository.findById(999L)).thenReturn(Optional.empty());
-    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-      () -> mediaService.update(999L, new Media(null, "X", 2000)));
-    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-  }
-
-  @Test
-  void delete_shouldCallRepositoryDelete_whenIdExists() {
-    when(mediaRepository.findById(1L)).thenReturn(Optional.of(inception));
-    doNothing().when(mediaRepository).delete(inception);
-    mediaService.delete(1L);
-    verify(mediaRepository, times(1)).delete(inception);
-  }
-
-  @Test
-  void delete_shouldThrowNotFound_whenIdDoesNotExist() {
-    when(mediaRepository.findById(999L)).thenReturn(Optional.empty());
-    ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-      () -> mediaService.delete(999L));
-    assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-  }
-}
-```
-
----
-
-## Test – MediaTests.java
-
-```java
-package com.ganatan.starter.api.media;
-
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-
-class MediaTests {
-
-  @Test
-  void noArgsConstructor_shouldCreateInstance() {
-    assertNotNull(new Media());
-  }
-
-  @Test
-  void allArgsConstructor_shouldSetAllFields() {
-    Media media = new Media(1L, "Inception", 2010);
-    assertEquals(1L, media.getId());
-    assertEquals("Inception", media.getName());
-    assertEquals(2010, media.getReleaseDate());
-  }
-
-  @Test
-  void setId_shouldUpdateId() {
-    Media media = new Media();
-    media.setId(42L);
-    assertEquals(42L, media.getId());
-  }
-
-  @Test
-  void setName_shouldUpdateName() {
-    Media media = new Media();
-    media.setName("Matrix");
-    assertEquals("Matrix", media.getName());
-  }
-
-  @Test
-  void setReleaseDate_shouldUpdateReleaseDate() {
-    Media media = new Media();
-    media.setReleaseDate(1999);
-    assertEquals(1999, media.getReleaseDate());
   }
 }
 ```
@@ -551,10 +395,4 @@ class MediaTests {
 - `ddl-auto=update` : auto-création/migration simple en dev (à éviter en prod)
 - `open-in-view=false` : pas de session Hibernate pendant la sérialisation HTTP
 - `save(existing)` : entité managée → UPDATE ; `save(new)` → INSERT
-- `setId(null)` dans `create()` : empêche un UPDATE si le client envoie un id
-- Tests Mockito : isolation par couche, pas de DB, pas de contexte Spring
-
-```
-mvn test jacoco:report
-→ target/site/jacoco/index.html
-```
+- Tests Mockito : isolation du controller, pas de DB, service mocké
