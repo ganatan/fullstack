@@ -10,7 +10,7 @@ javac -version
 ## Création projet IntelliJ
 
 ```
-Name: java-learning
+Name: java-starter
 Build system: IntelliJ
 JDK: 21
 ```
@@ -18,7 +18,7 @@ JDK: 21
 ## Structure projet
 
 ```
-java-learning
+java-starter
  └─ src
     └─ Main.java
 ```

@@ -24,7 +24,7 @@ Si Java n'est pas installé : https://www.oracle.com/java/technologies/downloads
 ```
 File → New → Project
 
-Name        : java-learning
+Name        : java-starter
 Location    : choisir un dossier
 Build system: IntelliJ
 JDK         : 21
@@ -37,7 +37,7 @@ Cliquer sur **Create**.
 ## 3. Structure du projet
 
 ```
-java-learning
+java-starter
 └── src
     └── Main.java
 ```
