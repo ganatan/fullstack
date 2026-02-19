@@ -10,6 +10,7 @@
 - [CRUD Controller Mongodb](./rest/005-crud-controller-mongodb.md)
 - [CRUD Controller Postgresql](./rest/005-crud-controller-postgresql.md)
 - [CRUD Service Postgresql](./rest/006-crud-service-postgresql.md)
+- [CRUD DTO Postgresql](./rest/007-crud-dto-postgresql.md)
 - [Reponses HTTP](./rest/007-reponses-http.md)
 - [Spring Data](./rest/008-spring-data.md)
 - [Database Postgresql](./database/001-postgresql.md)
