@@ -1,29 +1,15 @@
-# Throw – Java pur vs Spring Boot
+# Throw – Comprendre le fonctionnement en Java pur
 
 ---
 
-## Version 1 – Java pur
+## Le code de base
 
 ```java
 public class Main {
 
   public static void main(String[] args) {
-
-    // cas sans erreur
-    try {
-      process(false);
-      System.out.println("status : ok");
-    } catch (RuntimeException e) {
-      System.out.println("status : error");
-    }
-
-    // cas avec erreur
-    try {
-      process(true);
-      System.out.println("status : ok");
-    } catch (RuntimeException e) {
-      System.out.println("status : error");
-    }
+    process(false);
+    System.out.println("status : ok");
   }
 
   private static void process(boolean fail) {
@@ -34,39 +20,118 @@ public class Main {
 }
 ```
 
-Résultats :
+---
 
+## Cas 1 – fail = false → pas de throw
+
+```java
+public static void main(String[] args) {
+    process(false);                      // entre dans process, fail=false, rien ne se passe
+    System.out.println("status : ok");   // ← cette ligne est exécutée
+}
+```
+
+Résultat :
 ```
 status : ok
-status : error
 ```
 
 ---
 
-## Version 2 – Spring Boot
+## Cas 2 – fail = true → throw sans try/catch
 
 ```java
-package com.ganatan.starter.api.root;
+public static void main(String[] args) {
+    process(true);                       // entre dans process, fail=true → throw
+    System.out.println("status : ok");   // ← cette ligne n'est JAMAIS exécutée
+}
+```
 
-import java.util.Map;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+Résultat :
+```
+Exception in thread "main" java.lang.RuntimeException: quelque chose s'est mal passé
+    at Main.process(Main.java:10)
+    at Main.main(Main.java:4)
+```
 
-@RestController
-public class RootController {
+Le programme s'arrête brutalement. Tout ce qui est après `process(true)` est ignoré.
 
-  @GetMapping("/thrown")
-  public Map<String, Object> root(@RequestParam boolean fail) {
+---
+
+## Cas 3 – fail = true → throw avec try/catch
+
+```java
+public static void main(String[] args) {
     try {
-      process(fail);
-      return Map.of("status", "ok");
+      process(true);                         // throw déclenché ici
+      System.out.println("status : ok");     // ← ignoré, on saute directement au catch
     } catch (RuntimeException e) {
-      return Map.of("status", "error");
+      System.out.println("status : error");  // ← on atterrit ici
+      System.out.println("message : " + e.getMessage());
     }
+    System.out.println("programme continue"); // ← exécuté car le catch a géré l'erreur
+}
+```
+
+Résultat :
+```
+status : error
+message : quelque chose s'est mal passé
+programme continue
+```
+
+---
+
+## Ce qui se passe ligne par ligne
+
+```
+process(true) appelé
+  → fail = true
+  → throw new RuntimeException("quelque chose s'est mal passé")
+  → process() s'arrête immédiatement
+  → l'exception remonte vers main()
+  → main() est dans un try/catch → le catch attrape l'exception
+  → System.out.println("status : error") exécuté
+  → System.out.println("programme continue") exécuté
+```
+
+Sans try/catch :
+```
+process(true) appelé
+  → fail = true
+  → throw new RuntimeException("quelque chose s'est mal passé")
+  → process() s'arrête immédiatement
+  → l'exception remonte vers main()
+  → main() n'a pas de try/catch → personne n'attrape l'exception
+  → la JVM affiche l'erreur et stoppe le programme
+```
+
+---
+
+## Les 3 cas en un seul programme
+
+```java
+public class Main {
+
+  public static void main(String[] args) {
+
+    System.out.println("--- cas 1 : pas de throw ---");
+    process(false);
+    System.out.println("status : ok");
+
+    System.out.println("--- cas 2 : throw avec try/catch ---");
+    try {
+      process(true);
+      System.out.println("status : ok");     // jamais exécuté
+    } catch (RuntimeException e) {
+      System.out.println("status : error");
+      System.out.println("message : " + e.getMessage());
+    }
+
+    System.out.println("--- fin du programme ---");
   }
 
-  private void process(boolean fail) {
+  private static void process(boolean fail) {
     if (fail) {
       throw new RuntimeException("quelque chose s'est mal passé");
     }
@@ -74,22 +139,24 @@ public class RootController {
 }
 ```
 
-Résultats :
-
+Résultat :
 ```
-GET /thrown?fail=false  →  { "status": "ok" }
-GET /thrown?fail=true   →  { "status": "error" }
+--- cas 1 : pas de throw ---
+status : ok
+--- cas 2 : throw avec try/catch ---
+status : error
+message : quelque chose s'est mal passé
+--- fin du programme ---
 ```
 
 ---
 
-## La logique est identique
+## Résumé
 
-| | Java pur | Spring Boot |
-|---|---|---|
-| Déclenchement | `throw new RuntimeException()` | `throw new RuntimeException()` |
-| Capture | `catch (RuntimeException e)` | `catch (RuntimeException e)` |
-| Résultat si ok | `System.out.println("ok")` | `return Map.of("status", "ok")` |
-| Résultat si error | `System.out.println("error")` | `return Map.of("status", "error")` |
+| Situation | Résultat |
+|---|---|
+| `fail=false` | le code continue normalement |
+| `fail=true` sans `try/catch` | programme crash, message d'erreur JVM |
+| `fail=true` avec `try/catch` | l'erreur est attrapée, le programme continue |
 
-Spring Boot ne change pas le principe du `throw`. Il change uniquement comment on retourne le résultat au client.
+`throw` sans `catch` = crash. `throw` avec `catch` = erreur contrôlée.
