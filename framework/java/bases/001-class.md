@@ -7,6 +7,35 @@
 ```java
 public class Main {
 
+
+  static class Media {
+    String name;
+
+    Media(String name) {
+      this.name = name;
+    }
+
+    public void show() {
+      System.out.println("00000000001");
+    }
+  }
+
+  public static void main(String[] args) {
+
+    Media media = new Media("Aliens");
+    System.out.println("00000000001");
+    System.out.println("00000000002:" + media.name);
+  }
+}
+```
+---
+
+
+## Version 1 – Java pur
+
+```java
+public class Main {
+
   // classe simple : champs publics
   static class SimpleClass {
     String name;
