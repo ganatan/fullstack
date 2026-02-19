@@ -4,7 +4,8 @@
 - [Java 21](./installation/001-java21-installation.md)
 
 ## Programmation
-- [Starter](./code/001-starter.md)
+- [Starter](./code/001-java-starter.md)
+- [Starter Détails](./code/001-java-starter-details.md)
 
 ## Historique
 - [Histoire](./histoire/001-origines.md)
