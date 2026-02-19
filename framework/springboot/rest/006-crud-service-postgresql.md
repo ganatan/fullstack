@@ -1,10 +1,10 @@
 # CRUD REST – MediaController (PostgreSQL)
 
-Implémentation avec PostgreSQL :
-- `JpaRepository` pour l'accès aux données
+Implémentation PostgreSQL :
+- `JpaRepository` pour l’accès aux données
 - `MediaController` expose les endpoints REST
 - `MediaService` contient la logique métier
-- `Media` est l'entité JPA
+- `Media` est l’entité JPA (table `media` : `id`, `name`, `release_date`)
 
 ---
 
@@ -91,42 +91,28 @@ public class Media {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "media_id")
-  private int mediaId;
+  @Column(name = "name", nullable = false, length = 255)
+  private String name;
 
-  @Column(name = "title", nullable = false)
-  private String title;
-
-  @Column(name = "type")
-  private String type;
-
-  @Column(name = "release_year")
-  private int releaseYear;
+  @Column(name = "release_date")
+  private int releaseDate;
 
   public Media() {}
 
-  public Media(Long id, int mediaId, String title, String type, int releaseYear) {
+  public Media(Long id, String name, int releaseDate) {
     this.id = id;
-    this.mediaId = mediaId;
-    this.title = title;
-    this.type = type;
-    this.releaseYear = releaseYear;
+    this.name = name;
+    this.releaseDate = releaseDate;
   }
 
   public Long getId() { return id; }
   public void setId(Long id) { this.id = id; }
 
-  public int getMediaId() { return mediaId; }
-  public void setMediaId(int mediaId) { this.mediaId = mediaId; }
+  public String getName() { return name; }
+  public void setName(String name) { this.name = name; }
 
-  public String getTitle() { return title; }
-  public void setTitle(String title) { this.title = title; }
-
-  public String getType() { return type; }
-  public void setType(String type) { this.type = type; }
-
-  public int getReleaseYear() { return releaseYear; }
-  public void setReleaseYear(int releaseYear) { this.releaseYear = releaseYear; }
+  public int getReleaseDate() { return releaseDate; }
+  public void setReleaseDate(int releaseDate) { this.releaseDate = releaseDate; }
 }
 ```
 
@@ -175,15 +161,14 @@ public class MediaService {
   }
 
   public Media create(Media media) {
+    media.setId(null);
     return mediaRepository.save(media);
   }
 
   public Media update(Long id, Media modified) {
     Media existing = findById(id);
-    existing.setMediaId(modified.getMediaId());
-    existing.setTitle(modified.getTitle());
-    existing.setType(modified.getType());
-    existing.setReleaseYear(modified.getReleaseYear());
+    existing.setName(modified.getName());
+    existing.setReleaseDate(modified.getReleaseDate());
     return mediaRepository.save(existing);
   }
 
@@ -285,11 +270,9 @@ class MediaControllerTests {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    inception = new Media(1L, 1, "Inception", "MOVIE", 2010);
-    matrix = new Media(2L, 2, "The Matrix", "MOVIE", 1999);
+    inception = new Media(1L, "Inception", 2010);
+    matrix = new Media(2L, "The Matrix", 1999);
   }
-
-  // --- GET /media ---
 
   @Test
   void getAllMedia_shouldReturnList() {
@@ -311,8 +294,6 @@ class MediaControllerTests {
     assertTrue(result.isEmpty());
   }
 
-  // --- GET /media/{id} ---
-
   @Test
   void getMediaById_shouldReturnMedia_whenIdExists() {
     when(mediaService.findById(1L)).thenReturn(inception);
@@ -321,7 +302,8 @@ class MediaControllerTests {
 
     assertNotNull(result);
     assertEquals(1L, result.getId());
-    assertEquals("Inception", result.getTitle());
+    assertEquals("Inception", result.getName());
+    assertEquals(2010, result.getReleaseDate());
     verify(mediaService, times(1)).findById(1L);
   }
 
@@ -337,50 +319,38 @@ class MediaControllerTests {
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
   }
 
-  // --- POST /media ---
-
   @Test
   void createMedia_shouldReturnCreatedMedia() {
-    Media input = new Media(null, 3, "Interstellar", "MOVIE", 2014);
-    Media saved = new Media(3L, 3, "Interstellar", "MOVIE", 2014);
+    Media input = new Media(null, "Interstellar", 2014);
+    Media saved = new Media(3L, "Interstellar", 2014);
     when(mediaService.create(input)).thenReturn(saved);
 
     Media result = mediaController.createMedia(input);
 
     assertNotNull(result);
     assertEquals(3L, result.getId());
-    assertEquals("Interstellar", result.getTitle());
+    assertEquals("Interstellar", result.getName());
+    assertEquals(2014, result.getReleaseDate());
     verify(mediaService, times(1)).create(input);
   }
-
-  @Test
-  void createMedia_shouldCallServiceOnce() {
-    Media input = new Media(null, 3, "Interstellar", "MOVIE", 2014);
-    when(mediaService.create(any())).thenReturn(input);
-
-    mediaController.createMedia(input);
-
-    verify(mediaService, times(1)).create(input);
-  }
-
-  // --- PUT /media/{id} ---
 
   @Test
   void updateMedia_shouldReturnUpdatedMedia_whenIdExists() {
-    Media modified = new Media(null, 1, "Inception Updated", "MOVIE", 2010);
-    Media updated = new Media(1L, 1, "Inception Updated", "MOVIE", 2010);
+    Media modified = new Media(null, "Inception Updated", 2010);
+    Media updated = new Media(1L, "Inception Updated", 2010);
     when(mediaService.update(1L, modified)).thenReturn(updated);
 
     Media result = mediaController.updateMedia(1L, modified);
 
     assertNotNull(result);
-    assertEquals("Inception Updated", result.getTitle());
+    assertEquals("Inception Updated", result.getName());
+    assertEquals(2010, result.getReleaseDate());
     verify(mediaService, times(1)).update(1L, modified);
   }
 
   @Test
   void updateMedia_shouldThrowNotFound_whenIdDoesNotExist() {
-    Media modified = new Media(null, 1, "Unknown", "MOVIE", 2000);
+    Media modified = new Media(null, "Unknown", 2000);
     when(mediaService.update(eq(999L), any()))
       .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -390,8 +360,6 @@ class MediaControllerTests {
     );
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
   }
-
-  // --- DELETE /media/{id} ---
 
   @Test
   void deleteMedia_shouldCallService_whenIdExists() {
@@ -420,14 +388,11 @@ class MediaControllerTests {
 
 ## Principes clés
 
-- `@Entity` + `@Table(name = "media")` : mappe la classe sur la table PostgreSQL
-- `@Id` + `@GeneratedValue(strategy = GenerationType.IDENTITY)` : id auto-incrémenté par PostgreSQL
-- `@Column` : mappe les champs sur les colonnes — snake_case en base, camelCase en Java
-- `JpaRepository<Media, Long>` : fournit `findAll`, `findById`, `save`, `delete` sans code
-- `ddl-auto=update` : Hibernate crée ou met à jour la table automatiquement au démarrage
-- `open-in-view=false` : désactive la session Hibernate sur la couche HTTP — bonne pratique
-- `show-sql=true` + `format_sql=true` : affiche les requêtes SQL formatées dans les logs
-- `MediaService` : isole la logique métier — le controller ne connaît pas le repository
-- `mediaRepository.save(existing)` : en JPA, `save` sur une entité existante fait un UPDATE
-- Tests Mockito : aucune connexion PostgreSQL nécessaire — le service est entièrement mocké
-- différence MongoDB vs PostgreSQL : `String id` (ObjectId) vs `Long id` (SERIAL/BIGSERIAL)
+- `@Entity` + `@Table(name="media")` : mapping sur la table PostgreSQL
+- `@Id` + `@GeneratedValue(IDENTITY)` : auto-incrément PostgreSQL (BIGSERIAL côté SQL)
+- `@Column(name="release_date")` : mapping snake_case DB → camelCase Java
+- `JpaRepository<Media, Long>` : CRUD natif (`findAll`, `findById`, `save`, `delete`)
+- `ddl-auto=update` : auto-création/migration simple en dev (à éviter en prod)
+- `open-in-view=false` : pas de session Hibernate pendant la sérialisation HTTP
+- `save(existing)` : entité managée → UPDATE ; `save(new)` → INSERT
+- Tests Mockito : isolation du controller, pas de DB, service mocké
