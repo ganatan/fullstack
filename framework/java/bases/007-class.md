@@ -1,25 +1,20 @@
-# class
+# Class – Java pur vs Spring Boot
 
 ---
 
-## Code
+## Version 1 – Java pur
 
 ```java
-package com.ganatan.starter.api.root;
+public class Main {
 
-import java.util.Map;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class RootController {
-
-  class SimpleClass {
+  // classe simple : champs publics
+  static class SimpleClass {
     String name;
     int value;
   }
 
-  class ConstructorClass {
+  // classe avec constructeur
+  static class ConstructorClass {
     String name;
 
     ConstructorClass(String name) {
@@ -27,7 +22,8 @@ public class RootController {
     }
   }
 
-  class EncapsulatedClass {
+  // encapsulation : champ privé, accès via méthode
+  static class EncapsulatedClass {
     private int count;
 
     public int getCount() {
@@ -39,37 +35,43 @@ public class RootController {
     }
   }
 
+  // classe statique : champ partagé
   static class StaticClass {
     static String type = "STATIC";
   }
 
-  abstract class AbstractClass {
+  // classe abstraite : oblige les sous-classes à implémenter
+  static abstract class AbstractClass {
     abstract String getType();
   }
 
-  class ConcreteClass extends AbstractClass {
+  // classe concrète : implémente la classe abstraite
+  static class ConcreteClass extends AbstractClass {
     @Override
     String getType() {
       return "CONCRETE";
     }
   }
 
+  // interface : définit un contrat
   interface SampleInterface {
     String execute();
   }
 
-  class InterfaceImpl implements SampleInterface {
+  // implémentation de l'interface
+  static class InterfaceImpl implements SampleInterface {
     @Override
     public String execute() {
       return "OK";
     }
   }
 
-  class Parent {
+  // héritage : Child hérite de Parent
+  static class Parent {
     String name = "parent";
   }
 
-  class Child extends Parent {
+  static class Child extends Parent {
     String name = "child";
 
     String getNames() {
@@ -77,7 +79,8 @@ public class RootController {
     }
   }
 
-  class ImmutableClass {
+  // immutabilité : la valeur ne peut pas changer après création
+  static class ImmutableClass {
     private final String value;
 
     ImmutableClass(String value) {
@@ -87,6 +90,116 @@ public class RootController {
     public String getValue() {
       return value;
     }
+  }
+
+  public static void main(String[] args) {
+
+    SimpleClass simple = new SimpleClass();
+    simple.name = "simple";
+    simple.value = 1;
+    System.out.println("simple     : " + simple.name + ", " + simple.value);
+
+    ConstructorClass constructor = new ConstructorClass("ctor");
+    System.out.println("constructor: " + constructor.name);
+
+    EncapsulatedClass encapsulated = new EncapsulatedClass();
+    encapsulated.increment();
+    System.out.println("encapsulated: " + encapsulated.getCount());
+
+    System.out.println("static     : " + StaticClass.type);
+
+    ConcreteClass concrete = new ConcreteClass();
+    System.out.println("abstract   : " + concrete.getType());
+
+    InterfaceImpl impl = new InterfaceImpl();
+    System.out.println("interface  : " + impl.execute());
+
+    Child child = new Child();
+    System.out.println("inheritance: " + child.getNames());
+
+    ImmutableClass immutable = new ImmutableClass("fixed");
+    System.out.println("immutable  : " + immutable.getValue());
+  }
+}
+```
+
+Résultat :
+```
+simple     : simple, 1
+constructor: ctor
+encapsulated: 1
+static     : STATIC
+abstract   : CONCRETE
+interface  : OK
+inheritance: parent-child
+immutable  : fixed
+```
+
+---
+
+## Version 2 – Spring Boot
+
+```java
+package com.ganatan.starter.api.root;
+
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class RootController {
+
+  static class SimpleClass {
+    String name;
+    int value;
+  }
+
+  static class ConstructorClass {
+    String name;
+    ConstructorClass(String name) { this.name = name; }
+  }
+
+  static class EncapsulatedClass {
+    private int count;
+    public int getCount() { return count; }
+    public void increment() { count++; }
+  }
+
+  static class StaticClass {
+    static String type = "STATIC";
+  }
+
+  static abstract class AbstractClass {
+    abstract String getType();
+  }
+
+  static class ConcreteClass extends AbstractClass {
+    @Override
+    String getType() { return "CONCRETE"; }
+  }
+
+  interface SampleInterface {
+    String execute();
+  }
+
+  static class InterfaceImpl implements SampleInterface {
+    @Override
+    public String execute() { return "OK"; }
+  }
+
+  static class Parent {
+    String name = "parent";
+  }
+
+  static class Child extends Parent {
+    String name = "child";
+    String getNames() { return super.name + "-" + this.name; }
+  }
+
+  static class ImmutableClass {
+    private final String value;
+    ImmutableClass(String value) { this.value = value; }
+    public String getValue() { return value; }
   }
 
   @GetMapping("/class")
@@ -102,36 +215,46 @@ public class RootController {
     encapsulated.increment();
 
     ConcreteClass concrete = new ConcreteClass();
-
     InterfaceImpl impl = new InterfaceImpl();
-
     Child child = new Child();
-
     ImmutableClass immutable = new ImmutableClass("fixed");
 
     return Map.of(
-      "simple", Map.of("name", simple.name, "value", simple.value),
+      "simple",      Map.of("name", simple.name, "value", simple.value),
       "constructor", constructor.name,
       "encapsulated", encapsulated.getCount(),
-      "static", StaticClass.type,
-      "abstract", concrete.getType(),
-      "interface", impl.execute(),
+      "static",      StaticClass.type,
+      "abstract",    concrete.getType(),
+      "interface",   impl.execute(),
       "inheritance", child.getNames(),
-      "immutable", immutable.getValue()
+      "immutable",   immutable.getValue()
     );
   }
 }
 ```
 
+Résultat :
+```json
+{
+  "simple":       { "name": "simple", "value": 1 },
+  "constructor":  "ctor",
+  "encapsulated": 1,
+  "static":       "STATIC",
+  "abstract":     "CONCRETE",
+  "interface":    "OK",
+  "inheritance":  "parent-child",
+  "immutable":    "fixed"
+}
+```
+
 ---
 
-## Résumé
+## La seule différence
 
-- `class` définit un type objet
-- Champs + méthodes + constructeurs
-- Encapsulation via `private` / `public`
-- Héritage avec `extends`
-- Abstraction via `abstract`
-- Contrats via `interface`
-- `static` partagé par la classe
-- Immutabilité avec `final`
+| | Java pur | Spring Boot |
+|---|---|---|
+| Résultat | `System.out.println()` dans la console | `Map` retourné en JSON via HTTP |
+| Les classes | identiques | identiques |
+| La logique | identique | identique |
+
+Les classes internes doivent être `static` dans les deux cas pour pouvoir être instanciées sans instance de la classe parente.
