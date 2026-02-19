@@ -12,6 +12,7 @@
 - [class](./bases/001-class.md)
 - [static](./bases/002-static.md)
 - [Class vs Instance](./bases/003-class-vs-instance.md)
+- [Final](./bases/004-final.md)
 - [switch](./bases/015-switch.md)
 - [enum](./bases/003-enum.md)
 - [map](./bases/004-map.md)
