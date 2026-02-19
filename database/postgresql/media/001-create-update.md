@@ -1,9 +1,21 @@
 ```sql
-CREATE TABLE country (
+CREATE TABLE continent (
   id   BIGSERIAL PRIMARY KEY,
   code CHAR(2) NOT NULL,
   name VARCHAR(255) NOT NULL,
   UNIQUE (code),
+  UNIQUE (name)
+);
+
+ALTER SEQUENCE continent_id_seq RESTART WITH 1000;
+
+CREATE TABLE country (
+  id           BIGSERIAL PRIMARY KEY,
+  continent_id BIGINT NOT NULL,
+  code         CHAR(2) NOT NULL,
+  name         VARCHAR(255) NOT NULL,
+  FOREIGN KEY (continent_id) REFERENCES continent(id),
+  UNIQUE (continent_id, code),
   UNIQUE (name)
 );
 
@@ -29,9 +41,9 @@ CREATE TABLE person (
 ALTER SEQUENCE person_id_seq RESTART WITH 1000;
 
 CREATE TABLE media (
-  id    BIGSERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  release_date  INTEGER      NOT NULL,
+  id           BIGSERIAL PRIMARY KEY,
+  name         VARCHAR(255) NOT NULL,
+  release_date INTEGER      NOT NULL,
   UNIQUE (name, release_date)
 );
 
@@ -48,13 +60,20 @@ CREATE TABLE media_person (
 ```
 
 ```sql
-INSERT INTO country (code, name)
-VALUES ('US', 'United States');
+INSERT INTO continent (code, name)
+VALUES ('NA', 'North America');
+
+INSERT INTO country (continent_id, code, name)
+VALUES (
+  (SELECT id FROM continent WHERE code = 'NA'),
+  'US',
+  'United States'
+);
 
 INSERT INTO city (country_id, name)
 VALUES
-  ((SELECT id FROM country WHERE code = 'US'), 'Los Angeles'),
-  ((SELECT id FROM country WHERE code = 'US'), 'New York');
+  ((SELECT id FROM country WHERE code = 'US' AND continent_id = (SELECT id FROM continent WHERE code = 'NA')), 'Los Angeles'),
+  ((SELECT id FROM country WHERE code = 'US' AND continent_id = (SELECT id FROM continent WHERE code = 'NA')), 'New York');
 
 INSERT INTO person (city_id, name)
 VALUES
