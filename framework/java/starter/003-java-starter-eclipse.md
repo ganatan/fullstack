@@ -28,11 +28,13 @@ Choisir : **Eclipse IDE for Java Developers**
 ## Création projet Eclipse
 
 ```
-File → New → Java Project
+File → New → Project → Java → Java Project
 
-Project name : java-starter
+Project name : java_starter
 JRE          : Use default JRE (jdk-21)
 ```
+Décocher **Use Default Location**.
+Indiquer D:\demo
 
 Décocher **Create module-info.java** si proposé.
 
