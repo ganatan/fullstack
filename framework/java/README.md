@@ -8,12 +8,6 @@
 - [Starter IntelliJ Détails](./starter/002-java-starter-intellij-details.md)
 - [Starter Eclipse](./starter/003-java-starter-eclipse.md)
 
-## Historique
-- [Histoire](./histoire/001-origines.md)
-- [Versions](./histoire/002-versions.md)
-- [Synthese](./histoire/003-synthese.md)
-- [Framework](./histoire/004-framework.md)
-
 ## Bases
 - [class](./bases/001-class.md)
 - [switch](./bases/002-switch.md)
@@ -29,6 +23,12 @@
 - [array](./bases/012-array.md)
 - [thrown](./bases/013-thrown.md)
 - [modifier](./bases/014-modifier.md)
+
+## Historique
+- [Histoire](./histoire/001-origines.md)
+- [Versions](./histoire/002-versions.md)
+- [Synthese](./histoire/003-synthese.md)
+- [Framework](./histoire/004-framework.md)
 
 
 
