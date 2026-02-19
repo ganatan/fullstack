@@ -1,8 +1,8 @@
-# Class – Java pur vs Spring Boot
+# Class
 
 ---
 
-## Version 1 – Java pur
+## Version Simple – Java
 
 ```java
 public class Main {
@@ -31,7 +31,7 @@ public class Main {
 ---
 
 
-## Version 1 – Java pur
+## Version Détaillée – Java
 
 ```java
 public class Main {
@@ -166,7 +166,7 @@ immutable  : fixed
 
 ---
 
-## Version 2 – Spring Boot
+## Version Détaillée – Spring Boot
 
 ```java
 package com.ganatan.starter.api.root;
