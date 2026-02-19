@@ -1,8 +1,49 @@
-# thrown – Java (principe essentiel)
+# Throw – Java pur vs Spring Boot
 
 ---
 
-## Code
+## Version 1 – Java pur
+
+```java
+public class Main {
+
+  public static void main(String[] args) {
+
+    // cas sans erreur
+    try {
+      process(false);
+      System.out.println("status : ok");
+    } catch (RuntimeException e) {
+      System.out.println("status : error");
+    }
+
+    // cas avec erreur
+    try {
+      process(true);
+      System.out.println("status : ok");
+    } catch (RuntimeException e) {
+      System.out.println("status : error");
+    }
+  }
+
+  private static void process(boolean fail) {
+    if (fail) {
+      throw new RuntimeException("quelque chose s'est mal passé");
+    }
+  }
+}
+```
+
+Résultats :
+
+```
+status : ok
+status : error
+```
+
+---
+
+## Version 2 – Spring Boot
 
 ```java
 package com.ganatan.starter.api.root;
@@ -27,28 +68,28 @@ public class RootController {
 
   private void process(boolean fail) {
     if (fail) {
-      throw new RuntimeException("error");
+      throw new RuntimeException("quelque chose s'est mal passé");
     }
   }
 }
 ```
 
+Résultats :
+
+```
+GET /thrown?fail=false  →  { "status": "ok" }
+GET /thrown?fail=true   →  { "status": "error" }
+```
+
 ---
 
-## Explications
+## La logique est identique
 
-1. Le paramètre `fail` décide si une exception est déclenchée.
-2. `process(fail)` exécute la logique métier.
-3. Si `fail=false`, aucune exception n’est levée et le flux continue normalement.
-4. Si `fail=true`, l’instruction `throw` est exécutée.
-5. À cet instant, l’exception est dite **thrown**.
-6. `throw` interrompt immédiatement l’exécution de la méthode courante.
-7. Aucune ligne après le `throw` n’est exécutée.
-8. L’exception remonte la pile d’appels.
-9. Le `catch` dans `root()` intercepte l’exception.
-10. L’exception thrown est alors exploitée.
-11. Le flux est transformé en réponse contrôlée.
-12. Sans `try/catch`, Spring gérerait l’erreur automatiquement.
-13. Une exception non capturée stoppe le process.
-14. `thrown` n’est pas un mot-clé mais un état logique.
-15. Une exception n’a d’intérêt que si elle est capturée ou propagée volontairement.
+| | Java pur | Spring Boot |
+|---|---|---|
+| Déclenchement | `throw new RuntimeException()` | `throw new RuntimeException()` |
+| Capture | `catch (RuntimeException e)` | `catch (RuntimeException e)` |
+| Résultat si ok | `System.out.println("ok")` | `return Map.of("status", "ok")` |
+| Résultat si error | `System.out.println("error")` | `return Map.of("status", "error")` |
+
+Spring Boot ne change pas le principe du `throw`. Il change uniquement comment on retourne le résultat au client.
