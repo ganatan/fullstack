@@ -44,68 +44,74 @@ import java.util.Map;
 @RequestMapping("/media")
 public class MediaController {
 
-  // données en mémoire, pas de base de données
-  private final Map<Long, String> store = new HashMap<>();
+  private ArrayList<Long> ids = new ArrayList<>();
+  private ArrayList<String> names = new ArrayList<>();
   private long nextId = 1;
 
-  // GET /media → retourne tous les éléments
   @GetMapping
   public List<Map<String, Object>> getAll() {
     List<Map<String, Object>> result = new ArrayList<>();
-    store.forEach((id, name) -> {
+    for (int i = 0; i < ids.size(); i++) {
       Map<String, Object> item = new HashMap<>();
-      item.put("id", id);
-      item.put("name", name);
+      item.put("id", ids.get(i));
+      item.put("name", names.get(i));
       result.add(item);
-    });
+    }
     return result;
   }
 
-  // GET /media/1 → retourne un élément par id
   @GetMapping("/{id}")
   public Map<String, Object> getById(@PathVariable Long id) {
-    if (!store.containsKey(id)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
+    for (int i = 0; i < ids.size(); i++) {
+      if (ids.get(i).equals(id)) {
+        Map<String, Object> item = new HashMap<>();
+        item.put("id", ids.get(i));
+        item.put("name", names.get(i));
+        return item;
+      }
     }
-    Map<String, Object> item = new HashMap<>();
-    item.put("id", id);
-    item.put("name", store.get(id));
-    return item;
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
   }
 
-  // POST /media → ajoute un élément, retourne 201
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Map<String, Object> create(@RequestBody Map<String, String> body) {
     Long id = nextId++;
-    store.put(id, body.get("name"));
+    String name = body.get("name");
+    ids.add(id);
+    names.add(name);
     Map<String, Object> item = new HashMap<>();
     item.put("id", id);
-    item.put("name", body.get("name"));
+    item.put("name", name);
     return item;
   }
 
-  // PUT /media/1 → modifie un élément, retourne 200
   @PutMapping("/{id}")
   public Map<String, Object> update(@PathVariable Long id, @RequestBody Map<String, String> body) {
-    if (!store.containsKey(id)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
+    for (int i = 0; i < ids.size(); i++) {
+      if (ids.get(i).equals(id)) {
+        String name = body.get("name");
+        names.set(i, name);
+        Map<String, Object> item = new HashMap<>();
+        item.put("id", id);
+        item.put("name", name);
+        return item;
+      }
     }
-    store.put(id, body.get("name"));
-    Map<String, Object> item = new HashMap<>();
-    item.put("id", id);
-    item.put("name", body.get("name"));
-    return item;
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
   }
 
-  // DELETE /media/1 → supprime un élément, retourne 204
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable Long id) {
-    if (!store.containsKey(id)) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
+    for (int i = 0; i < ids.size(); i++) {
+      if (ids.get(i).equals(id)) {
+        ids.remove(i);
+        names.remove(i);
+        return;
+      }
     }
-    store.remove(id);
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
   }
 }
 ```
