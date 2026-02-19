@@ -1,19 +1,16 @@
 # Static
 
-`static` est un mot-clé Java qui indique qu’un membre appartient à la **classe** et non à une **instance**.
+`static` veut dire : **c’est à la classe**, pas à l’objet.
 
-- Un **champ static** est **partagé** par toutes les instances de la classe.
-- Un **champ non static** est **propre** à chaque objet créé avec `new`.
-- Une **méthode static** s’appelle via le **nom de la classe**, sans créer d’objet.
-- `static final` définit une **constante** : partagée et non modifiable.
-- Un **bloc static** s’exécute **une seule fois** au chargement de la classe.
+- `static` = **une seule valeur** pour toute la classe (partagée)
+- non `static` = **une valeur par objet** (chacun la sienne)
 
 ---
 
-## Exemple simple (Media)
+## Exemple (Media)
 
-- `compteurGlobal` est partagé par tous les `Media`
-- `compteurParObjet` est différent pour chaque `Media`
+- `totalViews` : compteur **global** pour tous les médias
+- `views` : compteur **local** pour un seul média
 
 ```java
 package java_starter;
@@ -21,43 +18,63 @@ package java_starter;
 public class Main {
 
   static class Media {
-    static int compteurGlobal = 0;
-    int compteurParObjet = 0;
+    static int totalViews = 0;
+    int views = 0;
 
-    void play() {
-      compteurGlobal = compteurGlobal + 1;
-      compteurParObjet = compteurParObjet + 1;
-      System.out.println("global=" + compteurGlobal + " objet=" + compteurParObjet);
+    void view() {
+      totalViews = totalViews + 1;
+      views = views + 1;
+      System.out.println("totalViews=" + totalViews + " views=" + views);
     }
   }
 
   public static void main(String[] args) {
-    Media a = new Media();
-    Media b = new Media();
+    Media aliens = new Media();
+    Media matrix = new Media();
 
-    a.play();
-    a.play();
+    aliens.view();
+    aliens.view();
 
-    b.play();
-    b.play();
+    matrix.view();
+    matrix.view();
 
-    System.out.println("Final global=" + Media.compteurGlobal);
-    System.out.println("Final a=" + a.compteurParObjet);
-    System.out.println("Final b=" + b.compteurParObjet);
+    System.out.println("final totalViews=" + Media.totalViews);
+    System.out.println("final aliens.views=" + aliens.views);
+    System.out.println("final matrix.views=" + matrix.views);
   }
 }
 ```
 
 ---
 
+## Explication “comme à un enfant”
+
+Imagine que tu as **deux films** : `aliens` et `matrix`.
+
+### `views` (pas static)
+C’est le **compteur collé sur chaque film**.
+
+- `aliens` a son compteur
+- `matrix` a son compteur
+Ils ne se mélangent pas.
+
+### `totalViews` (static)
+C’est le **grand panneau au cinéma** qui compte toutes les vues, tous films confondus.
+
+- Quand tu regardes `aliens`, le panneau monte
+- Quand tu regardes `matrix`, le panneau monte aussi
+C’est le même panneau pour tout le monde.
+
+---
+
 ## Résultat attendu (idée)
 
-- `a.play()` : `global=1 objet=1`
-- `a.play()` : `global=2 objet=2`
-- `b.play()` : `global=3 objet=1`
-- `b.play()` : `global=4 objet=2`
+- `aliens.view()` : `totalViews=1 views=1`
+- `aliens.view()` : `totalViews=2 views=2`
+- `matrix.view()` : `totalViews=3 views=1`
+- `matrix.view()` : `totalViews=4 views=2`
 
 À la fin :
-- `Media.compteurGlobal = 4` (partagé)
-- `a.compteurParObjet = 2` (propre à `a`)
-- `b.compteurParObjet = 2` (propre à `b`)
+- `Media.totalViews = 4` (global, partagé)
+- `aliens.views = 2` (propre à aliens)
+- `matrix.views = 2` (propre à matrix)
