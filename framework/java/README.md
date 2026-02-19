@@ -14,13 +14,13 @@
 - [Framework](./histoire/004-framework.md)
 
 ## Bases
-- [while](./bases/001-while.md)
+- [class](./bases/001-class.md)
 - [switch](./bases/002-switch.md)
 - [enum](./bases/003-enum.md)
 - [map](./bases/004-map.md)
 - [data-types](./bases/005-data-types.md)
 - [data-types-date](./bases/006-data-types-date.md)
-- [class](./bases/007-class.md)
+- [while](./bases/007-while.md)
 - [if](./bases/008-if.md)
 - [for](./bases/009-for.md)
 - [do-while](./bases/010-do-while.md)
