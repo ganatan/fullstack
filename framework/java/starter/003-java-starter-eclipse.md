@@ -36,9 +36,10 @@ JRE          : Use default JRE (jdk-21)
 Décocher **Use Default Location**.
 Indiquer D:\demo
 
-Décocher **Create module-info.java** si proposé.
 
 Cliquer sur **Finish**.
+
+Open Perspective
 
 ---
 

@@ -1,14 +1,14 @@
-# IntelliJ IDEA — Débogage
+# Eclipse — Débogage
 
 ## Lancer en mode debug
 
 Raccourci :
 
 ```
-Shift + F9
+F11
 ```
 
-Ou cliquer sur l'icône 🐛 à côté du bouton ▶
+Ou clic droit dans l'éditeur → **Debug As → Java Application**
 
 ---
 
@@ -16,9 +16,9 @@ Ou cliquer sur l'icône 🐛 à côté du bouton ▶
 
 ### Ajouter un breakpoint
 
-Cliquer dans la marge gauche à côté du numéro de ligne.
+Double-cliquer dans la marge gauche à côté du numéro de ligne.
 
-Un point rouge apparaît :
+Un point bleu apparaît :
 
 ```
 ● 12  int age = 25;
@@ -26,17 +26,11 @@ Un point rouge apparaît :
 
 ### Supprimer un breakpoint
 
-Cliquer à nouveau sur le point rouge.
+Double-cliquer à nouveau sur le point bleu.
 
-### Désactiver tous les breakpoints
+### Gérer tous les breakpoints
 
-Run → View Breakpoints → Mute Breakpoints
-
-Raccourci :
-
-```
-Ctrl + Shift + F8
-```
+Run → **Breakpoints**
 
 ---
 
@@ -44,11 +38,11 @@ Ctrl + Shift + F8
 
 | Raccourci | Bouton | Action |
 |---|---|---|
-| `F8` | ⬇ Step Over | exécute la ligne, ne rentre pas dans la méthode |
-| `F7` | ↘ Step Into | entre dans la méthode appelée |
-| `Shift + F8` | ↗ Step Out | sort de la méthode courante |
-| `F9` | ▶ Resume | continue jusqu'au prochain breakpoint |
-| `Alt + F9` | ⏩ Run to Cursor | continue jusqu'à la ligne du curseur |
+| `F6` | ⬇ Step Over | exécute la ligne, ne rentre pas dans la méthode |
+| `F5` | ↘ Step Into | entre dans la méthode appelée |
+| `F7` | ↗ Step Return | sort de la méthode courante |
+| `F8` | ▶ Resume | continue jusqu'au prochain breakpoint |
+| `Ctrl + R` | ⏩ Run to Line | continue jusqu'à la ligne du curseur |
 
 ---
 
@@ -64,31 +58,35 @@ Variables
 └── actif = true
 ```
 
-Accessible dans l'onglet **Debug** en bas d'IntelliJ.
+Accessible dans l'onglet **Variables** en haut à droite en vue Debug.
 
 ---
 
-## Evaluate Expression
+## Display / Evaluate Expression
 
 Exécuter une expression Java à la volée pendant le debug.
 
-Raccourci :
+```
+Window → Show View → Display
+```
+
+Taper l'expression, sélectionner le texte, puis :
 
 ```
-Alt + F8
+Ctrl + Shift + D
 ```
 
 Exemple : taper `age + 10` → affiche `35`
 
 ---
 
-## Watches
+## Expressions (Watches)
 
-Surveiller une variable ou expression en continu pendant toute l'exécution.
+Surveiller une variable ou expression en continu.
 
-Dans la fenêtre Debug → onglet **Watches** → cliquer sur **+**
+Dans l'onglet **Expressions** → cliquer sur **Add new expression**
 
-Exemple : ajouter `film.nom` → la valeur se met à jour à chaque step.
+Exemple : ajouter `film` → la valeur se met à jour à chaque step.
 
 ---
 
@@ -112,13 +110,13 @@ public class Main {
 ### Déroulé pas à pas
 
 ```
-F9  → programme démarre, s'arrête sur le breakpoint ligne 4
-F8  → nom = "Inception" est assigné, Variables affiche nom = "Inception"
-F8  → annee = 2010 est assigné, Variables affiche annee = 2010
-F8  → actif = true est assigné
-F8  → entre dans le if (actif = true)
-F8  → System.out.println exécuté, affiche dans la console
-F9  → programme termine
+F11 → programme démarre, s'arrête sur le breakpoint ligne 4
+F6  → nom = "Inception" est assigné, Variables affiche nom = "Inception"
+F6  → annee = 2010 est assigné, Variables affiche annee = 2010
+F6  → actif = true est assigné
+F6  → entre dans le if (actif = true)
+F6  → System.out.println exécuté, affiche dans la console
+F8  → programme termine
 ```
 
 ---
@@ -127,7 +125,7 @@ F9  → programme termine
 
 S'arrêter uniquement si une condition est vraie.
 
-Clic droit sur le point rouge → **Edit Breakpoint**
+Clic droit sur le point bleu → **Breakpoint Properties**
 
 ```
 Condition : annee == 2010
@@ -167,7 +165,7 @@ Variables
 └── film  = "Inception"
 ```
 
-À chaque `F8`, `i` et `film` se mettent à jour.
+À chaque `F6`, `i` et `film` se mettent à jour.
 
 ---
 
@@ -196,12 +194,12 @@ public class Main {
 ### Déroulé :
 
 ```
-F9  → s'arrête sur process(true)
-F7  → entre dans process(), Variables affiche fail = true
-F8  → entre dans le if
-F8  → throw exécuté, exception lancée
-F9  → s'arrête sur le catch, Variables affiche e.message = "erreur"
-F8  → System.out.println("status : error") exécuté
+F11 → s'arrête sur process(true)
+F5  → entre dans process(), Variables affiche fail = true
+F6  → entre dans le if
+F6  → throw exécuté, exception lancée
+F8  → s'arrête sur le catch, Variables affiche e = RuntimeException
+F6  → System.out.println("status : error") exécuté
 ```
 
 ---
@@ -210,11 +208,24 @@ F8  → System.out.println("status : error") exécuté
 
 | Raccourci | Action |
 |---|---|
-| `Shift + F9` | lancer en mode debug |
-| `F8` | step over |
-| `F7` | step into |
-| `Shift + F8` | step out |
-| `F9` | resume |
-| `Alt + F9` | run to cursor |
-| `Alt + F8` | evaluate expression |
-| `Ctrl + Shift + F8` | gérer les breakpoints |
+| `F11` | lancer en mode debug |
+| `F6` | step over |
+| `F5` | step into |
+| `F7` | step return (out) |
+| `F8` | resume |
+| `Ctrl + R` | run to line |
+| `Ctrl + Shift + D` | evaluate expression |
+
+---
+
+## IntelliJ vs Eclipse
+
+| Action | IntelliJ | Eclipse |
+|---|---|---|
+| Lancer debug | `Shift + F9` | `F11` |
+| Step Over | `F8` | `F6` |
+| Step Into | `F7` | `F5` |
+| Step Out | `Shift + F8` | `F7` |
+| Resume | `F9` | `F8` |
+| Run to cursor | `Alt + F9` | `Ctrl + R` |
+| Breakpoint | clic marge gauche (point rouge) | double-clic marge gauche (point bleu) |
