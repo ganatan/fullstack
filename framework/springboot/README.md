@@ -25,6 +25,7 @@
 - [DTO Validation](./features-metiers/007-springboot-dto-validation.md)
 - [DTO Mapping](./features-metiers/008-springboot-dto-mapping.md)
 - [Controller](./features-metiers/009-springboot-controller.md)
+- [Thrown](./features-metiers/010-springboot-thrown.md)
 
 ## Tests
 - [Demarrage](./tests/001-commandes.md)
