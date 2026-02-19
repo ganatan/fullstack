@@ -1,19 +1,14 @@
 # Eclipse — Débogage
 
 
-
 ## Resume
----
 
 | Raccourci | Bouton | Action |
 |---|---|---|
-
-| `F11` | ▶ Main | Lance le debugage |
-| `F8` | ▶ Resume | continue jusqu'au prochain breakpoint |
-| `F6` | ⬇ Step Over | exécute la ligne, ne rentre pas dans la méthode |
-| `F5` | ↘ Step Into | entre dans la méthode appelée |
-
----
+| `F11` | ▶ Main | Lance le débogage |
+| `F8` | ▶ Resume | Continue jusqu’au prochain breakpoint |
+| `F6` | ⬇ Step Over | Exécute la ligne, ne rentre pas dans la méthode |
+| `F5` | ↘ Step Into | Entre dans la méthode appelée |
 
 
 ## Lancer en mode debug
