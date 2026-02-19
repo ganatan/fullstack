@@ -1,70 +1,21 @@
-# 006 – DTO Validation · Contrôler ce que le client envoie
+# DTO Validation – Exemple minimal sans base de données
 
 ---
 
-## Le problème sans validation
+## Structure
 
-Sans validation, le client peut envoyer n'importe quoi :
-
-```json
-{ "name": "", "releaseDate": -500 }
+```
+com.ganatan.starter.api.media
+├── MediaDTO.java
+├── MediaController.java
+└── GlobalExceptionHandler.java
 ```
 
-Le controller accepte, le service enregistre en base. Résultat : données corrompues.
+Pas de base de données. Les données sont stockées dans une simple liste en mémoire.
 
 ---
 
-## La solution : DTO de validation
-
-On crée un DTO d'entrée avec des annotations de contraintes. Spring valide automatiquement avant d'entrer dans le controller.
-
-```
-Client envoie du JSON
-        ↓
-@Valid @RequestBody MediaRequestDTO
-        ↓
-Spring valide les contraintes
-        ↓
-  ✅ valide  →  entre dans le controller
-  ❌ invalide →  400 Bad Request  (jamais le controller)
-```
-
----
-
-## Les annotations de validation
-
-```java
-// champ obligatoire, non vide, non blank
-@NotNull     // refuse null
-@NotEmpty    // refuse null et ""
-@NotBlank    // refuse null, "" et "   " ← le plus strict, préférer celui-ci pour les String
-
-// taille
-@Size(min = 2, max = 255)   // longueur de String ou taille de Collection
-@Min(1888)                   // valeur numérique minimum
-@Max(2100)                   // valeur numérique maximum
-
-// format
-@Email                       // vérifie le format email
-@Pattern(regexp = "...")     // expression régulière
-@Positive                    // > 0
-@PositiveOrZero              // >= 0
-```
-
----
-
-## Exemple minimal
-
-### La dépendance – pom.xml
-
-```xml
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-validation</artifactId>
-</dependency>
-```
-
-### Le DTO d'entrée – MediaRequestDTO.java
+## MediaDTO.java
 
 ```java
 package com.ganatan.starter.api.media;
@@ -72,24 +23,28 @@ package com.ganatan.starter.api.media;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
-public class MediaRequestDTO {
+public class MediaDTO {
+
+  private Long id;
 
   @NotBlank(message = "Le nom ne peut pas être vide")
-  @Size(max = 255, message = "Le nom ne peut pas dépasser 255 caractères")
   private String name;
 
   @NotNull(message = "La date de sortie est obligatoire")
   @Min(value = 1888, message = "La date de sortie doit être supérieure à 1888")
   private Integer releaseDate;
 
-  public MediaRequestDTO() {}
+  public MediaDTO() {}
 
-  public MediaRequestDTO(String name, Integer releaseDate) {
+  public MediaDTO(Long id, String name, Integer releaseDate) {
+    this.id = id;
     this.name = name;
     this.releaseDate = releaseDate;
   }
+
+  public Long getId() { return id; }
+  public void setId(Long id) { this.id = id; }
 
   public String getName() { return name; }
   public void setName(String name) { this.name = name; }
@@ -99,11 +54,9 @@ public class MediaRequestDTO {
 }
 ```
 
-Pas d'`id` ici : le client ne fournit pas d'id en entrée (POST). C'est le serveur qui le génère.
+---
 
-### Le controller – MediaController.java
-
-`@Valid` déclenche la validation. Sans `@Valid`, les annotations du DTO sont ignorées.
+## MediaController.java
 
 ```java
 package com.ganatan.starter.api.media;
@@ -112,52 +65,47 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/media")
 public class MediaController {
 
-  private final MediaRepository mediaRepository;
+  // liste en mémoire, pas de base de données
+  private final List<MediaDTO> store = new ArrayList<>();
+  private long nextId = 1;
 
-  public MediaController(MediaRepository mediaRepository) {
-    this.mediaRepository = mediaRepository;
+  @GetMapping
+  public List<MediaDTO> getAll() {
+    return store;
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Media createMedia(@Valid @RequestBody MediaRequestDTO dto) {
-    //                      ↑
-    //              sans @Valid : aucune validation
-    Media media = new Media();
-    media.setName(dto.getName());
-    media.setReleaseDate(dto.getReleaseDate());
-    return mediaRepository.save(media);
-  }
-
-  @PutMapping("/{id}")
-  public Media updateMedia(@PathVariable Long id, @Valid @RequestBody MediaRequestDTO dto) {
-    Media existing = mediaRepository.findById(id)
-      .orElseThrow(() -> new RuntimeException("Not found"));
-    existing.setName(dto.getName());
-    existing.setReleaseDate(dto.getReleaseDate());
-    return mediaRepository.save(existing);
+  public MediaDTO create(@Valid @RequestBody MediaDTO dto) {
+    dto.setId(nextId++);
+    store.add(dto);
+    return dto;
   }
 }
 ```
 
-### Le gestionnaire d'erreurs – GlobalExceptionHandler.java
+---
 
-Sans ce handler, Spring retourne une réponse `400` avec un body verbeux et difficile à exploiter côté client. Le handler formate proprement les erreurs.
+## GlobalExceptionHandler.java
 
 ```java
 package com.ganatan.starter.api.media;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -176,100 +124,97 @@ public class GlobalExceptionHandler {
 
 ---
 
-## Cas concrets
+## pom.xml – la seule dépendance nécessaire
 
-### Requête valide
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+```
+
+---
+
+## Résultats
+
+### POST valide
 
 ```
-POST /media
+POST http://localhost:3000/media
 { "name": "Inception", "releaseDate": 2010 }
 
 → 201 CREATED
 { "id": 1, "name": "Inception", "releaseDate": 2010 }
 ```
 
-### Nom vide
+### nom vide → 400
 
 ```
-POST /media
+POST http://localhost:3000/media
 { "name": "", "releaseDate": 2010 }
 
 → 400 Bad Request
 { "name": "Le nom ne peut pas être vide" }
 ```
 
-### Plusieurs erreurs en même temps
+### date trop ancienne → 400
 
 ```
-POST /media
-{ "name": "  ", "releaseDate": 1500 }
+POST http://localhost:3000/media
+{ "name": "Inception", "releaseDate": 1500 }
 
 → 400 Bad Request
-{
-  "name": "Le nom ne peut pas être vide",
-  "releaseDate": "La date de sortie doit être supérieure à 1888"
-}
+{ "releaseDate": "La date de sortie doit être supérieure à 1888" }
 ```
 
-### Champ manquant
+### champ manquant → 400
 
 ```
-POST /media
+POST http://localhost:3000/media
 { "name": "Inception" }
 
 → 400 Bad Request
 { "releaseDate": "La date de sortie est obligatoire" }
 ```
 
----
-
-## @NotNull vs @NotEmpty vs @NotBlank
-
-| Annotation   | Refuse `null` | Refuse `""` | Refuse `"   "` | À utiliser pour         |
-|--------------|:-------------:|:-----------:|:--------------:|-------------------------|
-| `@NotNull`   | ✅            | ❌          | ❌             | Integer, Long, objets   |
-| `@NotEmpty`  | ✅            | ✅          | ❌             | Collections, tableaux   |
-| `@NotBlank`  | ✅            | ✅          | ✅             | String ← toujours celui-là |
-
----
-
-## DTO Request vs DTO Response
-
-On peut aller plus loin et séparer en deux classes distinctes :
+### GET après plusieurs POST valides
 
 ```
-MediaRequestDTO   ← POST/PUT  : champs que le client envoie  + contraintes @Valid
-MediaResponseDTO  ← GET       : champs que le serveur expose  (pas de contraintes)
+GET http://localhost:3000/media
+
+→ 200 OK
+[
+  { "id": 1, "name": "Inception", "releaseDate": 2010 },
+  { "id": 2, "name": "The Matrix", "releaseDate": 1999 }
+]
 ```
-
-```java
-// entrée : le client envoie name et releaseDate, pas d'id
-public class MediaRequestDTO {
-  @NotBlank private String name;
-  @NotNull @Min(1888) private Integer releaseDate;
-}
-
-// sortie : le serveur retourne id, name, releaseDate
-public class MediaResponseDTO {
-  private Long id;
-  private String name;
-  private Integer releaseDate;
-}
-```
-
-Avantage : les deux contrats sont indépendants. On peut ajouter un champ en sortie sans toucher aux règles d'entrée, et vice versa.
 
 ---
 
-## Résumé
+## Ce qui se passe quand @Valid détecte une erreur
 
 ```
-@Valid             = active la validation sur le DTO
-@NotBlank          = String obligatoire et non vide
-@NotNull           = objet obligatoire (Integer, Long...)
-@Min / @Max        = bornes numériques
-@Size              = longueur de String ou Collection
-@ControllerAdvice  = formate les erreurs en 400 lisible
+Client envoie { "name": "", "releaseDate": 2010 }
+       ↓
+Spring lit @Valid sur le paramètre
+       ↓
+Spring vérifie @NotBlank sur name → échec
+       ↓
+Spring lance MethodArgumentNotValidException
+       ↓
+GlobalExceptionHandler l'intercepte
+       ↓
+Retourne 400 { "name": "Le nom ne peut pas être vide" }
+       ↓
+Le code du controller n'est JAMAIS exécuté
 ```
 
-La validation s'arrête **avant** le controller. Si le DTO est invalide, le code métier n'est jamais exécuté.
+---
+
+## Résumé en 3 points
+
+**1. Le DTO porte les règles** — `@NotBlank`, `@NotNull`, `@Min` sont sur le DTO, pas sur l'entité ni dans le controller.
+
+**2. `@Valid` active la vérification** — sans `@Valid` devant `@RequestBody`, toutes les annotations sont ignorées.
+
+**3. Le handler formate les erreurs** — sans `GlobalExceptionHandler`, Spring retourne quand même un 400 mais avec un message illisible.
