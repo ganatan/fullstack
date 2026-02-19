@@ -26,20 +26,9 @@ Un seul fichier.
 
 ---
 
-## MediaController.java
+## MediaController.java Solution 1
 
 ```java
-package com.ganatan.starter.api.media;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/media")
 public class MediaController {
@@ -115,8 +104,190 @@ public class MediaController {
   }
 }
 ```
-
 ---
+
+## MediaController.java Solution 2
+
+```java
+@RestController
+@RequestMapping("/media")
+public class MediaController {
+
+  static class Media {
+    Long id;
+    String name;
+
+    Media(Long id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+  }
+
+  private List<Media> store = new ArrayList<>();
+  private long nextId = 1;
+
+  @GetMapping
+  public List<Media> getAll() {
+    return store;
+  }
+
+  @GetMapping("/{id}")
+  public Media getById(@PathVariable Long id) {
+    for (Media media : store) {
+      if (media.id.equals(id)) {
+        return media;
+      }
+    }
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
+  }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public Media create(@RequestBody Media body) {
+    Media media = new Media(nextId++, body.name);
+    store.add(media);
+    return media;
+  }
+
+  @PutMapping("/{id}")
+  public Media update(@PathVariable Long id, @RequestBody Media body) {
+    Media existing = getById(id);
+    existing.name = body.name;
+    return existing;
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable Long id) {
+    Media existing = getById(id);
+    store.remove(existing);
+  }
+}
+```
+---
+
+## MediaController.java Solution 3
+
+```java
+@RestController
+@RequestMapping("/media")
+public class MediaController {
+
+  static class Media {
+    private Long id;
+    private String name;
+
+    Media(Long id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+  }
+
+  private final Map<Long, Media> store = new HashMap<>();
+  private long nextId = 1;
+
+  private Media findOrThrow(Long id) {
+    Media media = store.get(id);
+    if (media == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé");
+    }
+    return media;
+  }
+
+  @GetMapping
+  public List<Media> getAll() {
+    return new ArrayList<>(store.values());
+  }
+
+  @GetMapping("/{id}")
+  public Media getById(@PathVariable Long id) {
+    return findOrThrow(id);
+  }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public Media create(@RequestBody Media body) {
+    Long id = nextId++;
+    Media media = new Media(id, body.getName());
+    store.put(id, media);
+    return media;
+  }
+
+  @PutMapping("/{id}")
+  public Media update(@PathVariable Long id, @RequestBody Media body) {
+    Media existing = findOrThrow(id);
+    existing.setName(body.getName());
+    return existing;
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable Long id) {
+    findOrThrow(id);
+    store.remove(id);
+  }
+}
+```
+---
+
+## MediaController.java Solution 4
+
+```java
+@RestController
+@RequestMapping("/media")
+public class MediaController {
+
+  record Media(Long id, String name) {}
+
+  private final ConcurrentHashMap<Long, Media> store = new ConcurrentHashMap<>();
+  private final AtomicLong nextId = new AtomicLong(1);
+
+  private Media findOrThrow(Long id) {
+    return Optional.ofNullable(store.get(id))
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Media non trouvé"));
+  }
+
+  @GetMapping
+  public List<Media> getAll() {
+    return new ArrayList<>(store.values());
+  }
+
+  @GetMapping("/{id}")
+  public Media getById(@PathVariable Long id) {
+    return findOrThrow(id);
+  }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public Media create(@RequestBody Media body) {
+    Long id = nextId.getAndIncrement();
+    Media media = new Media(id, body.name());
+    store.put(id, media);
+    return media;
+  }
+
+  @PutMapping("/{id}")
+  public Media update(@PathVariable Long id, @RequestBody Media body) {
+    findOrThrow(id);
+    Media updated = new Media(id, body.name());
+    store.put(id, updated);
+    return updated;
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable Long id) {
+    findOrThrow(id);
+    store.remove(id);
+  }
+}
+```
+---
+
 
 ## Les annotations expliquées
 
