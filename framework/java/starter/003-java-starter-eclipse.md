@@ -99,15 +99,6 @@ Bonjour Java
 
 ---
 
-## Commandes compilation manuelle
-
-```bash
-javac Main.java
-java Main
-```
-
----
-
 ## Raccourcis utiles Eclipse
 
 | Raccourci | Action |
