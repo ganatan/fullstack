@@ -4,9 +4,9 @@
 - [Java 21](./installation/001-java21-installation.md)
 
 ## Programmation
+- [Starter Eclipse](./starter/003-java-starter-eclipse.md)
 - [Starter IntelliJ](./starter/001-java-starter-intellij.md)
 - [Starter IntelliJ Détails](./starter/002-java-starter-intellij-details.md)
-- [Starter Eclipse](./starter/003-java-starter-eclipse.md)
 
 ## Bases
 - [class](./bases/001-class.md)
