@@ -1,7 +1,14 @@
-# Liste des 10 derniers commits
+# Liste des 10 derniers commits en local
 
 ```bash
 git log -20 --oneline --decorate
+```
+
+# Liste des 10 derniers commits sur un remote
+
+```bash
+git fetch gitlab
+git log -10 --oneline --decorate gitlab/main
 ```
 
 # Liste des commits
