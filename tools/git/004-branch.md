@@ -45,7 +45,17 @@ git push origin --delete feature-01
 git fetch --prune
 ```
 
-## Compter les branches
+## Compter les branches en local
 ```bash
 (git branch --list).Count
 ```
+## Compter les branches en remote
+```bash
+(git branch -r --list).Count
+```
+
+## Compter les branches en remote sur gitlab
+```bash
+(git branch -r --list "gitlab/*" | Where-Object { $_ -notmatch '->' }).Count
+```
+
