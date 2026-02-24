@@ -82,14 +82,16 @@ ssh -T git@gitlab-user02
 ### Repo du compte `user01`
 
 ```bash
-git remote add origin git@gitlab-user01:user01/REPO.git
+git remote rename origin gitlab
+git remote add gitlab git@gitlab-user01:user01/REPO.git
 git remote -v
 ```
 
 ### Repo du compte `user02`
 
 ```bash
-git remote add origin git@gitlab-user02:user02/REPO.git
+git remote rename origin gitlab
+git remote add gitlab git@gitlab-user02:user02/REPO.git
 git remote -v
 ```
 
