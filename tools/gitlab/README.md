@@ -4,4 +4,5 @@
 
 - [Init du repo](./gitlab-init.md)
 - [Token](./gitlab-token.md)
+- [SSH Key](./002-ssh-key.md)
 

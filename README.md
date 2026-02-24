@@ -1,4 +1,4 @@
-# Index 260224
+# Index
 
 | Framework | Tools | Database | Concepts |  |  |  |
 |---|---|---|---|---|---|---|
