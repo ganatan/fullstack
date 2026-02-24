@@ -6,6 +6,7 @@
 - [SSH Key Gitlab](./002-ssh-key-gitlab.md)
 - [Create Repo](./003-create-repo.md)
 - [Commandes Branches](./004-branch.md)
+- [Commandes Remote](./005-remote.md)
 - [Init du repo](./005-git-init.md)
 - [Commandes](./006-commandes.md)
 - [commits](./007-commits.md)
