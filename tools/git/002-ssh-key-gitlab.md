@@ -1,8 +1,8 @@
-# GitHub — 2 comptes (Windows) avec SSH (2 clés + config + remotes)
+# GitLab — 2 comptes (Windows) avec SSH (2 clés + config + remotes)
 
 ## Objectif
 
-Utiliser 2 comptes GitHub sur la même machine via SSH :
+Utiliser 2 comptes GitLab sur la même machine via SSH :
 - compte 1 : `user01` / `user01@gmail.com`
 - compte 2 : `user02` / `user02@gmail.com`
 
@@ -21,15 +21,15 @@ Indiquer les noms de fichier :
 user01
 user02
 
-
 Fichiers créés dans :
 - `C:\Users\<toi>\`
-Fichiers A deplacer dans :
+
+Fichiers à déplacer dans :
 - `C:\Users\<toi>\.ssh\`
 
 ---
 
-## 2) Ajouter chaque clé publique dans le bon compte GitHub
+## 2) Ajouter chaque clé publique dans le bon compte GitLab
 
 Afficher les clés publiques :
 
@@ -38,8 +38,8 @@ type $env:USERPROFILE\.ssh\user01.pub
 type $env:USERPROFILE\.ssh\user02.pub
 ```
 
-Sur GitHub (pour chaque compte) :
-Settings → SSH and GPG keys → New SSH key → coller la clé `.pub`.
+Sur GitLab (pour chaque compte) :
+Preferences → SSH Keys → Add new key → coller la clé `.pub`.
 
 ---
 
@@ -51,14 +51,14 @@ Fichier :
 Contenu :
 
 ```sshconfig
-Host github-user01
-  HostName github.com
+Host gitlab-user01
+  HostName gitlab.com
   User git
   IdentityFile ~/.ssh/user01
   IdentitiesOnly yes
 
-Host github-user02
-  HostName github.com
+Host gitlab-user02
+  HostName gitlab.com
   User git
   IdentityFile ~/.ssh/user02
   IdentitiesOnly yes
@@ -71,8 +71,8 @@ Host github-user02
 PowerShell :
 
 ```powershell
-ssh -T git@github-user01
-ssh -T git@github-user02
+ssh -T git@gitlab-user01
+ssh -T git@gitlab-user02
 ```
 
 ---
@@ -82,14 +82,14 @@ ssh -T git@github-user02
 ### Repo du compte `user01`
 
 ```bash
-git remote add origin git@github-user01:user01/REPO.git
+git remote add origin git@gitlab-user01:user01/REPO.git
 git remote -v
 ```
 
 ### Repo du compte `user02`
 
 ```bash
-git remote add origin git@github-user02:user02/REPO.git
+git remote add origin git@gitlab-user02:user02/REPO.git
 git remote -v
 ```
 
@@ -127,13 +127,13 @@ Activer l’agent et ajouter les clés :
 ```powershell
 Get-Service ssh-agent | Set-Service -StartupType Automatic
 Start-Service ssh-agent
-ssh-add $env:USERPROFILE\.ssh\id_ed25519_github_user01
-ssh-add $env:USERPROFILE\.ssh\id_ed25519_github_user02
+ssh-add $env:USERPROFILE\.ssh\user01
+ssh-add $env:USERPROFILE\.ssh\user02
 ```
 
 Re-tester :
 
 ```powershell
-ssh -T git@github-user01
-ssh -T git@github-user02
+ssh -T git@gitlab-user01
+ssh -T git@gitlab-user02
 ```
