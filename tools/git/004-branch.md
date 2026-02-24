@@ -44,3 +44,8 @@ git branch -d feature-01
 git push origin --delete feature-01
 git fetch --prune
 ```
+
+## Compter les branches
+```bash
+(git branch --list).Count
+```
