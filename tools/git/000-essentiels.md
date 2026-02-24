@@ -1,10 +1,13 @@
+## 1) Résumé
+
+```bash
 git branch -a
 git remote -v
 git checkout -b feature/x
 git push -u origin main
 git push -u origin feature/x
-
-
+```
+---
 
 ## 1) Générer une clé (ed25519)
 
