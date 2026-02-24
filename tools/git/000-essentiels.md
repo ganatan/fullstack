@@ -9,8 +9,15 @@ git push -u origin feature/x
 git log -20 --oneline --decorate
 git fetch gitlab
 git log -10 --oneline --decorate gitlab/main
-
 ```
+
+Verifier la synchronisation entre deux remotes
+```bash
+git fetch --all --prune
+git log -5 --oneline --decorate github/main
+git log -5 --oneline --decorate gitlab/main
+```
+
 ---
 
 ## 1) Générer une clé (ed25519)
