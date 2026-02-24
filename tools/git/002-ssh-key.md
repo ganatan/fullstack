@@ -1,4 +1,4 @@
-# 002-ssh-key.md — GitHub — 2 comptes (Windows) avec SSH (2 clés + config + remotes)
+# GitHub — 2 comptes (Windows) avec SSH (2 clés + config + remotes)
 
 ## Objectif
 

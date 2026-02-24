@@ -1,7 +1,5 @@
 # Git
 
-## Initialisation
-
 - [Essentiels](./000-essentiels.md)
 - [Installation](./001-install-git.md)
 - [SSH Key](./002-ssh-key.md)

@@ -1,4 +1,4 @@
-# 002-create-repo.md — GitHub — Créer un repo et pousser (HTTPS)
+# GitHub — Créer un repo
 
 ## 1) Créer le repo sur GitHub
 

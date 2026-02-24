@@ -1,4 +1,4 @@
-# 001-install-git.md — Installer Git (Windows) et vérifier que ça marche
+# Installer Git (Windows)
 
 ## 1) Installer Git
 

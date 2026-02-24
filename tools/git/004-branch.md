@@ -1,4 +1,4 @@
-# 004-branch.md — Commandes Branch (local + distant)
+# Commandes Branch (local + distant)
 
 ## Création / Renommage
 
