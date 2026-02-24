@@ -9,6 +9,6 @@
 - [Commandes Remote](./005-remote.md)
 - [Init du repo](./005-git-init.md)
 - [Commandes](./006-commandes.md)
-- [commits](./007-commits.md)
+- [Commandes commits](./007-commits.md)
 - [Erreurs](./008-errors.md)
 
