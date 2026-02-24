@@ -6,6 +6,10 @@ git remote -v
 git checkout -b feature/x
 git push -u origin main
 git push -u origin feature/x
+git log -20 --oneline --decorate
+git fetch gitlab
+git log -10 --oneline --decorate gitlab/main
+
 ```
 ---
 
