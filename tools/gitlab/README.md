@@ -1,6 +1,6 @@
 # GitLab.
 
-- [SSH Key](./001-ssh-key.md)
-- [Create Repo](./002-creation-repo.md)
-- [Interface Gitlab](./003-interface-gitlab.md)
+- [Interface Gitlab](./001-interface-gitlab.md)
+- [SSH Key](./002-ssh-key.md)
+- [Create Repo](./003-creation-repo.md)
 
