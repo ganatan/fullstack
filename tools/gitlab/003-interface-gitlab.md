@@ -1,8 +1,6 @@
-# 003-interface-gitlab.md — GitLab — Passer l’interface en anglais
+# Interface gitlab
 
-## Objectif
-
-Changer la langue de l’interface GitLab en **English** (compte utilisateur).
+## Changer la langue en **English** (compte utilisateur)
 
 ---
 
@@ -16,7 +14,3 @@ Changer la langue de l’interface GitLab en **English** (compte utilisateur).
 
 ---
 
-## Notes
-
-- Sur certaines versions, l’option **Language** est plus bas dans la page **Preferences** : scrolle et cherche **Localization**.
-- Sur un GitLab “entreprise” (self-hosted), le libellé peut légèrement varier, mais l’emplacement reste dans **Preferences**.
