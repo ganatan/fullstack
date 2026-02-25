@@ -31,12 +31,19 @@ git clone https://gitlab.com/user01/test001.git
 ```
 
 ```bash
-git clone git@gitlab-user01:user01/REPO.git
+git clone git@gitlab-user01:user01/test001.git
 ```
 
 ## 2) Créer le repo local + commit + push + en SSL
 
 Dans ton dossier clone :
+
+
+```bash
+git config user.name "user01"
+git config user.email "user01@gmail.com"
+git config --global --list
+```
 
 ```bash
 cd existing_repo
