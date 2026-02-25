@@ -1,6 +1,9 @@
 ## 1) Résumé
 
 ```bash
+git config user.name "user01"
+git config user.email "user01@gmail.com"
+git config --global --list
 git branch -a
 git remote -v
 git checkout -b feature/x

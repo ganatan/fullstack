@@ -1,4 +1,36 @@
-# GitLab — 2 comptes (Windows) avec SSH (2 clés + config + remotes)
+# GitLab — 2 comptes avec SSH (2 clés + config + remotes)
+
+## Résumé
+```powershell
+ssh-keygen -t ed25519 -C "user01@gmail.com"
+```
+
+```sshconfig
+Host gitlab-user01
+  HostName gitlab.com
+  User git
+  IdentityFile ~/.ssh/user01
+  IdentitiesOnly yes
+```
+
+```powershell
+ssh -T git@gitlab-user01
+ssh -T git@gitlab-user02
+```
+
+```bash
+git remote rename origin gitlab
+git remote add gitlab git@gitlab-user01:user01/REPO.git
+git remote -v
+```
+
+```bash
+git config user.name "user01"
+git config user.email "user01@gmail.com"
+git config --global --list
+```
+
+
 
 ## Objectif
 
