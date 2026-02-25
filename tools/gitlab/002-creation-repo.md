@@ -1,5 +1,16 @@
 # Creation repo — GitLab
 
+## Resume
+
+```bash
+git clone git@gitlab-user01:user01/test001.git
+git config user.name "user01"
+git config user.email "user01@gmail.com"
+git config --global --list
+git push origin main
+```
+
+
 ## Create repository
 
 Menu :
