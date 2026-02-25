@@ -3,7 +3,7 @@
 ## Create repository
 
 Menu :
-- En haut à gauche de GitLab → bouton **Accueil**
+- En haut à gauche de GitLab → bouton **Accueil** ou **Home** 
 - **Project**
 - **New project**
 - **Create blank project**
@@ -11,9 +11,13 @@ Menu :
 - https://gitlab.com/dashboard/projects
 
 Paramètres :
-- Project name: test-EXAMPLE01
+- Project name: test001
 - Visibility: Public
 - Cocher : Initialiser le dépôt avec un README
+
+Paramètres compte:
+- nom "user01"
+- email  "user01@gmail.com"
 
 ---
 
