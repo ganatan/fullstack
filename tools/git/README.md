@@ -1,6 +1,6 @@
 # Git
 
-- [Glassaire](./000-glossaire.md)
+- [Glossaire](./000-glossaire.md)
 - [Essentiels](./000-essentiels.md)
 - [Installation](./001-install-git.md)
 - [SSH Key Github](./002-ssh-key-github.md)
