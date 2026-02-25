@@ -5,6 +5,8 @@
 ```bash
 ssh-keygen -t ed25519 -C "user01@gmail.com"
 
+Preferences → SSH Keys → Add new key → coller la clé `.pub`.
+
 Host gitlab-user01
   HostName gitlab.com
   User git
