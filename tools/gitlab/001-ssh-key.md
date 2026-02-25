@@ -1,4 +1,4 @@
-# 002-ssh-key.md — GitLab — 2 comptes (Windows) avec SSH (2 clés + config + remotes)
+# GitLab — 2 comptes (Windows) avec SSH (2 clés + config + remotes)
 
 ## Objectif
 
@@ -18,7 +18,7 @@ ssh-keygen -t ed25519 -C "user02@gmail.com"
 ```
 
 Indiquer les noms de fichier :
-user01  
+user01
 user02
 
 Fichiers créés dans :
@@ -39,9 +39,7 @@ type $env:USERPROFILE\.ssh\user02.pub
 ```
 
 Sur GitLab (pour chaque compte) :
-- Avatar (en haut à droite) → Preferences
-- SSH Keys
-- Coller la clé `.pub` → Add key
+Preferences → SSH Keys → Add new key → coller la clé `.pub`.
 
 ---
 
@@ -84,14 +82,16 @@ ssh -T git@gitlab-user02
 ### Repo du compte `user01`
 
 ```bash
-git remote add origin git@gitlab-user01:user01/REPO.git
+git remote rename origin gitlab
+git remote add gitlab git@gitlab-user01:user01/REPO.git
 git remote -v
 ```
 
 ### Repo du compte `user02`
 
 ```bash
-git remote add origin git@gitlab-user02:user02/REPO.git
+git remote rename origin gitlab
+git remote add gitlab git@gitlab-user02:user02/REPO.git
 git remote -v
 ```
 
@@ -122,7 +122,7 @@ git config user.email
 
 ---
 
-## 7) Si `Permission denied (publickey)` (Windows)
+## 7) Si `Permission denied (publickey)`
 
 Activer l’agent et ajouter les clés :
 

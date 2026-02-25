@@ -1,8 +1,5 @@
-# Documentation GitLab.
+# GitLab.
 
-## Initialisation
-
-- [Init du repo](./gitlab-init.md)
-- [Token](./gitlab-token.md)
-- [SSH Key](./002-ssh-key.md)
+- [SSH Key](./001-ssh-key.md)
+- [Create Repo](./gitlab-init.md)
 
