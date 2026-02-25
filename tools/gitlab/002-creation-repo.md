@@ -1,9 +1,9 @@
-# 002-creation-repo.md — GitLab — Création d’un repository
+# Creation repo — GitLab
 
 ## Create repository
 
 Menu :
-- En haut à gauche de GitLab → bouton **Accueil** ou **Home** 
+- En haut à gauche de GitLab → bouton **Accueil** ou **Home**
 - **Project**
 - **New project**
 - **Create blank project**
@@ -14,6 +14,11 @@ Paramètres :
 - Project name: test001
 - Visibility: Public
 - Cocher : Initialiser le dépôt avec un README
+
+Project URL (namespace) :
+- **Users** : repo sous ton compte (ex: `https://gitlab.com/user01/test001`)
+- **Groups** : repo sous un groupe (ex: `https://gitlab.com/mon-groupe/test001`)
+- Règle simple : solo/test → **Users** ; équipe/organisation/plusieurs repos → **Groups**
 
 Paramètres compte:
 - nom "user01"
