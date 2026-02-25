@@ -1,6 +1,20 @@
 # GitLab — 2 comptes avec SSH (2 clés + config + remotes)
 
 ## Résumé
+
+```bash
+ssh-keygen -t ed25519 -C "user01@gmail.com"
+
+Host gitlab-user01
+  HostName gitlab.com
+  User git
+  IdentityFile ~/.ssh/user01
+  IdentitiesOnly yes
+
+ssh -T git@gitlab-user01
+```
+
+## Résumé
 ```powershell
 ssh-keygen -t ed25519 -C "user01@gmail.com"
 ```

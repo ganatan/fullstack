@@ -1,4 +1,4 @@
-# 004-share.md — GitLab — Donner accès à un repo `test001` à un 2ᵉ compte `user02`
+# Donner accès à un repo `test001` à un 2ᵉ compte `user02`
 
 ## Contexte
 
