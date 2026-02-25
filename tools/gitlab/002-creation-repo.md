@@ -25,6 +25,10 @@ Paramètres compte:
 git clone https://gitlab.com/user01/test001.git
 ```
 
+```bash
+git clone git@gitlab-user01:user01/REPO.git
+```
+
 ## 2) Créer le repo local + commit + push + en SSL
 
 Dans ton dossier clone :
