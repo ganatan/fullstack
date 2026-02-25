@@ -1,6 +1,8 @@
+# 002-creation-repo.md — GitLab — Création d’un repository
+
 ## Create repository
 
-Menu:
+Menu :
 - En haut à gauche de GitLab → bouton **Accueil**
 - **Project**
 - **New project**
@@ -14,7 +16,6 @@ Paramètres :
 - Cocher : Initialiser le dépôt avec un README
 
 ---
-
 
 ```bash
 git clone https://gitlab.com/user01/test001.git
