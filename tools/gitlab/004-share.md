@@ -1,10 +1,11 @@
-# Donner accès à un repo `test001` à un 2ᵉ compte `user02`
+# Partage de Repo sous GitLab
 
-## Resume
+## Résumé
 
-Menu gauche 
-Solution 1 : **Manage → Members**
-Solution 2 : **Project information → Members**
+Menu gauche :
+
+- Solution 1 : **Manage → Members**
+- Solution 2 : **Project information → Members**
 
 ```bash
 ```
