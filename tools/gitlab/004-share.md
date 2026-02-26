@@ -4,8 +4,11 @@
 
 Menu gauche :
 
-- Solution 1 : **Manage → Members**
+- Solution 1 : **Manage → Members → Invite Members**
 - Solution 2 : **Project information → Members**
+
+- username : user02
+- role : developper
 
 ```bash
 ```
