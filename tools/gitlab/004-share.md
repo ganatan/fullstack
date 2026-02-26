@@ -11,6 +11,11 @@ Menu gauche :
 - role : developper
 
 ```bash
+git clone git@gitlab-user02:user01/test001.git
+git config user.name "user02"
+git config user.email "user02@gmail.com"
+git config --global --list
+git push origin main
 ```
 
 
