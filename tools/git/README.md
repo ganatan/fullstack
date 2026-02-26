@@ -12,4 +12,5 @@
 - [Commandes](./006-commandes.md)
 - [Commandes commits](./007-commits.md)
 - [Erreurs](./008-errors.md)
+- [commandes Merge](./010-merge.md)
 
