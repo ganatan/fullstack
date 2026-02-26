@@ -2,7 +2,9 @@
 
 ## Resume
 
-Menu gauche : **Project information → Members** (ou **Manage → Members** selon version)
+Menu gauche 
+Solution 1 : **Manage → Members**
+Solution 2 : **Project information → Members**
 
 ```bash
 ```
