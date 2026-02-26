@@ -130,7 +130,68 @@ Si Git refuse (non fully merged), c’est que tu n’as pas intégré ce que tu 
 
 ---
 
-## 8) Merge + push (si tu travailles avec origin)
+## 8) Lister les merges (commits de merge)
+
+### 8.1 Liste des commits de merge
+
+```bash
+git log --merges --oneline
+```
+
+Avec un graphe lisible :
+
+```bash
+git log --merges --decorate --graph --oneline
+```
+
+### 8.2 Historique principal (très utile sur `main`)
+
+Montre la “ligne principale” (les merges vus depuis la branche) :
+
+```bash
+git switch main
+git log --first-parent --oneline
+```
+
+---
+
+## 9) Branches mergées / non mergées (local)
+
+### 9.1 Branches locales mergées dans `main`
+
+```bash
+git branch --merged main
+```
+
+### 9.2 Branches locales non mergées dans `main`
+
+```bash
+git branch --no-merged main
+```
+
+---
+
+## 10) Branches mergées / non mergées (distant)
+
+Ces commandes listent les branches **distantes** (`origin/*`).
+
+### 10.1 Branches distantes mergées dans `origin/main`
+
+```bash
+git fetch --all --prune
+git branch -r --merged origin/main
+```
+
+### 10.2 Branches distantes non mergées dans `origin/main`
+
+```bash
+git fetch --all --prune
+git branch -r --no-merged origin/main
+```
+
+---
+
+## 11) Merge + push (si tu travailles avec origin)
 
 Après merge sur `main` :
 

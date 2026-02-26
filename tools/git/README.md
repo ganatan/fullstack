@@ -13,4 +13,5 @@
 - [Commandes commits](./007-commits.md)
 - [Erreurs](./008-errors.md)
 - [commandes Merge](./010-merge.md)
+- [commit de merge](./011-merge-commit.md)
 
