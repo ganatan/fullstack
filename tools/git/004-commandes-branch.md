@@ -38,6 +38,48 @@
 
 ---
 
+## git fetch — combinaisons utiles
+
+| Objectif | Commande | Effet |
+|---|---|---|
+| Récupérer les refs d’un remote | `git fetch origin` | Met à jour `origin/*`, ne modifie pas la branche courante |
+| Récupérer toutes les refs | `git fetch --all` | Fetch de tous les remotes |
+| Nettoyer les branches distantes supprimées | `git fetch --prune` | Supprime les refs `origin/*` inexistantes côté remote |
+| Tout récupérer + nettoyer | `git fetch --all --prune` | Le plus utile en routine |
+| Fetch d’une branche précise | `git fetch origin feature-01` | Met à jour `origin/feature-01` uniquement |
+| Fetch d’un tag précis | `git fetch origin tag v1.2.0` | Récupère le tag demandé |
+| Fetch de tous les tags | `git fetch --tags` | Télécharge les tags manquants |
+| Forcer la mise à jour d’une ref locale (dangereux) | `git fetch origin main:main` | Écrase ta branche locale `main` avec `origin/main` |
+| Fetch en profondeur limitée (shallow) | `git fetch --depth 1 origin` | Récupère un historique tronqué |
+| Compléter un shallow clone | `git fetch --unshallow` | Récupère l’historique complet |
+| Voir ce qui va être fetch (dry-run) | `git fetch --dry-run origin` | Liste les mises à jour sans les appliquer |
+| Afficher détails (verbose) | `git fetch -v origin` | Log détaillé du fetch |
+| Mettre à jour une branche de tracking | `git fetch origin` + `git branch -vv` | Vérifie la branche suivie et l’écart |
+
+---
+
+## git pull — combinaisons utiles
+
+| Objectif | Commande | Effet |
+|---|---|---|
+| Pull simple (merge) sur la branche courante | `git pull` | `fetch` + `merge` de l’upstream |
+| Pull sur un remote précis | `git pull origin` | `fetch` + `merge` depuis `origin` |
+| Pull d’une branche précise (merge) | `git pull origin feature-01` | Merge de `origin/feature-01` dans ta branche courante |
+| Pull avec rebase | `git pull --rebase` | `fetch` + `rebase` sur l’upstream |
+| Pull d’une branche précise avec rebase | `git pull --rebase origin feature-01` | Rebase de ta branche courante sur `origin/feature-01` |
+| Pull avec autostash | `git pull --rebase --autostash` | Stash auto, rebase, unstash |
+| Pull avec fast-forward only | `git pull --ff-only` | Échoue si merge non fast-forward requis |
+| Pull avec merge explicite (pas rebase) | `git pull --no-rebase` | Force le merge même si config rebase |
+| Pull sans commit automatique (merge) | `git pull --no-commit` | Prépare le merge, laisse le commit à faire |
+| Pull + squash (merge squash) | `git pull --squash` | Fusionne en squash (pas de merge commit auto) |
+| Pull en vérifiant les signatures (si activé) | `git pull --verify-signatures` | Vérifie signatures des commits (si applicable) |
+| Pull verbeux | `git pull -v` | Log détaillé |
+
+### Notes rapides
+- `git pull` = `git fetch` + intégration (merge ou rebase).
+- `git pull origin feature-01` modifie **ta branche courante** : ce n’est pas “mettre à jour feature-01”, c’est “fusionner feature-01 dans la branche actuelle”.
+
+
 ## Cas pratique — Feature
 
 ```bash
