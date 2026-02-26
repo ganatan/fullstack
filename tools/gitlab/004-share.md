@@ -1,5 +1,13 @@
 # Donner accès à un repo `test001` à un 2ᵉ compte `user02`
 
+## Resume
+
+Menu gauche : **Project information → Members** (ou **Manage → Members** selon version)
+
+```bash
+```
+
+
 ## Contexte
 
 - Compte propriétaire : `user01`
