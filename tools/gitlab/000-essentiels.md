@@ -19,13 +19,23 @@ git clone git@gitlab-user01:user01/test001.git
 git config user.name "user01"
 git config user.email "user01@gmail.com"
 git config --global --list
+git add *
+git commit -m "First Commit"
 git push origin main
 ```
 
 ```bash
 git branch -a
 git remote -v
-git checkout -b feature-routing
+git log -20 --oneline --decorate
+git log -10 --oneline --decorate origin/main
+```
+
+```bash
+git checkout -b dev
+git add *
+git commit -m "Add Dev Branch"
+git push origin dev
 ```
 
 ```bash
@@ -34,8 +44,4 @@ git push -u origin main
 git push -u origin feature/x
 ```
 
-```bash
-git log -20 --oneline --decorate
-git log -10 --oneline --decorate gitlab/main
-```
 
