@@ -56,6 +56,7 @@ git push origin hotfix/prod-crash
 
 ```bash
 git fetch --all --prune
+git fetch origin dev
 ```
 
 
