@@ -55,7 +55,7 @@ git push origin hotfix/prod-crash
 ```
 
 ```bash
-git fetch gitlab
+git fetch --all --prune
 ```
 
 
