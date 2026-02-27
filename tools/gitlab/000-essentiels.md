@@ -38,10 +38,24 @@ git commit -m "Add Dev Branch"
 git push origin dev
 ```
 
+
+```bash
+git checkout -b feature/routing
+git checkout -b feature/lazy-loading
+git checkout -b release/1.0.0
+git checkout -b fix/routing-guard
+git checkout -b hotfix/prod-crash
+git add *
+git commit -m "feature"
+git push origin feature/routing
+git push origin feature/lazy-loading
+git push origin release/1.0.0
+git push origin fix/routing-guard
+git push origin hotfix/prod-crash
+```
+
 ```bash
 git fetch gitlab
-git push -u origin main
-git push -u origin feature/x
 ```
 
 
