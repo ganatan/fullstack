@@ -1,4 +1,16 @@
-# 005-best-practices.md — Git — Best practices noms de branches (succinct)
+# Best practices
+
+
+## Résumé
+```powershell
+main
+dev
+feature/routing
+feature/lazy-loading
+release/1.0.0
+fix/routing-guard
+hotfix/prod-crash
+```
 
 ## Objectif
 Standardiser les noms de branches pour :
