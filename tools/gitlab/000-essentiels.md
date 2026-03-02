@@ -15,6 +15,12 @@ ssh -T git@gitlab-user01
 ```
 
 ```bash
+git remote rename origin gitlab
+git remote add gitlab git@gitlab-user01:user01/REPO.git
+git remote -v
+```
+
+```bash
 git clone git@gitlab-user01:user01/test001.git
 git config user.name "user01"
 git config user.email "user01@gmail.com"
@@ -59,4 +65,10 @@ git fetch --all --prune
 git fetch origin dev
 ```
 
-
+```bash
+git log -20 --oneline --decorate
+git log --oneline --decorate -20 origin/feature/routing
+git switch feature/routing
+git pull
+git log --oneline --decorate -20 origin/feature/routing
+```
