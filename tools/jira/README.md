@@ -1,5 +1,5 @@
-## JIRA
 
+## JIRA
 - [Principes](./001-principes.md)
-- [Agile](./002-Agile.md)
+- [Agile](./002-agile.md)
 
