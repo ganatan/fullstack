@@ -1,19 +1,20 @@
 # 002-agile.md — Rituels Agile (Scrum + Kanban) — mémo (≤ 30 lignes)
 
-- Daily (15 min) : hier / aujourd’hui / blocages ; synchro d’équipe, pas de résolution de problèmes longue.
-- Sprint Planning (Scrum) : objectif de sprint + sélection backlog ; découpage ; capacité ; engagement réaliste.
-- Refinement / Grooming : clarifier stories ; critères d’acceptation ; prioriser ; estimer ; réduire l’incertitude.
-- Sprint Review : démo incrément ; feedback parties prenantes ; ajuster backlog ; acter ce qui est “Done”.
-- Rétrospective : inspecter le process ; identifier 1–3 actions concrètes ; owner + date ; suivre l’effet au sprint suivant.
-- Backlog / Priorisation (PO) : ordonner par valeur/risque ; garder “Ready” ; supprimer/archiver le bruit.
-- DoR (Definition of Ready) : story assez claire pour entrer en sprint (AC, dépendances, taille).
-- DoD (Definition of Done) : qualité non négociable (tests, review, doc, build vert, déploiement si applicable).
+## Scrum — rituels
+- **Sprint Planning** : objectif du sprint, sélection du backlog, capacité, découpage, engagement.
+- **Daily (15 min)** : synchro (hier/aujourd’hui/blocages), décisions rapides, parking lot pour le reste.
+- **Refinement** : stories claires + critères d’acceptation, estimation, dépendances, “Ready”.
+- **Sprint Review** : démo incrément, feedback, ajustements backlog/priorités, acter le “Done”.
+- **Rétrospective** : 1–3 actions d’amélioration, owner + date, vérif au sprint suivant.
 
-- Kanban Replenishment : alimenter la file “Ready” ; vérifier priorités ; aligner avec capacité.
-- Kanban Flow Review : analyser WIP, ageing, goulots ; rééquilibrer ; améliorer le flux.
-- WIP Limit : limiter le “In Progress” ; terminer avant de commencer ; réduire le cycle time.
-- Metrics utiles : Lead time, Cycle time, Throughput, WIP, Ageing ; éviter “vanity metrics”.
-- Artefacts : Product Backlog, Sprint Backlog, Incrément ; Board = vérité opérationnelle.
-- Roles (Scrum) : PO (valeur/priorités), SM (cadre/impédiments), Dev Team (livraison/qualité).
+## Kanban — rituels
+- **Replenishment** : alimenter “Ready”, prioriser, aligner avec capacité.
+- **Flow Review** : analyser goulots, ageing, rééquilibrer, améliorer le flux.
+- **WIP Limits** : limiter l’encours, finir avant de commencer, réduire le cycle time.
 
-- Bon réflexe : petites stories ; feedback rapide ; transparence ; cadence stable ; amélioration continue.
+## Règles de qualité (communes)
+- **DoR (Ready)** : story exploitable (AC, dépendances, taille).
+- **DoD (Done)** : qualité livrable (tests/review/build vert/doc/déploiement si applicable).
+
+## Indicateurs utiles
+- **Lead time**, **Cycle time**, **Throughput**, **WIP**, **Ageing** (éviter les métriques “vanité”).
