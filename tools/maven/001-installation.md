@@ -6,10 +6,37 @@
 - Archive : `apache-maven-3.9.11-bin.zip`
 - Décompresser dans :
   - `D:\hal\apache-maven-3.9.11\`
-- Ajouter au `PATH` (Variables d’environnement Windows) :
-  - `D:\hal\apache-maven-3.9.11\bin`
-- Tester :
-  - `mvn -version`
+
+
+# Ajouter Maven au PATH (Windows) — Utilisateur (recommandé)
+
+## Objectif
+Ajouter Maven au `PATH` **utilisateur** pour pouvoir exécuter `mvn` depuis n’importe quel terminal.
+
+## Étapes
+
+1. Ouvrir **Variables d’environnement**
+   - Menu Démarrer → taper **variables d’environnement**
+   - Ouvrir : **Modifier les variables d’environnement système**
+   - Cliquer : **Variables d’environnement…**
+
+2. Option A — **PATH utilisateur** (recommandé)
+   - Dans **Variables utilisateur pour <toi>**
+   - Sélectionner **Path**
+   - Cliquer **Modifier**
+   - Cliquer **Nouveau**
+   - Coller :
+     - `D:\hal\apache-maven-3.9.11\bin`
+   - Valider :
+     - **OK** → **OK** → **OK**
+
+3. Appliquer
+   - Fermer tous les terminaux (CMD/PowerShell/VSCode)
+   - Rouvrir un terminal
+
+4. Tester
+   - PowerShell :
+     - `mvn -version`
 
 ---
 
