@@ -1,5 +1,4 @@
 ## JIRA
 
-### Principes
-- [commandes](./001-commandes.md)
+- [Principes](./001-principes.md)
 
