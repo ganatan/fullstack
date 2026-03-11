@@ -21,6 +21,18 @@ Documentation des commandes principales pour manipuler la collection
 
 ------------------------------------------------------------------------
 
+# Insertion et lectrue
+
+``` javascript
+db.media_read.insertOne({
+  title: "Alien"
+})
+
+db.media_read.find()
+
+db.media_read.find({ title: "Alien" })
+```
+
 # Insertion
 
 ## insertOne
