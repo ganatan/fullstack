@@ -5,9 +5,9 @@
 - [Shell](./installation/002-shell-mongodb.md)
 - [Commandes](./installation/003-commands.md)
 - [Installation ZIP](./installation/004-installation-zip.md)
+- [Certificat CRT](./installation/005-certificat.md)
 
 ## Springboot
 - [Spring Data](./springboot/001-spring-data-mongodb.md)
 - [Tests](./springboot/002-tests-mongodb.md)
-- [Certificat CRT](./springboot/005-certificat.md)
 
