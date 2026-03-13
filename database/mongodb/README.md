@@ -6,6 +6,7 @@
 - [Commandes](./installation/003-commands.md)
 - [Installation ZIP](./installation/004-installation-zip.md)
 - [Certificat CRT](./installation/005-certificat.md)
+- [Connections](./installation/006-connections.md)
 
 ## Springboot
 - [Spring Data](./springboot/001-spring-data-mongodb.md)
