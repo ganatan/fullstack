@@ -8,6 +8,7 @@
 - [Certificat CRT](./installation/005-certificat.md)
 - [Connections](./installation/006-connections.md)
 - [Commandes Mongosh](./installation/007-commands-mongosh.md)
+- [Filtres](./installation/008-filtres.md)
 
 ## Springboot
 - [Spring Data](./springboot/001-spring-data-mongodb.md)
