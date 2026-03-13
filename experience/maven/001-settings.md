@@ -26,7 +26,7 @@ Ce fichier sert à :
 ## 1. Dépôt local Maven
 
 ~~~xml
-<localRepository>D:\REVOPARTI</localRepository>
+<localRepository>D:\HAL\REPO</localRepository>
 ~~~
 
 Cette ligne définit le cache Maven local.
