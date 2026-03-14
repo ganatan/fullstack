@@ -16,13 +16,12 @@ where wsl
 
 ## Installation de WSL
 
-Si WSL n'est pas installé :
+Si WSL n'est pas installé : L'installation peut durer quelques minutes !!!!!!!!!!!
 
 ```bash
 wsl --install
 ```
 
-L'installation peut durer quelques minutes !!!!!!!!!!!
 Puis redémarrer Windows.
 
 ## Activation manuelle si besoin
