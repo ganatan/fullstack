@@ -26,7 +26,7 @@ server:
 ## Classe `Declencheur`
 
 ```java
-package com.ganatan.starter.api.declencheur.model;
+package com.ganatan.starter.api.declencheur;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -106,11 +106,10 @@ public class Declencheur {
 ## Repository
 
 ```java
-package com.ganatan.starter.api.declencheur.repository;
+package com.ganatan.starter.api.declencheur;
 
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import com.ganatan.starter.api.declencheur.model.Declencheur;
 
 public interface DeclencheurRepository extends MongoRepository<Declencheur, String> {
   Optional<Declencheur> findByCode(String code);
@@ -120,13 +119,11 @@ public interface DeclencheurRepository extends MongoRepository<Declencheur, Stri
 ## Service
 
 ```java
-package com.ganatan.starter.api.declencheur.service;
+package com.ganatan.starter.api.declencheur;
 
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-import com.ganatan.starter.api.declencheur.model.Declencheur;
-import com.ganatan.starter.api.declencheur.repository.DeclencheurRepository;
 
 @Service
 public class DeclencheurService {
@@ -154,13 +151,11 @@ public class DeclencheurService {
 ## Controller
 
 ```java
-package com.ganatan.starter.api.declencheur.controller;
+package com.ganatan.starter.api.declencheur;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.ganatan.starter.api.declencheur.model.Declencheur;
-import com.ganatan.starter.api.declencheur.service.DeclencheurService;
 
 @RestController
 @RequestMapping("/api/declencheurs")
@@ -196,10 +191,10 @@ public class DeclencheurController {
 ## Arborescence
 
 ```text
-src/main/java/com/ganatan/starter/api/declencheur/controller/DeclencheurController.java
-src/main/java/com/ganatan/starter/api/declencheur/service/DeclencheurService.java
-src/main/java/com/ganatan/starter/api/declencheur/repository/DeclencheurRepository.java
-src/main/java/com/ganatan/starter/api/declencheur/model/Declencheur.java
+src/main/java/com/ganatan/starter/api/declencheur/Declencheur.java
+src/main/java/com/ganatan/starter/api/declencheur/DeclencheurRepository.java
+src/main/java/com/ganatan/starter/api/declencheur/DeclencheurService.java
+src/main/java/com/ganatan/starter/api/declencheur/DeclencheurController.java
 ```
 
 ## URLs de test

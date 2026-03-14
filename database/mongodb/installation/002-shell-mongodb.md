@@ -12,6 +12,8 @@ Ou :
 
     mongosh "mongodb://localhost:27017"
 
+    mongosh "mongodb://localhost:27017/MyCollection"
+
 ------------------------------------------------------------------------
 
 # Base
