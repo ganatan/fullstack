@@ -9,6 +9,17 @@ spring.application.name=springboot-starter
 server.port=3000
 ```
 
+### application.yml
+
+```yaml
+spring:
+  application:
+    name: springboot-starter
+
+server:
+  port: 3000
+```
+
 ## Refactor 
 
 ### Application
