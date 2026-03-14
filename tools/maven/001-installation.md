@@ -5,7 +5,7 @@
 - Télécharger Maven : https://maven.apache.org/download.cgi
 - Archive : `apache-maven-3.9.11-bin.zip`
 - Décompresser dans :
-  - `D:\hal\apache-maven-3.9.11\`
+  - `D:\hal\apache\maven-3.9.11\`
 
 ## Archives
 - 3.0.3  
@@ -33,7 +33,7 @@ Ajouter Maven au `PATH` **utilisateur** pour pouvoir exécuter `mvn` depuis n’
    - Cliquer **Modifier**
    - Cliquer **Nouveau**
    - Coller :
-     - `D:\hal\apache-maven-3.9.11\bin`
+     - `D:\hal\apache\maven-3.9.11\bin`
    - Valider :
      - **OK** → **OK** → **OK**
 
