@@ -81,15 +81,33 @@ Reload All Maven Projects
 
 ## Commentaires
 
-File → Settings  
-Keymap → Windows  
-Main Menu → Code → Comment Actions  
-Comment with Line
+Chemin :
 
-Raccourci :
-
+```text
+File > Settings > Keymap
+Main Menu > Code > 
+Taper en recherche Comment 
 ```
-Ctrl + /
+
+Ensuite :
+
+```text
+Remove les keys existants
+```
+
+```text
+Clic droit sur Comment  > Add Keyboard Shortcut
+```
+Puis appuyer sur :
+
+```text
+Ctrl + :
+```
+
+Valider avec :
+
+```text
+OK
 ```
 
 ---
@@ -117,13 +135,12 @@ Taper en recherche Reformat Code
 Ensuite :
 
 ```text
-Clic droit sur Reformat Code > Add Keyboard Shortcut
-```
-
-```text
 Remove les keys existants
 ```
 
+```text
+Clic droit sur Reformat Code > Add Keyboard Shortcut
+```
 Puis appuyer sur :
 
 ```text
