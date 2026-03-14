@@ -11,6 +11,7 @@ Configurer le projet avec les paramètres suivants :
 - **Spring Boot** : 3.5.10
 - **Java** : 21
 - **Packaging** : JAR  
+- **Configuration** : YAML
 
 ### 🧩 **Coordonnées**
 - **Group** : `com.ganatan`  
