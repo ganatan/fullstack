@@ -8,7 +8,7 @@ https://www.jetbrains.com/idea/download/?section=windows
 
 Fichier utilisé :
 
-ideaIU-2025.1.3.exe
+ideaIU-2025.3.3.exe
 
 ---
 

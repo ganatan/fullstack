@@ -11,6 +11,8 @@ Documentation des commandes principales pour manipuler la collection
 
     mongosh
 
+    use local
+
     use("media")
 
 ------------------------------------------------------------------------
