@@ -22,6 +22,7 @@ Si WSL n'est pas installé :
 wsl --install
 ```
 
+L'installation peut durer quelques minutes !!!!!!!!!!!
 Puis redémarrer Windows.
 
 ## Activation manuelle si besoin
