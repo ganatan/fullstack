@@ -110,7 +110,8 @@ Chemin :
 
 ```text
 File > Settings > Keymap
-Main Menu > Code > Reformat Code
+Main Menu > Code > 
+Taper en recherche Reformat Code
 ```
 
 Ensuite :
