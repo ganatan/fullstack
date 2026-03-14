@@ -99,3 +99,87 @@ Docker Desktop sous Windows fonctionne en général avec :
 - WSL2 activé
 - virtualisation activée
 - Docker Desktop lancé
+
+## Cas possible : WSL installé mais aucune distribution Linux
+
+Si la commande :
+
+```bash
+wsl -l -v
+```
+
+retourne :
+
+```text
+Sous-système Windows pour Linux n’a aucune distribution installée.
+```
+
+alors WSL est bien installé, mais aucune distribution Linux n’est encore présente.
+
+Lister les distributions disponibles :
+
+```bash
+wsl --list --online
+```
+
+Installer Ubuntu :
+
+```bash
+wsl --install Ubuntu
+```
+
+ou :
+
+```bash
+wsl --install -d Ubuntu
+```
+
+Puis redémarrer Windows si demandé.
+
+Lancer ensuite :
+
+```bash
+wsl
+```
+
+ou :
+
+```bash
+ubuntu
+```
+
+Au premier démarrage, créer :
+- un nom d’utilisateur Linux
+- un mot de passe Linux
+
+Vérifier ensuite :
+
+```bash
+wsl -l -v
+```
+
+Résultat attendu :
+
+```text
+  NAME      STATE           VERSION
+* Ubuntu    Running         2
+```
+
+## Si `wsl` reste bloqué
+
+Tester :
+
+```bash
+wsl --shutdown
+wsl --status
+wsl -l -v
+```
+
+Puis redémarrer Windows si nécessaire.
+
+## Remarque utile avec Docker Desktop
+
+Si Docker Desktop fonctionne correctement, alors :
+- la virtualisation est en principe active
+- WSL2 est en général correctement activé
+- le problème vient souvent d’une distribution Linux non installée ou d’un souci local de commande `wsl`
