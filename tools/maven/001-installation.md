@@ -7,6 +7,11 @@
 - Décompresser dans :
   - `D:\hal\apache-maven-3.9.11\`
 
+## Archives
+
+- archive.apache.org/dist/maven/maven-3/3.0.3/binaries/
+- archive.apache.org/dist/maven/maven-3/3.5.4/binaries/
+- archive.apache.org/dist/maven/maven-3/3.9.8/binaries/
 
 # Ajouter Maven au PATH (Windows) — Utilisateur (recommandé)
 
