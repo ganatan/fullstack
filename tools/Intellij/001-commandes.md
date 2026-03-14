@@ -123,7 +123,7 @@ Clic droit sur Reformat Code > Add Keyboard Shortcut
 Puis appuyer sur :
 
 ```text
-Shift + Alt + F
+Alt + Maj + F
 ```
 
 Valider avec :
