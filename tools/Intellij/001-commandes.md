@@ -120,6 +120,10 @@ Ensuite :
 Clic droit sur Reformat Code > Add Keyboard Shortcut
 ```
 
+```text
+Remove les keys existants
+```
+
 Puis appuyer sur :
 
 ```text
