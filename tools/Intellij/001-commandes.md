@@ -84,6 +84,7 @@ Reload All Maven Projects
 File → Settings  
 Keymap → Windows  
 Main Menu → Code → Comment Actions  
+Comment with Line
 
 Raccourci :
 
@@ -103,19 +104,42 @@ Alt + F12
 
 View → Tool Windows → Terminal
 
-## Formatage du code
+## Formatage du code dans IntelliJ
 
-Raccourci :
+Chemin :
 
+```text
+File > Settings > Keymap
+Main Menu > Code > Reformat Code
 ```
-Ctrl + Alt + L
+
+Ensuite :
+
+```text
+Clic droit sur Reformat Code > Add Keyboard Shortcut
 ```
 
-Configuration personnalisée :
+Puis appuyer sur :
 
+```text
 Shift + Alt + F
+```
 
----
+Valider avec :
+
+```text
+OK
+```
+
+Si IntelliJ signale un conflit :
+- choisir `Remove` pour affecter ce raccourci au formatage
+- ou choisir `Leave` pour conserver les deux raccourcis
+
+Nom exact de l’action :
+
+```text
+Reformat Code
+```
 
 ## Indentation
 
