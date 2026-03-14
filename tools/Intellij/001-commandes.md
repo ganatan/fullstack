@@ -86,17 +86,17 @@ Chemin :
 ```text
 File > Settings > Keymap
 Main Menu > Code > 
-Taper en recherche Comment 
+Taper en recherche Comment
 ```
 
 Ensuite :
 
 ```text
-Remove les keys existants
+Remove les keys existants sur les deux comments
 ```
 
 ```text
-Clic droit sur Comment  > Add Keyboard Shortcut
+Clic droit sur Comment with line Comment  > Add Keyboard Shortcut
 ```
 Puis appuyer sur :
 
