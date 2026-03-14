@@ -1,4 +1,4 @@
-# WSL ne répond pas sous Windows
+# WSL 
 
 ## Symptôme
 
