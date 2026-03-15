@@ -179,6 +179,13 @@ public class DeclencheurController {
         return service.findAll();
     }
 
+     @GetMapping
+    public List<Declencheur> getAll() {
+        List<Declencheur> result = repository.findAll();
+        System.out.println("NB declencheurs = " + result.size());
+        return result;
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Declencheur> getById(@PathVariable String id) {
         return service.findById(id)
@@ -297,5 +304,36 @@ http://localhost:3000/qsfqsf
   "detail": "Resource not found",
   "timestamp": "2026-03-15T09:00:00Z",
   "path": "/qsfqsf"
+}
+```
+
+
+
+## Debug Classe `Declencheur`
+
+```java
+package com.ganatan.starter.api.declencheur;
+
+import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/declencheurs")
+public class DeclencheurController {
+
+    private final DeclencheurRepository repository;
+
+    public DeclencheurController(DeclencheurRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping
+    public List<Declencheur> getAll() {
+        List<Declencheur> result = repository.findAll();
+        System.out.println("NB declencheurs = " + result.size());
+        return result;
+    }
 }
 ```
