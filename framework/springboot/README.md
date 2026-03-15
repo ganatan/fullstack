@@ -94,6 +94,8 @@
 
 ## MVP
 - [Controller Collection mongod](./mvp/001-controller-collection.md)
+- [Controller Collection mongod error ](./mvp/002-controller-collection-error.md)
+- [Controller Collection mongod 404](./mvp/003-controller-collection-error-404.md)
 
 
 
