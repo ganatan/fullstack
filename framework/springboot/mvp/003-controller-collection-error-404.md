@@ -27,7 +27,7 @@ spring:
     name: springboot-starter
   data:
     mongodb:
-      uri: mongodb://localhost:27017/Declencheur
+      uri: mongodb://localhost:27017/local
 
 server:
   port: 3000
