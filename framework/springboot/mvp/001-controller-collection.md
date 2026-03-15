@@ -28,7 +28,7 @@ server:
 ```java
 package com.ganatan.starter.api.declencheur;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,71 +36,72 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Declencheur")
 public class Declencheur {
 
-  @Id
-  private String id;
-  private String code;
-  private String libelleCourt;
-  private String libelleLong;
-  private List<String> services;
-  private String codeCr;
-  private OffsetDateTime dateDebutValidite;
+    @Id
+    private String id;
+    private String code;
+    private String libelleCourt;
+    private String libelleLong;
+    private List<String> services;
+    private String codeCr;
+    private Instant dateDebutValidite;
 
-  public String getId() {
-    return id;
-  }
+    public String getId() {
+        return id;
+    }
 
-  public void setId(String id) {
-    this.id = id;
-  }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getLibelleCourt() {
-    return libelleCourt;
-  }
+    public String getLibelleCourt() {
+        return libelleCourt;
+    }
 
-  public void setLibelleCourt(String libelleCourt) {
-    this.libelleCourt = libelleCourt;
-  }
+    public void setLibelleCourt(String libelleCourt) {
+        this.libelleCourt = libelleCourt;
+    }
 
-  public String getLibelleLong() {
-    return libelleLong;
-  }
+    public String getLibelleLong() {
+        return libelleLong;
+    }
 
-  public void setLibelleLong(String libelleLong) {
-    this.libelleLong = libelleLong;
-  }
+    public void setLibelleLong(String libelleLong) {
+        this.libelleLong = libelleLong;
+    }
 
-  public List<String> getServices() {
-    return services;
-  }
+    public List<String> getServices() {
+        return services;
+    }
 
-  public void setServices(List<String> services) {
-    this.services = services;
-  }
+    public void setServices(List<String> services) {
+        this.services = services;
+    }
 
-  public String getCodeCr() {
-    return codeCr;
-  }
+    public String getCodeCr() {
+        return codeCr;
+    }
 
-  public void setCodeCr(String codeCr) {
-    this.codeCr = codeCr;
-  }
+    public void setCodeCr(String codeCr) {
+        this.codeCr = codeCr;
+    }
 
-  public OffsetDateTime getDateDebutValidite() {
-    return dateDebutValidite;
-  }
+    public Instant getDateDebutValidite() {
+        return dateDebutValidite;
+    }
 
-  public void setDateDebutValidite(OffsetDateTime dateDebutValidite) {
-    this.dateDebutValidite = dateDebutValidite;
-  }
+    public void setDateDebutValidite(Instant dateDebutValidite) {
+        this.dateDebutValidite = dateDebutValidite;
+    }
 }
+
 ```
 
 ## Repository
@@ -109,10 +110,11 @@ public class Declencheur {
 package com.ganatan.starter.api.declencheur;
 
 import java.util.Optional;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface DeclencheurRepository extends MongoRepository<Declencheur, String> {
-  Optional<Declencheur> findByCode(String code);
+    Optional<Declencheur> findByCode(String code);
 }
 ```
 
@@ -128,23 +130,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeclencheurService {
 
-  private final DeclencheurRepository repository;
+    private final DeclencheurRepository repository;
 
-  public DeclencheurService(DeclencheurRepository repository) {
-    this.repository = repository;
-  }
+    public DeclencheurService(DeclencheurRepository repository) {
+        this.repository = repository;
+    }
 
-  public List<Declencheur> findAll() {
-    return repository.findAll();
-  }
+    public List<Declencheur> findAll() {
+        return repository.findAll();
+    }
 
-  public Optional<Declencheur> findById(String id) {
-    return repository.findById(id);
-  }
+    public Optional<Declencheur> findById(String id) {
+        return repository.findById(id);
+    }
 
-  public Optional<Declencheur> findByCode(String code) {
-    return repository.findByCode(code);
-  }
+    public Optional<Declencheur> findByCode(String code) {
+        return repository.findByCode(code);
+    }
 }
 ```
 
@@ -154,6 +156,8 @@ public class DeclencheurService {
 package com.ganatan.starter.api.declencheur;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -161,30 +165,37 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/declencheurs")
 public class DeclencheurController {
 
-  private final DeclencheurService service;
+    private final DeclencheurService service;
 
-  public DeclencheurController(DeclencheurService service) {
-    this.service = service;
-  }
+    public DeclencheurController(DeclencheurService service) {
+        this.service = service;
+    }
 
-  @GetMapping
-  public List<Declencheur> getAll() {
-    return service.findAll();
-  }
+//    @GetMapping
+//    public Map<String, Object> root() {
+//        return Map.of(
+//                "application", "api/declencheurs");
+//    }
+//
 
-  @GetMapping("/{id}")
-  public ResponseEntity<Declencheur> getById(@PathVariable String id) {
-    return service.findById(id)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-  }
+    @GetMapping
+    public List<Declencheur> getAll() {
+        return service.findAll();
+    }
 
-  @GetMapping("/code/{code}")
-  public ResponseEntity<Declencheur> getByCode(@PathVariable String code) {
-    return service.findByCode(code)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
-  }
+    @GetMapping("/{id}")
+    public ResponseEntity<Declencheur> getById(@PathVariable String id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/code/{code}")
+    public ResponseEntity<Declencheur> getByCode(@PathVariable String code) {
+        return service.findByCode(code)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
 ```
 
