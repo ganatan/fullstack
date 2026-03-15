@@ -15,4 +15,6 @@
 - [commandes Merge](./010-merge.md)
 - [commit de merge](./011-merge-commit.md)
 - [Utilisation de Vim dans VSCode](./012-utilisation-vim-vscode.md)
+- [GitFlow](./013-gitflow.md)
+- [Git Tag](./014-git-tags.md)
 
