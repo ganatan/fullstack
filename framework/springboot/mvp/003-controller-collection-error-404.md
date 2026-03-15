@@ -357,3 +357,59 @@ http://localhost:3000/qsfqsf
 - `ResourceNotFoundException` : ressource métier non trouvée en base
 
 Dans les deux cas, l'API renvoie maintenant un JSON propre.
+
+
+
+## Debug Classe `Declencheur`
+
+```java
+package com.ganatan.starter.api.declencheur;
+
+import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/declencheurs")
+public class DeclencheurController {
+
+    private final DeclencheurRepository repository;
+
+    public DeclencheurController(DeclencheurRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping
+    public List<Declencheur> getAll() {
+        List<Declencheur> result = repository.findAll();
+        System.out.println("NB declencheurs = " + result.size());
+        return result;
+    }
+}
+```
+
+
+```java
+package com.ganatan.starter.config;
+
+import jakarta.annotation.PostConstruct;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MongoDebug {
+
+  private final MongoTemplate mongoTemplate;
+
+  public MongoDebug(MongoTemplate mongoTemplate) {
+    this.mongoTemplate = mongoTemplate;
+  }
+
+  @PostConstruct
+  public void init() {
+    System.out.println("Mongo database = " + mongoTemplate.getDb().getName());
+    System.out.println("Mongo collections = " + mongoTemplate.getCollectionNames());
+  }
+}
+```
