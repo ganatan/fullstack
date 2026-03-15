@@ -10,7 +10,7 @@
 - [Commandes Mongosh](./installation/007-commands-mongosh.md)
 - [Filtres](./installation/008-filtres.md)
 - [Filtres ISODate](./installation/009-filtres-isodate.md)
-- [Aggregations](./springboot/010-aggregations.md)
+- [Aggregations](./installation/010-aggregations.md)
 
 ## Springboot
 - [Spring Data](./springboot/001-spring-data-mongodb.md)
