@@ -112,6 +112,14 @@ File > Settings > Keymap
 Main Menu > Window > Editor Tabs > Close
 ```
 
+```text
+Window
+Editor Tabs
+Editor Close Actions
+close Tab
+```
+
+
 Ensuite :
 
 ```text
