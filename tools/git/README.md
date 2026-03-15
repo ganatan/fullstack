@@ -17,4 +17,5 @@
 - [Utilisation de Vim dans VSCode](./012-utilisation-vim-vscode.md)
 - [GitFlow](./013-gitflow.md)
 - [Git Tag](./014-git-tags.md)
+- [Git Rebase](./015-git-Rebase.md)
 
