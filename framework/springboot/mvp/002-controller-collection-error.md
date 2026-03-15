@@ -337,3 +337,28 @@ public class DeclencheurController {
     }
 }
 ```
+
+
+```java
+package com.ganatan.starter.config;
+
+import jakarta.annotation.PostConstruct;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MongoDebug {
+
+  private final MongoTemplate mongoTemplate;
+
+  public MongoDebug(MongoTemplate mongoTemplate) {
+    this.mongoTemplate = mongoTemplate;
+  }
+
+  @PostConstruct
+  public void init() {
+    System.out.println("Mongo database = " + mongoTemplate.getDb().getName());
+    System.out.println("Mongo collections = " + mongoTemplate.getCollectionNames());
+  }
+}
+```
