@@ -13,3 +13,6 @@
 
 ### Kafka via Springboot
 - [Controller](./springboot/001-starter.md)
+
+### Kafka via Conduktor
+- [Controller](./bases/009-conduktor.md)
