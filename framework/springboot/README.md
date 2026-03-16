@@ -28,6 +28,7 @@
 - [Thrown](./features-metiers/010-springboot-thrown.md)
 
 ## Tests
+- [Pratique essentielles](./tests/001-pratiques.md)
 - [Demarrage](./tests/001-commandes.md)
 - [Principes](./tests/002-principes.md)
 - [Syntaxe JUnit](./tests/003-junit.md)
