@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @GetMapping("/produits/{code}")
     public String getProduit(@PathVariable String code) {
