@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @GetMapping("/rechercher-param")
     public String rechercher(@RequestParam String code) {
@@ -100,7 +100,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @GetMapping("/rechercher-multi")
     public String rechercherMulti(@RequestParam String code, @RequestParam String type) {
@@ -142,7 +142,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @PostMapping("/rechercher-header")
     public Map<String, Object> rechercher(@RequestHeader("aaaa") String aaaa) {
@@ -194,7 +194,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @PostMapping("/rechercher-body")
     public Map<String, Object> rechercher(@RequestBody Map<String, Object> body) {
@@ -253,7 +253,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @GetMapping("/response")
     public ResponseEntity<String> response() {
@@ -297,7 +297,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @PostMapping("/response-body")
     public ResponseEntity<Map<String, Object>> rechercher(@RequestBody Map<String, Object> body) {
@@ -359,7 +359,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @PostMapping("/rechercher-complet")
     public Map<String, Object> rechercher(
@@ -435,7 +435,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ParamObjetController {
+public class ParamController {
 
     @PostMapping("/objets/{code}")
     public ResponseEntity<Map<String, Object>> testComplet(
