@@ -18,6 +18,33 @@
 ]
 ```
 
+# Produit-count-by-code
+
+```json
+[
+  {
+    "$group": {
+      "_id": "$code",
+      "totalProduits": {
+        "$sum": 1
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "code": "$_id",
+      "totalProduits": 1
+    }
+  },
+  {
+    "$sort": {
+      "code": 1
+    }
+  }
+]
+```
+
 # Produit-count-by-codeCr
 
 ```json
