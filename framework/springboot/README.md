@@ -17,6 +17,7 @@
 - [Swagger](./features/003-swagger.md)
 - [RequestBody](./features/004-request-body.md)
 - [ResponseEntity](./features/005-response-entity.md)
+- [Request & Response](./features/006-request-response.md)
 
 ## Features Metier
 - [External API](./features-metiers/001-springboot-external-api.md)
