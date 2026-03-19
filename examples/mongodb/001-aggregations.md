@@ -122,3 +122,32 @@
   }
 ]
 ```
+
+# Produit-count-by-annee-creation-detail
+
+```json
+[
+  {
+    "$group": {
+      "_id": {
+        "$year": "$creationDate"
+      },
+      "totalProduits": {
+        "$sum": 1
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "annee": "$_id",
+      "totalProduits": 1
+    }
+  },
+  {
+    "$sort": {
+      "annee": 1
+    }
+  }
+]
+```
