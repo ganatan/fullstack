@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
 @RequestMapping("/param")
-public class ParamObjetController {
+public class ParamController {
 
     @GetMapping("/rechercher")
     @Operation(summary = "Recherche des objets de parametrage")
