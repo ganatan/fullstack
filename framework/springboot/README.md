@@ -14,6 +14,7 @@
 - [Reponses HTTP](./rest/007-reponses-http.md)
 - [Spring Data](./rest/008-spring-data.md)
 - [Database Postgresql](./database/001-postgresql.md)
+- [Swagger](./features/003-swagger.md)
 
 ## Features Metier
 - [External API](./features-metiers/001-springboot-external-api.md)
