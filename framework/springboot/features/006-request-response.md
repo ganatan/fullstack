@@ -487,3 +487,61 @@ http://localhost:3000/objets/REC0001?type=film
   }
 }
 ```
+
+---
+
+## Test simple de `@RequestHeader` avec tous les headers
+
+`@RequestHeader Map<String, String>` sert à lire tous les headers HTTP envoyés par le client.
+
+## Import
+
+```java
+import org.springframework.web.bind.annotation.RequestHeader;
+```
+
+## Exemple de controller
+
+```java
+import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ParamController {
+
+    @PostMapping("/rechercher-headers")
+    public Map<String, Object> rechercher(@RequestHeader Map<String, String> headers) {
+        return Map.of(
+                "headers", headers
+        );
+    }
+}
+```
+
+## Headers à envoyer
+
+```text
+aaaa: 1111
+bbbb: 2222
+cccc: 3333
+```
+
+## URL à tester
+
+```text
+http://localhost:3000/rechercher-headers
+```
+
+## Résultat attendu
+
+```json
+{
+  "headers": {
+    "aaaa": "1111",
+    "bbbb": "2222",
+    "cccc": "3333"
+  }
+}
+```
