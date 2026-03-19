@@ -16,7 +16,7 @@
 - [Database Postgresql](./database/001-postgresql.md)
 - [Swagger](./features/003-swagger.md)
 - [RequestBody](./features/004-requestbody.md)
-- [ResponseEntity](./features/004-responseentity.md)
+- [ResponseEntity](./features/005-responseentity.md)
 
 ## Features Metier
 - [External API](./features-metiers/001-springboot-external-api.md)
