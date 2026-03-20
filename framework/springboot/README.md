@@ -21,7 +21,7 @@
 - [RequestBody](./features/004-request-body.md)
 - [ResponseEntity](./features/005-response-entity.md)
 - [Request & Response](./features/006-request-response.md)
-- [Lonbok](./features/007-lombok.md)
+- [Lombok](./features/007-lombok.md)
 
 ## Features Metier
 - [External API](./features-metiers/001-springboot-external-api.md)
