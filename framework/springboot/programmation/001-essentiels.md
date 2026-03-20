@@ -167,3 +167,23 @@ if (ok1 != ok2) {
 }
 ```
 
+
+### Lombok
+```java
+package com.ganatan.starter.test;
+
+
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MovieDTOLombok {
+    public String name;
+}
+```
+

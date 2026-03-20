@@ -2,83 +2,282 @@
 
 ## Local
 
-| Action | Commandes (local) |
-|---|---|
-| Créer une branche | `git switch -c feature-01`<br>`git checkout -b feature-01` |
-| Renommer une branche (branche courante) | `git branch -M feature-02` |
-| Renommer une branche (depuis une autre branche) | `git branch -m feature-01 feature-02` |
-| Supprimer une branche | `git branch -d feature-02`<br>`git branch -D feature-02` |
-| Changer de branche | `git switch feature-01`<br>`git checkout feature-01` |
-| Voir les branches | `git branch`<br>`git branch -a` |
+### Créer une branche
+```bash
+git switch -c feature-01
+git checkout -b feature-01
+```
+
+### Renommer une branche (branche courante)
+```bash
+git branch -M feature-02
+```
+
+### Renommer une branche (depuis une autre branche)
+```bash
+git branch -m feature-01 feature-02
+```
+
+### Supprimer une branche
+```bash
+git branch -d feature-02
+git branch -D feature-02
+```
+
+### Changer de branche
+```bash
+git switch feature-01
+git checkout feature-01
+```
+
+### Voir les branches
+```bash
+git branch
+git branch -a
+```
 
 ---
 
 ## Distant (origin)
 
-| Action | Commandes (distant) |
-|---|---|
-| Publier une branche (suivi upstream) | `git push -u origin feature-01` |
-| Renommer une branche (distant) | `git push -u origin feature-02`<br>`git push origin --delete feature-01` |
-| Supprimer une branche (distant) | `git push origin --delete feature-02` |
-| Récupérer les refs | `git fetch origin`<br>`git fetch --all --prune` |
-| Créer une branche locale depuis origin | `git switch -c feature-01 --track origin/feature-01`<br>`git checkout -b feature-01 origin/feature-01` |
-| Mettre à jour une branche locale | `git pull`<br>`git pull --rebase` |
+### Publier une branche (suivi upstream)
+```bash
+git push -u origin feature-01
+```
+
+### Renommer une branche (distant)
+```bash
+git push -u origin feature-02
+git push origin --delete feature-01
+```
+
+### Supprimer une branche (distant)
+```bash
+git push origin --delete feature-02
+```
+
+### Récupérer les refs
+```bash
+git fetch origin
+git fetch --all --prune
+```
+
+### Créer une branche locale depuis origin
+```bash
+git switch -c feature-01 --track origin/feature-01
+git checkout -b feature-01 origin/feature-01
+```
+
+### Mettre à jour une branche locale
+```bash
+git pull
+git pull --rebase
+```
+
+---
 
 ## Utilisation / Gestion
 
-| Action | Commande |
-|---|---|
-| Lister branches locales | `git branch` |
-| Lister branches distantes | `git branch -r` |
-| Lister toutes les branches | `git branch -a` |
-| Voir la branche trackée | `git branch -vv` |
-| Publier la branche courante | `git push -u origin HEAD` |
-| Récupérer les branches distantes | `git fetch --all --prune` |
-| Créer localement depuis une branche distante | `git switch -c feature-01 --track origin/feature-01` |
+### Lister branches locales
+```bash
+git branch
+```
+
+### Lister branches distantes
+```bash
+git branch -r
+```
+
+### Lister toutes les branches
+```bash
+git branch -a
+```
+
+### Voir la branche trackée
+```bash
+git branch -vv
+```
+
+### Publier la branche courante
+```bash
+git push -u origin HEAD
+```
+
+### Récupérer les branches distantes
+```bash
+git fetch --all --prune
+```
+
+### Créer localement depuis une branche distante
+```bash
+git switch -c feature-01 --track origin/feature-01
+```
 
 ---
 
 ## git fetch — combinaisons utiles
 
-| Objectif | Commande | Effet |
-|---|---|---|
-| Récupérer les refs d’un remote | `git fetch origin` | Met à jour `origin/*`, ne modifie pas la branche courante |
-| Récupérer toutes les refs | `git fetch --all` | Fetch de tous les remotes |
-| Nettoyer les branches distantes supprimées | `git fetch --prune` | Supprime les refs `origin/*` inexistantes côté remote |
-| Tout récupérer + nettoyer | `git fetch --all --prune` | Le plus utile en routine |
-| Fetch d’une branche précise | `git fetch origin feature-01` | Met à jour `origin/feature-01` uniquement |
-| Fetch d’un tag précis | `git fetch origin tag v1.2.0` | Récupère le tag demandé |
-| Fetch de tous les tags | `git fetch --tags` | Télécharge les tags manquants |
-| Forcer la mise à jour d’une ref locale (dangereux) | `git fetch origin main:main` | Écrase ta branche locale `main` avec `origin/main` |
-| Fetch en profondeur limitée (shallow) | `git fetch --depth 1 origin` | Récupère un historique tronqué |
-| Compléter un shallow clone | `git fetch --unshallow` | Récupère l’historique complet |
-| Voir ce qui va être fetch (dry-run) | `git fetch --dry-run origin` | Liste les mises à jour sans les appliquer |
-| Afficher détails (verbose) | `git fetch -v origin` | Log détaillé du fetch |
-| Mettre à jour une branche de tracking | `git fetch origin` + `git branch -vv` | Vérifie la branche suivie et l’écart |
+### Récupérer les refs d’un remote
+```bash
+git fetch origin
+```
+Effet : met à jour `origin/*`, ne modifie pas la branche courante.
+
+### Récupérer toutes les refs
+```bash
+git fetch --all
+```
+Effet : fetch de tous les remotes.
+
+### Nettoyer les branches distantes supprimées
+```bash
+git fetch --prune
+```
+Effet : supprime les refs `origin/*` inexistantes côté remote.
+
+### Tout récupérer + nettoyer
+```bash
+git fetch --all --prune
+```
+Effet : le plus utile en routine.
+
+### Fetch d’une branche précise
+```bash
+git fetch origin feature-01
+```
+Effet : met à jour `origin/feature-01` uniquement.
+
+### Fetch d’un tag précis
+```bash
+git fetch origin tag v1.2.0
+```
+Effet : récupère le tag demandé.
+
+### Fetch de tous les tags
+```bash
+git fetch --tags
+```
+Effet : télécharge les tags manquants.
+
+### Forcer la mise à jour d’une ref locale (dangereux)
+```bash
+git fetch origin main:main
+```
+Effet : écrase ta branche locale `main` avec `origin/main`.
+
+### Fetch en profondeur limitée (shallow)
+```bash
+git fetch --depth 1 origin
+```
+Effet : récupère un historique tronqué.
+
+### Compléter un shallow clone
+```bash
+git fetch --unshallow
+```
+Effet : récupère l’historique complet.
+
+### Voir ce qui va être fetch (dry-run)
+```bash
+git fetch --dry-run origin
+```
+Effet : liste les mises à jour sans les appliquer.
+
+### Afficher détails (verbose)
+```bash
+git fetch -v origin
+```
+Effet : log détaillé du fetch.
+
+### Mettre à jour une branche de tracking
+```bash
+git fetch origin
+git branch -vv
+```
+Effet : vérifie la branche suivie et l’écart.
 
 ---
 
 ## git pull — combinaisons utiles
 
-| Objectif | Commande | Effet |
-|---|---|---|
-| Pull simple (merge) sur la branche courante | `git pull` | `fetch` + `merge` de l’upstream |
-| Pull sur un remote précis | `git pull origin` | `fetch` + `merge` depuis `origin` |
-| Pull d’une branche précise (merge) | `git pull origin feature-01` | Merge de `origin/feature-01` dans ta branche courante |
-| Pull avec rebase | `git pull --rebase` | `fetch` + `rebase` sur l’upstream |
-| Pull d’une branche précise avec rebase | `git pull --rebase origin feature-01` | Rebase de ta branche courante sur `origin/feature-01` |
-| Pull avec autostash | `git pull --rebase --autostash` | Stash auto, rebase, unstash |
-| Pull avec fast-forward only | `git pull --ff-only` | Échoue si merge non fast-forward requis |
-| Pull avec merge explicite (pas rebase) | `git pull --no-rebase` | Force le merge même si config rebase |
-| Pull sans commit automatique (merge) | `git pull --no-commit` | Prépare le merge, laisse le commit à faire |
-| Pull + squash (merge squash) | `git pull --squash` | Fusionne en squash (pas de merge commit auto) |
-| Pull en vérifiant les signatures (si activé) | `git pull --verify-signatures` | Vérifie signatures des commits (si applicable) |
-| Pull verbeux | `git pull -v` | Log détaillé |
+### Pull simple (merge) sur la branche courante
+```bash
+git pull
+```
+Effet : `fetch` + `merge` de l’upstream.
+
+### Pull sur un remote précis
+```bash
+git pull origin
+```
+Effet : `fetch` + `merge` depuis `origin`.
+
+### Pull d’une branche précise (merge)
+```bash
+git pull origin feature-01
+```
+Effet : merge de `origin/feature-01` dans ta branche courante.
+
+### Pull avec rebase
+```bash
+git pull --rebase
+```
+Effet : `fetch` + `rebase` sur l’upstream.
+
+### Pull d’une branche précise avec rebase
+```bash
+git pull --rebase origin feature-01
+```
+Effet : rebase de ta branche courante sur `origin/feature-01`.
+
+### Pull avec autostash
+```bash
+git pull --rebase --autostash
+```
+Effet : stash auto, rebase, unstash.
+
+### Pull avec fast-forward only
+```bash
+git pull --ff-only
+```
+Effet : échoue si merge non fast-forward requis.
+
+### Pull avec merge explicite (pas rebase)
+```bash
+git pull --no-rebase
+```
+Effet : force le merge même si config rebase.
+
+### Pull sans commit automatique (merge)
+```bash
+git pull --no-commit
+```
+Effet : prépare le merge, laisse le commit à faire.
+
+### Pull + squash (merge squash)
+```bash
+git pull --squash
+```
+Effet : fusionne en squash, pas de merge commit auto.
+
+### Pull en vérifiant les signatures (si activé)
+```bash
+git pull --verify-signatures
+```
+Effet : vérifie signatures des commits si applicable.
+
+### Pull verbeux
+```bash
+git pull -v
+```
+Effet : log détaillé.
 
 ### Notes rapides
+
 - `git pull` = `git fetch` + intégration (merge ou rebase).
 - `git pull origin feature-01` modifie **ta branche courante** : ce n’est pas “mettre à jour feature-01”, c’est “fusionner feature-01 dans la branche actuelle”.
 
+---
 
 ## Cas pratique — Feature
 
@@ -101,16 +300,19 @@ git fetch --prune
 ```
 
 ## Compter les branches en local
+
 ```bash
 (git branch --list).Count
 ```
+
 ## Compter les branches en remote
+
 ```bash
 (git branch -r --list).Count
 ```
 
 ## Compter les branches en remote sur gitlab
+
 ```bash
 (git branch -r --list "gitlab/*" | Where-Object { $_ -notmatch '->' }).Count
 ```
-
