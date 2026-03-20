@@ -48,7 +48,8 @@
 
 ## Essentiels
 - [Commandes](./commandes.md)
-- [pom.xml](./pom-xml.md)
+- [pom.xml](./configuration/001-pom-xml.md)
+- [pom.xml Parent](./configuration/002-pom-xml-parent.md)
 - [application.properties vs application.yml](./application/application-type.md)
 - [application.properties](./application/application-properties.md)
 - [application.yml](./application/application-yaml.md)
