@@ -1,5 +1,8 @@
 # Springboot
 
+## Java
+- [Essentiel](./installation/000-README.md)
+
 ## Java 21
 - [README](./installation/000-README.md)
 - [Installation Java 21](./installation/001-java21-installation.md)
