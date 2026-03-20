@@ -17,13 +17,13 @@ Dans `Variables utilisateur` ou `Variables système` :
 Exemple Java 21 :
 
 ```text
-C:\Program Files\Eclipse Adoptium\jdk-21
+D:\hal\java\jdk-21
 ```
 
 Exemple Java 25 :
 
 ```text
-C:\Program Files\Eclipse Adoptium\jdk-25
+D:\hal\java\jdk-25
 ```
 
 ## Modifier `Path`
