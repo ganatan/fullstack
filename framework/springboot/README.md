@@ -2,6 +2,7 @@
 
 ## Java
 - [Essentiels](./programmation/001-essentiels.md)
+- [Debugage](./programmation/002-debugage.md)
 
 ## Java 21
 - [README](./installation/000-README.md)
