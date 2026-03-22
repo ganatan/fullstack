@@ -4,7 +4,8 @@
 - [Essentiels Config](./programmation/001-essentiels-config.md)
 - [Essentiels Type](./programmation/002-essentiels-type.md)
 - [Essentiels Rest](./programmation/003-essentiels-rest.md)
-- [Debugage](./programmation/004-debugage.md)
+- [Essentiels Rest Class](./programmation/004-essentiels-rest-class.md)
+- [Debugage](./programmation/005-debugage.md)
 
 ## Java 21
 - [README](./installation/000-README.md)
