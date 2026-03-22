@@ -1,8 +1,10 @@
 # Springboot
 
 ## Java
-- [Essentiels](./programmation/001-essentiels.md)
-- [Debugage](./programmation/002-debugage.md)
+- [Essentiels Config](./programmation/001-essentiels-config.md)
+- [Essentiels Type](./programmation/002-essentiels-type.md)
+- [Essentiels Rest](./programmation/003-essentiels-rest.md)
+- [Debugage](./programmation/004-debugage.md)
 
 ## Java 21
 - [README](./installation/000-README.md)
