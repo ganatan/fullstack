@@ -1,5 +1,5 @@
-# Ouvrir deux projets IntelliJ séparément
-Aller dans `File > Settings > Project`.
-Dans `Open project in`, choisir `New window`.
-Ainsi, chaque nouveau projet s’ouvre dans une fenêtre IntelliJ distincte.
-Cela permet de lancer deux applications de sources différentes en parallèle.
+- Aller dans `File > Settings > Project`
+- Repérer l’option `Open project in`
+- Sélectionner `New window`
+- Chaque projet s’ouvrira dans une fenêtre IntelliJ séparée
+- Cela permet de lancer deux applications différentes en parallèle
