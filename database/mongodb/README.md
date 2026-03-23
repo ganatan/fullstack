@@ -12,6 +12,7 @@
 - [Filtres ISODate](./installation/009-filtres-isodate.md)
 - [Aggregations](./installation/010-aggregations.md)
 - [Aggregations Test](./installation/011-aggregations-test.md)
+- [Aggregations Exemples](./installation/012-aggregations-examples.md)
 
 ## Springboot
 - [Spring Data](./springboot/001-spring-data-mongodb.md)
