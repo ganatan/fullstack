@@ -1,5 +1,5 @@
-- Aller dans `File > Settings > Project`
-- Repérer l’option `Open project in`
+- Aller dans `File > Settings > System Settings`
+- Repérer l’option `Reopen project on startup`
 - Sélectionner `New window`
 - Chaque projet s’ouvrira dans une fenêtre IntelliJ séparée
 - Cela permet de lancer deux applications différentes en parallèle
