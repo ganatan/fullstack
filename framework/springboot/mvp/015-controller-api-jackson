@@ -1,0 +1,419 @@
+# Tuto Spring Boot simple : `TestController` qui consomme une API publique avec Jackson, `try/catch` et 5 retries
+
+## Objectif
+
+Créer un `TestController` simple qui :
+
+- appelle une API publique sur le web
+- récupère la réponse brute en `String`
+- transforme le JSON avec Jackson
+- gère les erreurs avec `try/catch`
+- réessaie jusqu’à 5 fois avant d’échouer
+
+Le but est de montrer une version simple mais un peu plus robuste qu’un appel direct.
+
+---
+
+## API publique utilisée
+
+```text
+https://jsonplaceholder.typicode.com/todos/1
+```
+
+Réponse attendue :
+
+```json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+```
+
+---
+
+## Dépendances Maven
+
+`spring-boot-starter-web` embarque déjà Jackson.
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+---
+
+## `application.yml`
+
+```yaml
+spring:
+  application:
+    name: springboot-api-client-jackson-demo
+
+server:
+  port: 3000
+```
+
+---
+
+## Classe principale
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+---
+
+## Classe `Todo`
+
+```java
+package com.example.demo.test;
+
+public class Todo {
+
+    private Integer userId;
+    private Integer id;
+    private String title;
+    private Boolean completed;
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+}
+```
+
+---
+
+## `TestController`
+
+```java
+package com.example.demo.test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+
+    private static final String URL = "https://jsonplaceholder.typicode.com/todos/1";
+    private static final int MAX_RETRIES = 5;
+
+    private final ObjectMapper objectMapper;
+
+    public TestController(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    @GetMapping("/test/public-api")
+    public ResponseEntity<?> callPublicApi() {
+        RestTemplate restTemplate = new RestTemplate();
+        Exception lastException = null;
+
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                String response = restTemplate.getForObject(URL, String.class);
+                Todo todo = objectMapper.readValue(response, Todo.class);
+                return ResponseEntity.ok(todo);
+            } catch (Exception exception) {
+                lastException = exception;
+                System.out.println("tentative " + attempt + " en erreur : " + exception.getMessage());
+            }
+        }
+
+        Map<String, Object> error = new LinkedHashMap<>();
+        error.put("message", "echec appel api apres 5 tentatives");
+        error.put("url", URL);
+        error.put("retries", MAX_RETRIES);
+        error.put("error", lastException != null ? lastException.getMessage() : "erreur inconnue");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+}
+```
+
+---
+
+## Explication
+
+Le controller fait exactement ça :
+
+- crée un `RestTemplate`
+- essaie d’appeler l’API publique
+- récupère la réponse en texte brut
+- transforme le JSON avec `ObjectMapper`
+- en cas d’erreur, passe dans le `catch`
+- recommence jusqu’à 5 fois
+- si tout échoue, renvoie une erreur JSON
+
+---
+
+## URL locale à tester
+
+```text
+http://localhost:3000/test/public-api
+```
+
+---
+
+## Réponse attendue si tout fonctionne
+
+```json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+```
+
+---
+
+## Réponse possible si les 5 tentatives échouent
+
+```json
+{
+  "message": "echec appel api apres 5 tentatives",
+  "url": "https://jsonplaceholder.typicode.com/todos/1",
+  "retries": 5,
+  "error": "..."
+}
+```
+
+---
+
+## Version avec délai entre les retries
+
+Tu peux ajouter une petite pause entre chaque tentative.
+
+```java
+package com.example.demo.test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+
+    private static final String URL = "https://jsonplaceholder.typicode.com/todos/1";
+    private static final int MAX_RETRIES = 5;
+
+    private final ObjectMapper objectMapper;
+
+    public TestController(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    @GetMapping("/test/public-api")
+    public ResponseEntity<?> callPublicApi() {
+        RestTemplate restTemplate = new RestTemplate();
+        Exception lastException = null;
+
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                String response = restTemplate.getForObject(URL, String.class);
+                Todo todo = objectMapper.readValue(response, Todo.class);
+                return ResponseEntity.ok(todo);
+            } catch (Exception exception) {
+                lastException = exception;
+                System.out.println("tentative " + attempt + " en erreur : " + exception.getMessage());
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException interruptedException) {
+                    Thread.currentThread().interrupt();
+                    Map<String, Object> error = new LinkedHashMap<>();
+                    error.put("message", "thread interrompu pendant l attente");
+                    error.put("error", interruptedException.getMessage());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+                }
+            }
+        }
+
+        Map<String, Object> error = new LinkedHashMap<>();
+        error.put("message", "echec appel api apres 5 tentatives");
+        error.put("url", URL);
+        error.put("retries", MAX_RETRIES);
+        error.put("error", lastException != null ? lastException.getMessage() : "erreur inconnue");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+}
+```
+
+---
+
+## Pourquoi utiliser Jackson ici
+
+Dans ce tuto, Jackson sert à :
+
+- lire le JSON brut
+- le convertir en objet Java `Todo`
+
+La ligne clé est :
+
+```java
+Todo todo = objectMapper.readValue(response, Todo.class);
+```
+
+C’est utile quand tu veux :
+
+- maîtriser toi-même le parsing
+- logguer la réponse brute avant transformation
+- intercepter le JSON avant mapping
+
+---
+
+## Variante pour voir aussi le JSON brut
+
+```java
+package com.example.demo.test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+
+    private static final String URL = "https://jsonplaceholder.typicode.com/todos/1";
+    private static final int MAX_RETRIES = 5;
+
+    private final ObjectMapper objectMapper;
+
+    public TestController(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    @GetMapping("/test/public-api-debug")
+    public Map<String, Object> callPublicApiDebug() throws Exception {
+        RestTemplate restTemplate = new RestTemplate();
+        String response = null;
+        Todo todo = null;
+
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                response = restTemplate.getForObject(URL, String.class);
+                todo = objectMapper.readValue(response, Todo.class);
+                break;
+            } catch (Exception exception) {
+                System.out.println("tentative " + attempt + " en erreur : " + exception.getMessage());
+                if (attempt == MAX_RETRIES) {
+                    throw exception;
+                }
+            }
+        }
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("rawJson", response);
+        result.put("todo", todo);
+        return result;
+    }
+}
+```
+
+---
+
+## Ce que montre ce tuto
+
+Ce tuto montre comment :
+
+- appeler une API publique
+- récupérer une réponse brute
+- parser le JSON avec Jackson
+- gérer les erreurs avec `try/catch`
+- faire 5 retries manuels
+
+---
+
+## Limites
+
+Cette version est pédagogique.
+
+Dans une vraie application, on ferait plutôt :
+
+- un `Service`
+- un vrai client HTTP partagé
+- des timeouts
+- une gestion d’erreur centralisée
+- éventuellement `WebClient`
+- éventuellement Spring Retry
+
+Mais pour apprendre, ce code est parfait.
+
+---
+
+## Résumé
+
+- `RestTemplate` fait l’appel HTTP
+- `ObjectMapper` parse le JSON
+- le `try/catch` gère les erreurs
+- la boucle `for` fait les 5 retries
+- on renvoie soit l’objet `Todo`, soit une erreur JSON claire
+
+---
+
+## Suite logique
+
+Après ce tuto, tu peux faire :
+
+- la même chose avec un `Service`
+- la même chose avec `WebClient`
+- la même chose avec `Spring Retry`
+- la même chose avec gestion globale des erreurs
