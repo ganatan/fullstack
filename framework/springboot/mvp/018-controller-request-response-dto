@@ -1,0 +1,674 @@
+# Tuto Spring Boot : API REST `TestController` avec MongoDB, `RequestMediaDTO` et `ResponseMediaDTO`
+
+## Objectif
+
+Créer un exemple simple avec peu de champs pour bien comprendre :
+
+- le document MongoDB `Media`
+- un DTO de requête `RequestMediaDTO`
+- un DTO de réponse `ResponseMediaDTO`
+- un `Service` avec interface
+- un `ServiceImpl`
+- un `Repository` avec interface
+- un `TestController`
+
+Ici on garde seulement 3 champs métier pour rester simple :
+
+- `title`
+- `type`
+- `year`
+
+---
+
+## Structure du projet
+
+```text
+src/main/java/com/example/demo/
+├── DemoApplication.java
+├── media/
+│   ├── Media.java
+│   ├── RequestMediaDTO.java
+│   ├── ResponseMediaDTO.java
+│   ├── MediaRepository.java
+│   ├── TestService.java
+│   ├── TestServiceImpl.java
+│   └── TestController.java
+```
+
+---
+
+## Dépendances Maven
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+```
+
+---
+
+## `application.yml`
+
+```yaml
+spring:
+  application:
+    name: springboot-media-api
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/media_db
+
+server:
+  port: 3000
+```
+
+---
+
+## Classe principale
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+---
+
+## Classe `Media`
+
+C’est le document MongoDB stocké en base.
+
+```java
+package com.example.demo.media;
+
+import java.time.Instant;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "media")
+public class Media {
+
+    @Id
+    private String id;
+    private String title;
+    private String type;
+    private Integer year;
+    private Instant createdAt;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+```
+
+---
+
+## Classe `RequestMediaDTO`
+
+C’est l’objet reçu dans le `POST`.
+
+```java
+package com.example.demo.media;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class RequestMediaDTO {
+
+    @NotBlank(message = "title est obligatoire")
+    private String title;
+
+    @NotBlank(message = "type est obligatoire")
+    private String type;
+
+    @NotNull(message = "year est obligatoire")
+    @Min(value = 1900, message = "year doit etre superieur ou egal a 1900")
+    @Max(value = 2100, message = "year doit etre inferieur ou egal a 2100")
+    private Integer year;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+}
+```
+
+---
+
+## Classe `ResponseMediaDTO`
+
+C’est l’objet retourné par l’API.
+
+```java
+package com.example.demo.media;
+
+public class ResponseMediaDTO {
+
+    private String id;
+    private String title;
+    private String type;
+    private Integer year;
+    private String createdAt;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+```
+
+---
+
+## Interface `MediaRepository`
+
+```java
+package com.example.demo.media;
+
+import java.util.List;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface MediaRepository extends MongoRepository<Media, String> {
+
+    List<Media> findByTitleContainingIgnoreCase(String title);
+
+    List<Media> findByType(String type);
+}
+```
+
+---
+
+## Interface `TestService`
+
+```java
+package com.example.demo.media;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface TestService {
+
+    List<ResponseMediaDTO> findAll();
+
+    Optional<ResponseMediaDTO> findById(String id);
+
+    List<ResponseMediaDTO> findByTitle(String title);
+
+    List<ResponseMediaDTO> findByType(String type);
+
+    ResponseMediaDTO create(RequestMediaDTO requestMediaDTO);
+
+    boolean deleteById(String id);
+
+    long count();
+}
+```
+
+---
+
+## Classe `TestServiceImpl`
+
+Ici on fait les 2 mappings :
+
+- `RequestMediaDTO -> Media`
+- `Media -> ResponseMediaDTO`
+
+```java
+package com.example.demo.media;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TestServiceImpl implements TestService {
+
+    private final MediaRepository mediaRepository;
+
+    public TestServiceImpl(MediaRepository mediaRepository) {
+        this.mediaRepository = mediaRepository;
+    }
+
+    @Override
+    public List<ResponseMediaDTO> findAll() {
+        return mediaRepository.findAll()
+            .stream()
+            .map(this::toResponseMediaDTO)
+            .toList();
+    }
+
+    @Override
+    public Optional<ResponseMediaDTO> findById(String id) {
+        return mediaRepository.findById(id)
+            .map(this::toResponseMediaDTO);
+    }
+
+    @Override
+    public List<ResponseMediaDTO> findByTitle(String title) {
+        return mediaRepository.findByTitleContainingIgnoreCase(title)
+            .stream()
+            .map(this::toResponseMediaDTO)
+            .toList();
+    }
+
+    @Override
+    public List<ResponseMediaDTO> findByType(String type) {
+        return mediaRepository.findByType(type)
+            .stream()
+            .map(this::toResponseMediaDTO)
+            .toList();
+    }
+
+    @Override
+    public ResponseMediaDTO create(RequestMediaDTO requestMediaDTO) {
+        Media media = new Media();
+        media.setTitle(requestMediaDTO.getTitle());
+        media.setType(requestMediaDTO.getType());
+        media.setYear(requestMediaDTO.getYear());
+        media.setCreatedAt(Instant.now());
+
+        Media savedMedia = mediaRepository.save(media);
+        return toResponseMediaDTO(savedMedia);
+    }
+
+    @Override
+    public boolean deleteById(String id) {
+        if (!mediaRepository.existsById(id)) {
+            return false;
+        }
+        mediaRepository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public long count() {
+        return mediaRepository.count();
+    }
+
+    private ResponseMediaDTO toResponseMediaDTO(Media media) {
+        ResponseMediaDTO responseMediaDTO = new ResponseMediaDTO();
+        responseMediaDTO.setId(media.getId());
+        responseMediaDTO.setTitle(media.getTitle());
+        responseMediaDTO.setType(media.getType());
+        responseMediaDTO.setYear(media.getYear());
+        responseMediaDTO.setCreatedAt(media.getCreatedAt() != null ? media.getCreatedAt().toString() : null);
+        return responseMediaDTO;
+    }
+}
+```
+
+---
+
+## `TestController`
+
+```java
+package com.example.demo.media;
+
+import jakarta.validation.Valid;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/test/media")
+public class TestController {
+
+    private final TestService testService;
+
+    public TestController(TestService testService) {
+        this.testService = testService;
+    }
+
+    @GetMapping
+    public List<ResponseMediaDTO> getAll() {
+        return testService.findAll();
+    }
+
+    @GetMapping("/count")
+    public Map<String, Object> count() {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("count", testService.count());
+        return response;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseMediaDTO> getById(@PathVariable String id) {
+        Optional<ResponseMediaDTO> media = testService.findById(id);
+        return media.map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/search/by-title")
+    public List<ResponseMediaDTO> getByTitle(@RequestParam String title) {
+        return testService.findByTitle(title);
+    }
+
+    @GetMapping("/search/by-type")
+    public List<ResponseMediaDTO> getByType(@RequestParam String type) {
+        return testService.findByType(type);
+    }
+
+    @PostMapping
+    public ResponseEntity<ResponseMediaDTO> create(@Valid @RequestBody RequestMediaDTO requestMediaDTO) {
+        ResponseMediaDTO created = testService.create(requestMediaDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteById(@PathVariable String id) {
+        boolean deleted = testService.deleteById(id);
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", id);
+        response.put("deleted", deleted);
+
+        if (!deleted) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+}
+```
+
+---
+
+## Endpoints disponibles
+
+### Récupérer tous les médias
+
+```http
+GET /test/media
+```
+
+### Compter les médias
+
+```http
+GET /test/media/count
+```
+
+### Récupérer un média par id
+
+```http
+GET /test/media/{id}
+```
+
+### Rechercher par titre
+
+```http
+GET /test/media/search/by-title?title=dune
+```
+
+### Rechercher par type
+
+```http
+GET /test/media/search/by-type?type=MOVIE
+```
+
+### Créer un média
+
+```http
+POST /test/media
+```
+
+### Supprimer un média
+
+```http
+DELETE /test/media/{id}
+```
+
+---
+
+## Exemple JSON pour le `POST`
+
+```json
+{
+  "title": "Dune",
+  "type": "MOVIE",
+  "year": 2021
+}
+```
+
+---
+
+## Exemple de réponse du `POST`
+
+```json
+{
+  "id": "67f000000000000000000001",
+  "title": "Dune",
+  "type": "MOVIE",
+  "year": 2021,
+  "createdAt": "2026-03-25T10:00:00Z"
+}
+```
+
+---
+
+## Exemple de réponse du `GET /test/media`
+
+```json
+[
+  {
+    "id": "67f000000000000000000001",
+    "title": "Dune",
+    "type": "MOVIE",
+    "year": 2021,
+    "createdAt": "2026-03-25T10:00:00Z"
+  },
+  {
+    "id": "67f000000000000000000002",
+    "title": "Arrival",
+    "type": "MOVIE",
+    "year": 2016,
+    "createdAt": "2026-03-25T10:01:00Z"
+  }
+]
+```
+
+---
+
+## Exemple JSON invalide
+
+```json
+{
+  "title": "",
+  "type": "",
+  "year": 1500
+}
+```
+
+---
+
+## Jeu de données MongoDB
+
+```json
+[
+  {
+    "title": "Dune",
+    "type": "MOVIE",
+    "year": 2021,
+    "createdAt": { "$date": "2026-03-25T10:00:00Z" }
+  },
+  {
+    "title": "Arrival",
+    "type": "MOVIE",
+    "year": 2016,
+    "createdAt": { "$date": "2026-03-25T10:01:00Z" }
+  },
+  {
+    "title": "Interstellar",
+    "type": "MOVIE",
+    "year": 2014,
+    "createdAt": { "$date": "2026-03-25T10:02:00Z" }
+  }
+]
+```
+
+---
+
+## Ce que montre ce tuto
+
+- `RequestMediaDTO` sert uniquement pour l’entrée API
+- `ResponseMediaDTO` sert uniquement pour la sortie API
+- `Media` est le document MongoDB
+- le `ServiceImpl` fait les mappings
+- le controller reste propre et simple
+
+---
+
+## Architecture finale
+
+```text
+TestController
+    ↓
+TestService
+    ↓
+TestServiceImpl
+    ↓
+MediaRepository
+    ↓
+MongoDB
+```
+
+---
+
+## Résumé
+
+- `RequestMediaDTO` protège l’entrée
+- `ResponseMediaDTO` contrôle la sortie
+- `Media` reste l’objet de persistance
+- cette séparation est la base d’une API propre
+- avec peu de champs, on comprend mieux le principe
+
+---
+
+## Suite logique
+
+Le prochain tuto peut être :
+
+- ajouter `PUT`
+- ajouter gestion d’erreurs de validation
+- ajouter `ResponseEntity` plus riche
+- ajouter pagination et tri
