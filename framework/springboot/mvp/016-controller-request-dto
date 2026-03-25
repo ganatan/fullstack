@@ -1,0 +1,669 @@
+# Tuto Spring Boot : API REST `TestController` avec MongoDB, `RequestMediaDTO`, `Service` interface + implementation, `Repository` interface
+
+## Objectif
+
+Créer une API REST simple avec :
+
+- une collection MongoDB `media`
+- un `TestController`
+- un `RequestMediaDTO` pour les requêtes entrantes
+- un `TestService` en interface
+- un `TestServiceImpl` qui implémente ce service
+- un `MediaRepository` en interface
+- une validation simple
+
+Le but est d’avoir une structure propre et classique :
+
+- controller
+- service interface
+- service implementation
+- repository interface
+- document MongoDB
+- DTO de requête
+
+---
+
+## Structure du projet
+
+```text
+src/main/java/com/example/demo/
+├── DemoApplication.java
+├── media/
+│   ├── Media.java
+│   ├── RequestMediaDTO.java
+│   ├── MediaRepository.java
+│   ├── TestService.java
+│   ├── TestServiceImpl.java
+│   └── TestController.java
+```
+
+---
+
+## Dépendances Maven
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+```
+
+---
+
+## `application.yml`
+
+```yaml
+spring:
+  application:
+    name: springboot-media-api
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/media_db
+
+server:
+  port: 3000
+```
+
+---
+
+## Classe principale
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+---
+
+## Classe `Media`
+
+C’est l’objet stocké dans MongoDB.
+
+```java
+package com.example.demo.media;
+
+import java.time.Instant;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "media")
+public class Media {
+
+    @Id
+    private String id;
+    private String name;
+    private String type;
+    private String director;
+    private Integer year;
+    private String country;
+    private Instant createdAt;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+}
+```
+
+---
+
+## Classe `RequestMediaDTO`
+
+C’est l’objet reçu dans le `POST`.
+
+Validation simple :
+
+- `name` obligatoire
+- `type` obligatoire
+- `director` obligatoire
+- `year` obligatoire
+- `year` entre 1900 et 2100
+- `country` obligatoire
+
+```java
+package com.example.demo.media;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class RequestMediaDTO {
+
+    @NotBlank(message = "name est obligatoire")
+    private String name;
+
+    @NotBlank(message = "type est obligatoire")
+    private String type;
+
+    @NotBlank(message = "director est obligatoire")
+    private String director;
+
+    @NotNull(message = "year est obligatoire")
+    @Min(value = 1900, message = "year doit etre superieur ou egal a 1900")
+    @Max(value = 2100, message = "year doit etre inferieur ou egal a 2100")
+    private Integer year;
+
+    @NotBlank(message = "country est obligatoire")
+    private String country;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+}
+```
+
+---
+
+## Interface `MediaRepository`
+
+Le repository est une interface.
+
+Spring Data MongoDB génère automatiquement son implémentation.
+
+```java
+package com.example.demo.media;
+
+import java.util.List;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface MediaRepository extends MongoRepository<Media, String> {
+
+    List<Media> findByNameContainingIgnoreCase(String name);
+
+    List<Media> findByType(String type);
+}
+```
+
+---
+
+## Interface `TestService`
+
+Le service est aussi une interface.
+
+```java
+package com.example.demo.media;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface TestService {
+
+    List<Media> findAll();
+
+    Optional<Media> findById(String id);
+
+    List<Media> findByName(String name);
+
+    List<Media> findByType(String type);
+
+    Media create(RequestMediaDTO requestMediaDTO);
+
+    boolean deleteById(String id);
+
+    long count();
+}
+```
+
+---
+
+## Classe `TestServiceImpl`
+
+C’est l’implémentation concrète du service.
+
+Elle fait le mapping entre `RequestMediaDTO` et `Media`.
+
+```java
+package com.example.demo.media;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TestServiceImpl implements TestService {
+
+    private final MediaRepository mediaRepository;
+
+    public TestServiceImpl(MediaRepository mediaRepository) {
+        this.mediaRepository = mediaRepository;
+    }
+
+    @Override
+    public List<Media> findAll() {
+        return mediaRepository.findAll();
+    }
+
+    @Override
+    public Optional<Media> findById(String id) {
+        return mediaRepository.findById(id);
+    }
+
+    @Override
+    public List<Media> findByName(String name) {
+        return mediaRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    @Override
+    public List<Media> findByType(String type) {
+        return mediaRepository.findByType(type);
+    }
+
+    @Override
+    public Media create(RequestMediaDTO requestMediaDTO) {
+        Media media = new Media();
+        media.setName(requestMediaDTO.getName());
+        media.setType(requestMediaDTO.getType());
+        media.setDirector(requestMediaDTO.getDirector());
+        media.setYear(requestMediaDTO.getYear());
+        media.setCountry(requestMediaDTO.getCountry());
+        media.setCreatedAt(Instant.now());
+        return mediaRepository.save(media);
+    }
+
+    @Override
+    public boolean deleteById(String id) {
+        if (!mediaRepository.existsById(id)) {
+            return false;
+        }
+        mediaRepository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public long count() {
+        return mediaRepository.count();
+    }
+}
+```
+
+---
+
+## `TestController`
+
+Le controller dépend uniquement de l’interface `TestService`.
+
+Il reçoit `RequestMediaDTO` avec `@Valid`.
+
+```java
+package com.example.demo.media;
+
+import jakarta.validation.Valid;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/test/media")
+public class TestController {
+
+    private final TestService testService;
+
+    public TestController(TestService testService) {
+        this.testService = testService;
+    }
+
+    @GetMapping
+    public List<Media> getAll() {
+        return testService.findAll();
+    }
+
+    @GetMapping("/count")
+    public Map<String, Object> count() {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("count", testService.count());
+        return response;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Media> getById(@PathVariable String id) {
+        Optional<Media> media = testService.findById(id);
+        return media.map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/search/by-name")
+    public List<Media> getByName(@RequestParam String name) {
+        return testService.findByName(name);
+    }
+
+    @GetMapping("/search/by-type")
+    public List<Media> getByType(@RequestParam String type) {
+        return testService.findByType(type);
+    }
+
+    @PostMapping
+    public ResponseEntity<Media> create(@Valid @RequestBody RequestMediaDTO requestMediaDTO) {
+        Media created = testService.create(requestMediaDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteById(@PathVariable String id) {
+        boolean deleted = testService.deleteById(id);
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", id);
+        response.put("deleted", deleted);
+
+        if (!deleted) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+}
+```
+
+---
+
+## Endpoints disponibles
+
+### Récupérer tous les médias
+
+```http
+GET /test/media
+```
+
+### Compter les médias
+
+```http
+GET /test/media/count
+```
+
+### Récupérer un média par id
+
+```http
+GET /test/media/{id}
+```
+
+### Rechercher par nom
+
+```http
+GET /test/media/search/by-name?name=dune
+```
+
+### Rechercher par type
+
+```http
+GET /test/media/search/by-type?type=MOVIE
+```
+
+### Créer un média
+
+```http
+POST /test/media
+```
+
+### Supprimer un média
+
+```http
+DELETE /test/media/{id}
+```
+
+---
+
+## Exemple JSON valide pour le `POST`
+
+```json
+{
+  "name": "Dune",
+  "type": "MOVIE",
+  "director": "Denis Villeneuve",
+  "year": 2021,
+  "country": "USA"
+}
+```
+
+---
+
+## Exemple JSON invalide
+
+```json
+{
+  "name": "",
+  "type": "",
+  "director": "",
+  "year": 1500,
+  "country": ""
+}
+```
+
+---
+
+## Réponse attendue si tout va bien
+
+```json
+{
+  "id": "67f000000000000000000001",
+  "name": "Dune",
+  "type": "MOVIE",
+  "director": "Denis Villeneuve",
+  "year": 2021,
+  "country": "USA",
+  "createdAt": "2026-03-25T10:00:00.000Z"
+}
+```
+
+---
+
+## Jeu de données MongoDB
+
+```json
+[
+  {
+    "name": "Dune",
+    "type": "MOVIE",
+    "director": "Denis Villeneuve",
+    "year": 2021,
+    "country": "USA",
+    "createdAt": { "$date": "2026-03-25T10:00:00Z" }
+  },
+  {
+    "name": "Arrival",
+    "type": "MOVIE",
+    "director": "Denis Villeneuve",
+    "year": 2016,
+    "country": "USA",
+    "createdAt": { "$date": "2026-03-25T10:01:00Z" }
+  },
+  {
+    "name": "Interstellar",
+    "type": "MOVIE",
+    "director": "Christopher Nolan",
+    "year": 2014,
+    "country": "USA",
+    "createdAt": { "$date": "2026-03-25T10:02:00Z" }
+  }
+]
+```
+
+---
+
+## Architecture finale
+
+```text
+TestController
+    ↓
+TestService
+    ↓
+TestServiceImpl
+    ↓
+MediaRepository
+    ↓
+MongoDB
+```
+
+---
+
+## Rôle de chaque classe
+
+### `RequestMediaDTO`
+
+- reçoit les données du `POST`
+- porte la validation
+- ne contient pas `id`
+- ne contient pas `createdAt`
+
+### `Media`
+
+- représente le document MongoDB
+- contient `id`
+- contient `createdAt`
+
+### `TestService`
+
+- définit le contrat métier
+
+### `TestServiceImpl`
+
+- implémente la logique métier
+- fait le mapping DTO vers document
+
+### `MediaRepository`
+
+- interface d’accès aux données MongoDB
+
+### `TestController`
+
+- expose les endpoints REST
+
+---
+
+## Pourquoi cette structure est propre
+
+- le controller ne parle pas directement au repository
+- le controller dépend d’une interface
+- le DTO évite d’exposer directement le document MongoDB en entrée
+- le mapping est centralisé dans le service
+- la validation se fait au niveau API
+
+---
+
+## Suite logique
+
+Le tuto suivant peut être :
+
+- ajouter `update`
+- ajouter `patch`
+- ajouter `ResponseMediaDTO`
+- ajouter une gestion globale des erreurs de validation
+- ajouter pagination et tri
