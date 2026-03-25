@@ -118,5 +118,6 @@
 - [Mongodb Rest](./mvp/008-mongodb-rest.md)
 - [Mongodb Rest Interface](./mvp/009-mongodb-rest_interface.md)
 - [Config via Profile](./mvp/010-config-profile.md)
+- [Service via Profile](./mvp/011-service-profile.md)
 
 
