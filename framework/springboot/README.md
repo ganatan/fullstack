@@ -113,5 +113,6 @@
 - [Controller Collection mongod 404](./mvp/003-controller-collection-error-404.md)
 - [Config local](./mvp/004-config-local.md)
 - [service Interface](./mvp/005-service-interface.md)
+- [Profile](./mvp/006-profile.md)
 
 
