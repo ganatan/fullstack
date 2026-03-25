@@ -1,0 +1,315 @@
+# Tuto Spring Boot simple : `TestController` qui consomme une API publique sur le web
+
+## Objectif
+
+Créer un `TestController` très simple qui appelle une API publique externe et renvoie la réponse.
+
+Le but est de montrer :
+
+- comment appeler une API web depuis Spring Boot
+- comment récupérer du JSON
+- comment renvoyer ce JSON dans un endpoint local
+
+---
+
+## Exemple choisi
+
+On va consommer cette API publique :
+
+```text
+https://jsonplaceholder.typicode.com/todos/1
+```
+
+Cette API renvoie un JSON simple :
+
+```json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+```
+
+---
+
+## Dépendance Maven
+
+Avec Spring Boot Web, `RestTemplate` est déjà disponible.
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+---
+
+## `application.yml`
+
+```yaml
+spring:
+  application:
+    name: springboot-api-client-demo
+
+server:
+  port: 3000
+```
+
+---
+
+## Classe principale
+
+```java
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+---
+
+## Classe `Todo`
+
+Cette classe représente la réponse JSON de l’API.
+
+```java
+package com.example.demo.test;
+
+public class Todo {
+
+    private Integer userId;
+    private Integer id;
+    private String title;
+    private Boolean completed;
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+}
+```
+
+---
+
+## `TestController`
+
+```java
+package com.example.demo.test;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+
+    @GetMapping("/test/public-api")
+    public Todo callPublicApi() {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://jsonplaceholder.typicode.com/todos/1";
+        return restTemplate.getForObject(url, Todo.class);
+    }
+}
+```
+
+---
+
+## Explication
+
+Quand on appelle :
+
+```text
+GET /test/public-api
+```
+
+le controller :
+
+- crée un `RestTemplate`
+- appelle l’URL publique
+- convertit automatiquement le JSON en objet `Todo`
+- renvoie cet objet en JSON
+
+---
+
+## URL locale à tester
+
+```text
+http://localhost:3000/test/public-api
+```
+
+---
+
+## Réponse attendue
+
+```json
+{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}
+```
+
+---
+
+## Variante encore plus simple sans classe Java
+
+Si tu veux juste tester rapidement, tu peux récupérer un `String`.
+
+```java
+package com.example.demo.test;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+
+    @GetMapping("/test/public-api-string")
+    public String callPublicApiAsString() {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://jsonplaceholder.typicode.com/todos/1";
+        return restTemplate.getForObject(url, String.class);
+    }
+}
+```
+
+---
+
+## URL à tester
+
+```text
+http://localhost:3000/test/public-api-string
+```
+
+---
+
+## Réponse attendue
+
+```json
+{"userId":1,"id":1,"title":"delectus aut autem","completed":false}
+```
+
+---
+
+## Variante avec `Map`
+
+Tu peux aussi éviter de créer une classe métier et récupérer directement une map.
+
+```java
+package com.example.demo.test;
+
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+
+    @GetMapping("/test/public-api-map")
+    public Map<String, Object> callPublicApiAsMap() {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://jsonplaceholder.typicode.com/todos/1";
+        return restTemplate.getForObject(url, Map.class);
+    }
+}
+```
+
+---
+
+## URL à tester
+
+```text
+http://localhost:3000/test/public-api-map
+```
+
+---
+
+## Ce que montre ce tuto
+
+Ce tuto montre le minimum pour :
+
+- appeler une API publique externe
+- récupérer du JSON
+- renvoyer ce JSON via un endpoint Spring Boot
+
+---
+
+## Limite de cette version
+
+Cette version est volontairement simple.
+
+Dans une vraie application, on ferait plutôt :
+
+- un `Service`
+- une gestion d’erreur
+- un timeout
+- un client HTTP réutilisable
+- éventuellement `WebClient`
+
+Mais pour apprendre, ce controller suffit.
+
+---
+
+## Version conseillée pour débuter
+
+La plus simple est celle-ci :
+
+```java
+@GetMapping("/test/public-api")
+public Todo callPublicApi() {
+    RestTemplate restTemplate = new RestTemplate();
+    String url = "https://jsonplaceholder.typicode.com/todos/1";
+    return restTemplate.getForObject(url, Todo.class);
+}
+```
+
+---
+
+## Suite logique
+
+Après ce tuto, tu peux faire :
+
+- appel API publique avec paramètre
+- appel API publique avec `Service`
+- appel API avec gestion d’erreur
+- appel API avec `WebClient`
