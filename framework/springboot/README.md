@@ -123,5 +123,7 @@
 - [Constante final](./mvp/013-constant-final)
 - [Controller with api](./mvp/014-controller-api)
 - [Controller Jackson with api retry](./mvp/015-controller-api-jackson)
+- [Controller Request DTO](./mvp/016-controller-request-dto)
+- [Controller REsponse DTO](./mvp/017-controller-response-dto)
 
 
