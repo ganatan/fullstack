@@ -1,0 +1,314 @@
+# Spring Boot : `TestController` pour tester `static final` et constantes
+
+## Objectif
+
+Créer un petit tutoriel Spring Boot avec :
+
+- une classe de constantes
+- des champs `final`
+- des constantes `static final`
+- un `TestController` pour voir le résultat dans le JSON
+
+---
+
+## Principe
+
+En Java :
+
+- `final` signifie qu’une variable n’est plus réaffectable
+- `static final` est souvent utilisé pour définir une constante
+- une constante est généralement écrite en majuscules
+
+---
+
+## Structure simple
+
+```text
+src/main/java/com/example/demo/
+├── constants/
+│   └── TestConstants.java
+├── model/
+│   └── TestResponse.java
+└── controllers/
+    └── TestController.java
+```
+
+---
+
+## Classe `TestConstants`
+
+```java
+package com.example.demo.constants;
+
+public final class TestConstants {
+
+    public static final String APPLICATION_NAME = "springboot-starter";
+    public static final String DEFAULT_PROFILE = "dev";
+    public static final int DEFAULT_PORT = 8080;
+    public static final String STATUS_OK = "OK";
+    public static final String MESSAGE = "test des constantes Java";
+
+    private TestConstants() {
+    }
+}
+```
+
+---
+
+## Classe `TestResponse`
+
+```java
+package com.example.demo.model;
+
+public class TestResponse {
+
+    private String applicationName;
+    private String profile;
+    private int port;
+    private String status;
+    private String message;
+    private String localValue;
+
+    public TestResponse() {
+    }
+
+    public TestResponse(String applicationName, String profile, int port, String status, String message, String localValue) {
+        this.applicationName = applicationName;
+        this.profile = profile;
+        this.port = port;
+        this.status = status;
+        this.message = message;
+        this.localValue = localValue;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getLocalValue() {
+        return localValue;
+    }
+
+    public void setLocalValue(String localValue) {
+        this.localValue = localValue;
+    }
+}
+```
+
+---
+
+## Controller `TestController`
+
+```java
+package com.example.demo.controllers;
+
+import com.example.demo.constants.TestConstants;
+import com.example.demo.model.TestResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TestController {
+
+    private final String controllerName = "TestController";
+
+    @GetMapping("/test/constants")
+    public TestResponse testConstants() {
+        final String localValue = "valeur locale final";
+
+        return new TestResponse(
+            TestConstants.APPLICATION_NAME,
+            TestConstants.DEFAULT_PROFILE,
+            TestConstants.DEFAULT_PORT,
+            TestConstants.STATUS_OK,
+            TestConstants.MESSAGE,
+            localValue
+        );
+    }
+
+    @GetMapping("/test/final")
+    public String testFinal() {
+        final String message = "une variable final ne peut plus etre reassignee";
+        return message;
+    }
+
+    @GetMapping("/test/controller-name")
+    public String getControllerName() {
+        return controllerName;
+    }
+}
+```
+
+---
+
+## Résultat JSON sur `/test/constants`
+
+```json
+{
+  "applicationName": "springboot-starter",
+  "profile": "dev",
+  "port": 8080,
+  "status": "OK",
+  "message": "test des constantes Java",
+  "localValue": "valeur locale final"
+}
+```
+
+---
+
+## Explication
+
+### `final` sur une variable locale
+
+```java
+final String localValue = "valeur locale final";
+```
+
+Cela veut dire :
+
+- la variable est initialisée une seule fois
+- on ne peut pas faire une seconde affectation
+
+Exemple interdit :
+
+```java
+localValue = "autre valeur";
+```
+
+---
+
+### `final` sur un attribut
+
+```java
+private final String controllerName = "TestController";
+```
+
+Cela veut dire :
+
+- chaque instance du controller aura cette valeur
+- la référence ne pourra pas être réaffectée
+
+---
+
+### `static final` sur une constante
+
+```java
+public static final String STATUS_OK = "OK";
+```
+
+Cela veut dire :
+
+- la valeur appartient à la classe
+- elle est partagée
+- elle ne change pas
+- on y accède sans créer d’objet
+
+Exemple :
+
+```java
+TestConstants.STATUS_OK
+```
+
+---
+
+## Pourquoi faire ce tuto
+
+Ce tuto permet de montrer :
+
+- la différence entre variable locale `final`
+- attribut `final`
+- constante `static final`
+- bonne pratique de centralisation des constantes
+
+---
+
+## Variante ultra simple sans classe modèle
+
+```java
+package com.example.demo.controllers;
+
+import com.example.demo.constants.TestConstants;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TestController {
+
+    @GetMapping("/test/constants-map")
+    public Map<String, Object> testConstantsMap() {
+        final String localValue = "valeur locale final";
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("applicationName", TestConstants.APPLICATION_NAME);
+        response.put("defaultProfile", TestConstants.DEFAULT_PROFILE);
+        response.put("defaultPort", TestConstants.DEFAULT_PORT);
+        response.put("status", TestConstants.STATUS_OK);
+        response.put("message", TestConstants.MESSAGE);
+        response.put("localValue", localValue);
+        return response;
+    }
+}
+```
+
+---
+
+## URL de test
+
+```text
+http://localhost:8080/test/constants
+```
+
+```text
+http://localhost:8080/test/final
+```
+
+```text
+http://localhost:8080/test/controller-name
+```
+
+---
+
+## Résumé
+
+- `final` bloque la réaffectation
+- `static final` sert à définir une constante
+- une constante Java est souvent `public static final`
+- un `TestController` est un bon moyen de voir rapidement le comportement dans une API
