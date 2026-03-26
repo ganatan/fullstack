@@ -1,3 +1,3 @@
-# Maven
+# Teams
 
-- [Installation](./001-installation.md)
+- [Copie de documents](./001-document-copie.md)
