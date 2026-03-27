@@ -6,10 +6,33 @@
     <artifactId>spring-boot-starter-data-mongodb</artifactId>
 </dependency>
 ```
+
+```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        <exclusions>
+            <exclusion>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-mongodb</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongodb-driver-sync</artifactId>
+    </dependency>
+```xml
+
 ## Links
 
 ```text
 http://localhost:3000/test-mongodb-controller
+http://localhost:3001/test-mongodb-controller
 ```
 
 ## `application.yml`

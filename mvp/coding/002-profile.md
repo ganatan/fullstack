@@ -82,7 +82,9 @@ http://localhost:3001/test-profile-controller
 # Execution Maven        
   
   mvn spring-boot:run
+  
   mvn spring-boot:run "-Dspring-boot.run.profiles=dev" "-Dspring-boot.run.arguments=--spring.config.additional-location=./config-local/"
+  
   mvn spring-boot:run "-Dspring-boot.run.profiles=local" "-Dspring-boot.run.arguments=--spring.config.additional-location=./config-local/"
 
 
