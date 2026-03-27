@@ -1,0 +1,104 @@
+# Configuration
+mvp-starter/
+  config-local/
+    application-dev.yml
+    application-local.yml
+  src/
+    main/
+      resources/
+        application.yml
+
+# Parametre Intellij
+    
+  Run > Edit Configurations
+  Modify Options
+    options :
+
+      pour profile dev
+        -Dspring.profiles.active=dev -Dspring.config.additional-location=./config-local/
+      pour profile local
+        -Dspring.profiles.active=local -Dspring.config.additional-location=./config-local/
+
+# Execution Maven        
+  
+  mvn spring-boot:run
+  mvn spring-boot:run "-Dspring-boot.run.profiles=dev" "-Dspring-boot.run.arguments=--spring.config.additional-location=./config-local/"
+  mvn spring-boot:run "-Dspring-boot.run.profiles=local" "-Dspring-boot.run.arguments=--spring.config.additional-location=./config-local/"
+
+
+
+```java
+package com.mvp.controller.prototypes;
+
+import org.springframework.core.env.Environment;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TestProfileController {
+
+    private final Environment environment;
+
+    @Value("${spring.application.name}")
+    private String applicationName;
+
+    @Value("${server.port}")
+    private String serverPort;
+
+    @Value("${custom.api-url}")
+    private String apiUrl;
+
+    @Value("${custom.message}")
+    private String message;
+
+    @Value("${custom.param}")
+    private String param;
+
+    public TestProfileController(Environment environment) {
+        this.environment = environment;
+    }
+
+    @GetMapping("/test-profile-controller")
+    public Map<String, Object> getConfig() {
+
+        List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
+
+        String configFileName = activeProfiles.isEmpty()
+                ? "application.yml"
+                : "application-" + activeProfiles.get(0) + ".yml";
+
+        Map<String, Object> applicationConfig = new LinkedHashMap<>();
+        applicationConfig.put("applicationName", applicationName);
+        applicationConfig.put("serverPort", serverPort);
+        applicationConfig.put("apiUrl", apiUrl);
+        applicationConfig.put("message", message);
+        applicationConfig.put("param", param);
+
+        Map<String, Object> runtimeInfo = new LinkedHashMap<>();
+        runtimeInfo.put("activeProfiles", activeProfiles);
+        runtimeInfo.put("configFileName", configFileName);
+        runtimeInfo.put("additionalLocation", environment.getProperty("spring.config.additional-location"));
+        runtimeInfo.put("javaVersion", environment.getProperty("java.version"));
+        runtimeInfo.put("javaHome", environment.getProperty("java.home"));
+        runtimeInfo.put("workingDirectory", environment.getProperty("user.dir"));
+        runtimeInfo.put("timezone", environment.getProperty("user.timezone"));
+        runtimeInfo.put("osName", environment.getProperty("os.name"));
+        runtimeInfo.put("encoding", environment.getProperty("file.encoding"));
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("applicationConfig", applicationConfig);
+        response.put("runtimeInfo", runtimeInfo);
+
+        return response;
+    }
+}
+```
+
+
