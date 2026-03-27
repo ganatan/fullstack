@@ -44,7 +44,7 @@ Puis fermer et rouvrir le terminal.
 
 ## 5. Créer un certificat local simple longue durée
 
-Dans ton dossier de travail :
+Dans ton dossier de travail : !!!! Attention commande sur 2 lignes à executer
 
 ```bat
 openssl req -x509 -newkey rsa:2048 -sha256 -nodes -keyout mongodb.key -out mongodb.crt -days 36500 -subj "/CN=localhost"
