@@ -41,7 +41,6 @@ spring:
 custom:
   api-url: http://localhost:3001/api
   message: configuration du profil dev
-  toto: configuration du profil default
 ```
 
 ```yaml
@@ -55,7 +54,6 @@ spring:
 custom:
   api-url: http://localhost:3002/api
   message: configuration du profil local
-  toto: configuration du profil default
 ```
 
 # Links
