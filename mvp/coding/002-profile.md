@@ -8,6 +8,22 @@ mvp-starter/
       resources/
         application.yml
 
+# Application
+```properties
+server:
+  port: 3000
+
+spring:
+  application:
+    name: mvp-starter-default
+
+custom:
+  api-url: http://localhost:3000/api
+  message: configuration du profil default
+  param: param profil default uniquement
+```
+
+
 # Parametre Intellij
     
   Run > Edit Configurations
