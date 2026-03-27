@@ -10,6 +10,13 @@ mvp-starter/
 
 # Application
 ```properties
+server.port=8080
+spring.application.name=media-api
+spring.datasource.url=jdbc:postgresql://localhost:5432/backend_media
+```
+
+
+```yaml
 server:
   port: 3000
 
@@ -48,6 +55,7 @@ package com.mvp.controller.prototypes;
 
 import org.springframework.core.env.Environment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -86,9 +94,11 @@ public class TestProfileController {
 
         List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
 
-        String configFileName = activeProfiles.isEmpty()
-                ? "application.yml"
-                : "application-" + activeProfiles.get(0) + ".yml";
+        List<String> configFiles = new ArrayList<>();
+        configFiles.add("application.yml");
+        for (String profile : activeProfiles) {
+            configFiles.add("application-" + profile + ".yml");
+        }
 
         Map<String, Object> applicationConfig = new LinkedHashMap<>();
         applicationConfig.put("applicationName", applicationName);
@@ -99,14 +109,13 @@ public class TestProfileController {
 
         Map<String, Object> runtimeInfo = new LinkedHashMap<>();
         runtimeInfo.put("activeProfiles", activeProfiles);
-        runtimeInfo.put("configFileName", configFileName);
+        runtimeInfo.put("configFiles", configFiles);
         runtimeInfo.put("additionalLocation", environment.getProperty("spring.config.additional-location"));
         runtimeInfo.put("javaVersion", environment.getProperty("java.version"));
         runtimeInfo.put("javaHome", environment.getProperty("java.home"));
         runtimeInfo.put("workingDirectory", environment.getProperty("user.dir"));
         runtimeInfo.put("timezone", environment.getProperty("user.timezone"));
         runtimeInfo.put("osName", environment.getProperty("os.name"));
-        runtimeInfo.put("encoding", environment.getProperty("file.encoding"));
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("applicationConfig", applicationConfig);
