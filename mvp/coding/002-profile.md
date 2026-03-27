@@ -10,9 +10,8 @@ mvp-starter/
 
 # Application
 ```properties
-server.port=8080
-spring.application.name=media-api
-spring.datasource.url=jdbc:postgresql://localhost:5432/backend_media
+server.port=3000
+spring.application.name=mvp-starter-default
 ```
 
 
@@ -30,6 +29,46 @@ custom:
   param: param profil default uniquement
 ```
 
+
+```yaml
+server:
+  port: 3001
+
+spring:
+  application:
+    name: mvp-starter-dev
+
+custom:
+  api-url: http://localhost:3001/api
+  message: configuration du profil dev
+  toto: configuration du profil default
+```
+
+```yaml
+server:
+  port: 3002
+
+spring:
+  application:
+    name: mvp-starter-local
+
+custom:
+  api-url: http://localhost:3002/api
+  message: configuration du profil local
+  toto: configuration du profil default
+```
+
+# Links
+
+# LOCAL
+http://localhost:3000
+http://localhost:3000/test
+http://localhost:3000/test-profile-controller
+
+# DEV
+http://localhost:3001
+http://localhost:3001/test
+http://localhost:3001/test-profile-controller
 
 # Parametre Intellij
     
