@@ -1,3 +1,35 @@
+## Commandes mongo
+
+  show dbs
+  use local
+  show collections
+  db.nomCollection.find({})
+  db.nomCollection.countDocuments({})
+
+## Creation compte Admin
+  
+  use admin
+
+  db.createUser({
+    user: "admin",
+    pwd: "Trustno1",
+    roles: [
+      { role: "userAdminAnyDatabase", db: "admin" },
+      { role: "readWriteAnyDatabase", db: "admin" }
+    ]
+  })  
+
+  mongosh -u admin -p Trustno1 --authenticationDatabase admin
+  
+  mongosh "mongodb://admin:Trustno1@localhost:27017/admin?authSource=admin"
+
+# Creation dabatase
+  use mvp
+
+  db.test.insertOne({
+    name: "demo"
+  })
+
 ## `pom.xml`
 
 ```xml
