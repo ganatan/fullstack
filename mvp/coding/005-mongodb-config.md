@@ -258,7 +258,7 @@ public class TestMongoSimpleController {
 ```
 
 
-# mondobd.yml
+# mongobd.yml
 
 ```yaml
 spring:

@@ -14,3 +14,4 @@
 - [Mongodb](./coding/003-mongodb.md)
 - [Mongodb TLS](./coding/004-mongodb-tls.md)
 - [Mongodb config](./coding/005-mongodb-config.md)
+- [Mongodb Details](./coding/006-mongodb-details.md)
