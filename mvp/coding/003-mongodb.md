@@ -5,6 +5,7 @@
   show dbs
   use local
   show collections
+  db.createCollection("Produit");
   db.nomCollection.find({})
   db.nomCollection.countDocuments({})
 
