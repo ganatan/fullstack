@@ -229,7 +229,7 @@ Puis :
 - en local auto-signé : `tlsAllowInvalidCertificates=true`
 
 
-# Variante avec mongodb.yml
+# Variantes avec mongodb.yml
 ## `application.yml`
 
 ```yaml
@@ -265,4 +265,37 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/mvp
+```
+
+
+
+## `mongodb.yml`
+
+```yaml
+spring:
+  config:
+    activate:
+      on-profile: local
+  data:
+    mongodb:
+      testenabled: true
+      username:
+      password:
+      hosts: localhost:27017
+      database: local
+      options:
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  data:
+    mongodb:
+      testenabled: false
+      username: admin
+      password: Trustno1
+      hosts: localhost:27017
+      database: mvp
+      options:
 ```
