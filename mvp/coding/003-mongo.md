@@ -1,5 +1,7 @@
 ## Commandes mongo
 
+  mongosh
+
   show dbs
   use local
   show collections
@@ -18,10 +20,23 @@
       { role: "readWriteAnyDatabase", db: "admin" }
     ]
   })  
+  
+  !!!!!!! Droits interdits sur local
 
   mongosh -u admin -p Trustno1 --authenticationDatabase admin
   
   mongosh "mongodb://admin:Trustno1@localhost:27017/admin?authSource=admin"
+
+# Rajout de droits
+  use admin
+
+  db.updateUser("admin", {
+    roles: [
+      { role: "root", db: "admin" }
+    ]
+  })
+
+  Possibilte de travailler sur local
 
 # Creation dabatase
   use mvp
@@ -89,6 +104,11 @@ spring.application.name=mvp-starter
 spring.data.mongodb.uri=mongodb://localhost:27017/local
 ```
 
+## `Connection compass`
+```text
+mongodb://admin:Trustno1@localhost:27017/admin?authSource=admin&tls=true
+```
+
 
 ## Controller
 
@@ -138,3 +158,111 @@ public class TestMongodbController {
 }
 ```
 
+
+
+Verif du fichier de config
+
+mongosh
+db.adminCommand({ getCmdLineOpts: 1 })
+
+'C:\\Program Files\\MongoDB\\Server\\8.2\\bin\\mongod.cfg',
+
+
+# Résumé commandes TLS MongoDB local
+
+## 1. Créer les fichiers certificat
+
+```bat
+openssl req -x509 -newkey rsa:2048 -nodes -keyout mongodb.key -out mongodb.crt -days 36500 -subj "/CN=localhost"
+copy /b mongodb.key + mongodb.crt mongodb.pem
+dir mongodb.*
+```
+
+## 2. Fichiers obtenus
+
+- `mongodb.key` : clé privée
+- `mongodb.crt` : certificat
+- `mongodb.pem` : fichier combiné pour MongoDB
+
+## 3. URI Spring Boot local avec TLS
+
+```yaml
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:Trustno1@localhost:27017/mvp?authSource=admin&tls=true&tlsAllowInvalidCertificates=true&directConnection=true
+```
+
+## 4. Config MongoDB serveur
+
+```yaml
+net:
+  port: 27017
+  bindIp: 127.0.0.1
+  tls:
+    mode: requireTLS
+    certificateKeyFile: D:/chemin/vers/mongodb.pem
+
+security:
+  authorization: enabled
+```
+
+## 5. Compass
+
+URI :
+
+```text
+mongodb://admin:Trustno1@localhost:27017/mvp?authSource=admin&tls=true
+```
+
+Puis :
+
+- activer `TLS/SSL`
+- choisir `Server CA Certificate`
+- sélectionner `mongodb.crt`
+
+## 6. Idée simple
+
+- `mongodb.pem` côté serveur MongoDB
+- `mongodb.crt` côté Compass
+- Spring Boot en `tls=true`
+- en local auto-signé : `tlsAllowInvalidCertificates=true`
+
+
+# Variante avec mongodb.yml
+## `application.yml`
+
+```yaml
+server:
+  port: 3001
+
+spring:
+  application:
+    name: mvp-starter-dev
+  config:
+    import: optional:file:./config-local/librairie/mongodb.yml
+
+custom:
+  api-url: http://localhost:3001/api
+  message: configuration du profil dev
+```
+
+## `mongodb.yml`
+
+```yaml
+spring:
+  config:
+    activate:
+      on-profile: local
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/mvp
+```
