@@ -213,6 +213,74 @@ public class TestKafkaConnectionController {
 }
 ```
 
+```java
+package com.mvp.controller.prototypes;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TestKafkaTopicsController {
+
+    @Value("${bootstrap.servers}")
+    private String bootstrapServers;
+
+    @Value("${consumer.sasl.mechanism}")
+    private String saslMechanism;
+
+    @Value("${consumer.sasl.jaas.config}")
+    private String saslJaasConfig;
+
+    @GetMapping("/test-kafka-topics")
+    public Map<String, Object> getKafkaTopics() {
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        Properties props = new Properties();
+        props.put("bootstrap.servers", bootstrapServers);
+        props.put("request.timeout.ms", "3000");
+        props.put("default.api.timeout.ms", "3000");
+        props.put("socket.connection.setup.timeout.ms", "2000");
+        props.put("socket.connection.setup.timeout.max.ms", "3000");
+        props.put("retries", "0");
+
+        if (saslMechanism != null && !saslMechanism.isBlank()) {
+            props.put("security.protocol", "SASL_SSL");
+            props.put("sasl.mechanism", saslMechanism);
+        }
+
+        if (saslJaasConfig != null && !saslJaasConfig.isBlank()) {
+            props.put("sasl.jaas.config", saslJaasConfig);
+        }
+
+        try (AdminClient adminClient = AdminClient.create(props)) {
+            Set<String> topics = new TreeSet<>(adminClient.listTopics().names().get(3, TimeUnit.SECONDS));
+
+            response.put("success", true);
+            response.put("message", "Lecture des topics OK");
+            response.put("bootstrap.servers", bootstrapServers);
+            response.put("count", topics.size());
+            response.put("topics", topics);
+            return response;
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Lecture des topics KO");
+            response.put("bootstrap.servers", bootstrapServers);
+            response.put("error", e.getClass().getSimpleName());
+            response.put("details", e.getMessage());
+            return response;
+        }
+    }
+}
+```
+
 ```text
 http://localhost:3001
 http://localhost:3001/test
@@ -224,6 +292,7 @@ http://localhost:3001/test-mongo-details
 http://localhost:3001/test-mongo-details/Produit
 http://localhost:3001/test-kafka-config
 http://localhost:3001/test-kafka-connection
+http://localhost:3001/test-kafka-topics
 ```
 
 
