@@ -63,7 +63,7 @@ custom:
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: dev,local
   kafka:
     consumer:
       auto-offset-reset: earliest

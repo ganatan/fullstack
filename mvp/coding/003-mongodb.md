@@ -262,7 +262,7 @@ spring:
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: dev,local
   data:
     mongodb:
       uri: mongodb://localhost:27017/mvp
@@ -290,7 +290,7 @@ spring:
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: dev,local
   data:
     mongodb:
       testenabled: false

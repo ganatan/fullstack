@@ -278,7 +278,7 @@ spring:
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: dev,local
   data:
     mongodb:
       testenabled: false
