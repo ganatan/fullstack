@@ -6,6 +6,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
+            <version>4.1.1</version>
         </dependency>
 
         <dependency>
@@ -172,6 +173,12 @@ public class TestKafkaConnectionController {
 
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapServers);
+        props.put("request.timeout.ms", "3000");
+        props.put("default.api.timeout.ms", "3000");
+        props.put("socket.connection.setup.timeout.ms", "2000");
+        props.put("socket.connection.setup.timeout.max.ms", "3000");
+        props.put("connections.max.idle.ms", "3000");
+        props.put("retries", "0");
 
         if (saslMechanism != null && !saslMechanism.isBlank()) {
             props.put("security.protocol", "SASL_SSL");
@@ -185,8 +192,8 @@ public class TestKafkaConnectionController {
         try (AdminClient adminClient = AdminClient.create(props)) {
             DescribeClusterResult clusterResult = adminClient.describeCluster();
 
-            String clusterId = clusterResult.clusterId().get(5, TimeUnit.SECONDS);
-            int nodeCount = clusterResult.nodes().get(5, TimeUnit.SECONDS).size();
+            String clusterId = clusterResult.clusterId().get(3, TimeUnit.SECONDS);
+            int nodeCount = clusterResult.nodes().get(3, TimeUnit.SECONDS).size();
 
             response.put("success", true);
             response.put("message", "Connexion Kafka OK");
@@ -198,7 +205,7 @@ public class TestKafkaConnectionController {
             response.put("success", false);
             response.put("message", "Connexion Kafka KO");
             response.put("bootstrap.servers", bootstrapServers);
-            response.put("error", e.getClass().getName());
+            response.put("error", e.getClass().getSimpleName());
             response.put("details", e.getMessage());
             return response;
         }
