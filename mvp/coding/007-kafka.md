@@ -3,6 +3,19 @@
 docker compose -f docker-compose.kafka.yml up -d
 ```
 
+```text
+http://localhost:8085
+```
+
+```text
+créer un topic de test
+Topics puis :
+bouton Create topic
+nom : test-topic
+partitions : 1
+replication factor : 1
+```
+
 # application-dev.yml
 ```yaml
 server:
@@ -104,6 +117,86 @@ public class TestKafkaConfigController {
     }
 }
 ```
+
+
+```java
+package com.mvp.controller.prototypes;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.DescribeClusterResult;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TestKafkaConnectionController {
+
+    @Value("${bootstrap.servers}")
+    private String bootstrapServers;
+
+    @Value("${consumer.sasl.mechanism}")
+    private String saslMechanism;
+
+    @Value("${consumer.sasl.jaas.config}")
+    private String saslJaasConfig;
+
+    @GetMapping("/test-kafka-connection")
+    public Map<String, Object> testKafkaConnection() {
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        Properties props = new Properties();
+        props.put("bootstrap.servers", bootstrapServers);
+
+        if (saslMechanism != null && !saslMechanism.isBlank()) {
+            props.put("security.protocol", "SASL_SSL");
+            props.put("sasl.mechanism", saslMechanism);
+        }
+
+        if (saslJaasConfig != null && !saslJaasConfig.isBlank()) {
+            props.put("sasl.jaas.config", saslJaasConfig);
+        }
+
+        try (AdminClient adminClient = AdminClient.create(props)) {
+            DescribeClusterResult clusterResult = adminClient.describeCluster();
+
+            String clusterId = clusterResult.clusterId().get(5, TimeUnit.SECONDS);
+            int nodeCount = clusterResult.nodes().get(5, TimeUnit.SECONDS).size();
+
+            response.put("success", true);
+            response.put("message", "Connexion Kafka OK");
+            response.put("bootstrap.servers", bootstrapServers);
+            response.put("clusterId", clusterId);
+            response.put("nodeCount", nodeCount);
+            return response;
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Connexion Kafka KO");
+            response.put("bootstrap.servers", bootstrapServers);
+            response.put("error", e.getClass().getName());
+            response.put("details", e.getMessage());
+            return response;
+        }
+    }
+}
+```
+
+```text
+http://localhost:3001
+http://localhost:3001/test
+http://localhost:3001/test-profile-controller
+http://localhost:3001/test-mongodb-controller
+http://localhost:3001/test-mongodb-config
+http://localhost:3001/test-mongo-simple
+http://localhost:3001/test-mongo-details
+http://localhost:3001/test-mongo-details/Produit
+http://localhost:3001/test-kafka-config
+http://localhost:3001/test-kafka-connection
+```
+
 
 
 
