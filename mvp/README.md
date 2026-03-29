@@ -16,3 +16,5 @@
 - [Mongodb config](./coding/005-mongodb-config.md)
 - [Mongodb Details](./coding/006-mongodb-details.md)
 - [Kafka](./coding/007-kafka.md)
+- [Mongodb Rest](./coding/008-mongodb-rest.md.md)
+
