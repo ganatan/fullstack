@@ -437,3 +437,35 @@ public class MediaController3 {
     }
 }
 ```
+
+
+
+# JSON
+```json
+[
+  {
+    "_id": "MED00001",
+    "nom": "Dune",
+    "type": "Film",
+    "dateCreation": { "$date": "2024-05-14T08:30:00.000Z" }
+  },
+  {
+    "_id": "MED00002",
+    "nom": "Breaking Bad",
+    "type": "Serie",
+    "dateCreation": { "$date": "2024-06-01T10:15:00.000Z" }
+  },
+  {
+    "_id": "MED00003",
+    "nom": "Game of thrones",
+    "type": "Serie",
+    "dateCreation": { "$date": "2024-06-01T10:15:00.000Z" }
+  },
+  {
+    "_id": "MED00004",
+    "nom": "Legend",
+    "type": "Film",
+    "dateCreation": { "$date": "2024-05-14T08:30:00.000Z" }
+  }
+]
+```
