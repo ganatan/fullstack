@@ -1,3 +1,23 @@
+```text
+# DEV
+http://localhost:3001
+http://localhost:3001/test
+http://localhost:3001/test-profile-controller
+http://localhost:3001/test-mongodb-controller
+http://localhost:3001/test-mongodb-config
+http://localhost:3001/test-mongo-simple
+http://localhost:3001/test-mongo-details
+http://localhost:3001/test-mongo-details/Produit
+http://localhost:3001/test-kafka-config
+http://localhost:3001/test-kafka-connection
+http://localhost:3001/test-kafka-topics
+http://localhost:3001/test-mongodb-rest
+http://localhost:3001/test-mongodb-service
+http://localhost:3001//test-mongodb-implement
+http://localhost:3001/test-mongodb-repository
+```
+
+
 # Rest
 ```java
 package com.mvp.controller.mongodb.rest;
