@@ -298,3 +298,24 @@ http://localhost:3001/test-kafka-topics
 
 
 
+# Tests
+
+```java
+package com.mvp;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+@SpringBootTest(properties = {
+		"spring.config.additional-location=./config-local/"
+})
+@ActiveProfiles("dev")
+class ApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+}
+```
+
