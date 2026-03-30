@@ -19,6 +19,7 @@
 - [Mongodb Rest](./coding/008-mongodb-rest.md.md)
 - [Mongodb DTO](./coding/009-mongodb-dto.md)
 - [Mongodb DTO Prod](./coding/010-mongodb-dto-prod.md)
-- [Kafka Topics Prod](./coding/011-kafka-topics-prod.md)
-- [Errors Exception](./coding/012-errors-exception.md)
+- [Kafka Topics Rest](./coding/011-kafka-topics-rest.md)
+- [Kafka Topics Prod](./coding/012-kafka-topics-prod.md)
+- [Errors Exception](./coding/013-errors-exception)
 
