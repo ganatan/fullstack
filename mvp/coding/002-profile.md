@@ -68,6 +68,20 @@ http://localhost:3001
 http://localhost:3001/test
 http://localhost:3001/test-profile-controller
 
+# Parametre Eclipse
+    
+  Run > run configuration
+  Java Application
+    projects : 009-mvp-starter-kafka-topics
+    Main Class : com.mvp.Application
+
+  Arguments
+    VM Arguments
+      pour profile dev
+        -Dspring.profiles.active=dev -Dspring.config.additional-location=./config-local/
+      pour profile local
+        -Dspring.profiles.active=local -Dspring.config.additional-location=./config-local/
+
 # Parametre Intellij
     
   Run > Edit Configurations
