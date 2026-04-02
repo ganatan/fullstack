@@ -5,7 +5,7 @@ spring:
       testenabled: false
       username: admin
       password: Trustno1
-      hosts: mongo1.company.net:27017,mongo2.company.net:27017,mongo3.company.net:27017
+      hosts: localhost:27017
       database: mvp
       options: authSource=admin&replicaSet=rs0&retryWrites=false
 ```
