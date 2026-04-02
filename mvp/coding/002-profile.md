@@ -93,6 +93,23 @@ http://localhost:3001/test-profile-controller
       pour profile local
         -Dspring.profiles.active=local -Dspring.config.additional-location=./config-local/
 
+
+# Parametre SDK 
+  File > Project Structure > Project
+    projet Java 21 → Project SDK = JDK 21
+    projet Java 25 → Project SDK = JDK 25
+  Settings > Build, Execution, Deployment > Build Tools > Maven
+    Importing
+    projet Java 21 → JDK for importer = JDK 21
+    projet Java 25 → JDK for importer = JDK 25
+  Maven Runner JRE
+    Settings > Build, Execution, Deployment > Build Tools > Maven
+      Runner
+      projet Java 21 → JRE = JDK 21
+      projet Java 25 → JRE = JDK 25
+
+C’est ce réglage Runner qui est souvent le vrai problème quand Lifecycle > compile part avec le mauvais Java. Parce que le bouton Maven d’IntelliJ exécute un runner Maven, et ce runner a son propre JDK.
+
 # Execution Maven        
   
   mvn spring-boot:run
