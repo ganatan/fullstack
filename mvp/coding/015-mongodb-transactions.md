@@ -1,18 +1,18 @@
-# Test mongodb en replica
+```yaml
+spring:
+  data:
+    mongodb:
+      testenabled: false
+      username: admin
+      password: Trustno1
+      hosts: mongo1.company.net:27017,mongo2.company.net:27017,mongo3.company.net:27017
+      database: mvp
+      options: authSource=admin&replicaSet=rs0&retryWrites=false
+```
+# Choix 1 Ligne de commande
+  mongod.exe --dbpath="D:\hal\MongoDB\Server\8.2\data" --replSet rs0
 
-  net stop mongodb  
-  net start mongodb
-
-  
-  rs.initiate({
-  _id: "rs0",
-  members: [
-    { _id: 0, host: "127.0.0.1:27017" }
-  ]
-})
-
-  rs.status()
-  
+# Choix 2 Fichier mongodb cfg 
 
 Modifier le fichier de conf
 
@@ -32,6 +32,23 @@ net:
 replication:
   replSetName: rs0
 ```
+
+
+# Test mongodb en replica
+  net stop mongodb  
+  net start mongodb
+
+  
+  rs.initiate({
+  _id: "rs0",
+  members: [
+    { _id: 0, host: "127.0.0.1:27017" }
+  ]
+})
+
+  rs.status()
+  
+
 
 
 ```java
