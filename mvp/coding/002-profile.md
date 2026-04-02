@@ -108,8 +108,6 @@ http://localhost:3001/test-profile-controller
       projet Java 21 → JRE = JDK 21
       projet Java 25 → JRE = JDK 25
 
-C’est ce réglage Runner qui est souvent le vrai problème quand Lifecycle > compile part avec le mauvais Java. Parce que le bouton Maven d’IntelliJ exécute un runner Maven, et ce runner a son propre JDK.
-
 # Execution Maven        
   
   mvn spring-boot:run

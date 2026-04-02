@@ -3,6 +3,35 @@
 docker compose -f docker-compose.redis.yml up -d
 ```
 
+
+```yml
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7.4
+    container_name: redis-local
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight-local
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight-data:/data
+    depends_on:
+      - redis
+
+volumes:
+  redis-data:
+  redisinsight-data:
+```
+
 ```xml
   <dependency>
       <groupId>org.springframework.session</groupId>
@@ -72,7 +101,7 @@ public class TestRedisController {
         this.redisConnectionFactory = redisConnectionFactory;
     }
 
-    @GetMapping("/test-redis-controller")
+    @GetMapping("/test-redis")
     public Map<String, Object> testConnection() {
         Map<String, Object> response = new LinkedHashMap<>();
 
