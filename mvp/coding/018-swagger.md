@@ -1,3 +1,8 @@
+```text
+http://localhost:3001/v3/api-docs
+http://localhost:3001/swagger-ui/index.html
+```
+
 ```xml
     <dependency>
         <groupId>org.springdoc</groupId>
