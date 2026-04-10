@@ -27,4 +27,5 @@
 - [Kafka Event](./coding/016-kafka-events.md)
 - [Logging](./coding/017-logging.md)
 - [Swagger](./coding/018-swagger.md)
+- [Test Integration](./coding/019-test-integration.md)
 
