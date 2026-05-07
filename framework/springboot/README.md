@@ -1,5 +1,9 @@
 # Springboot
 
+## Java 25
+- [Installation Java 25](./installation/002-java25-installation.md)
+- [Initialisation Springboot 25](./initialisation/002-springboot-initializr-java25.md)
+
 ## Java
 - [Essentiels Config](./programmation/001-essentiels-config.md)
 - [Essentiels Type](./programmation/002-essentiels-type.md)
@@ -101,10 +105,6 @@
 ## Features
 - [Actuator](./features/001-actuator.md)
 - [CORS](./features/002-cors.md)
-
-## Java 25
-- [Installation Java 25](./installation/002-java25-installation.md)
-- [Initialisation Springboot 25](./initialisation/002-springboot-initializr-java25.md)
 
 
 ## MVP
