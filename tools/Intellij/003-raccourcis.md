@@ -90,7 +90,8 @@ Reformat Code
 
 ### Java
 
-Editor → Code Style → Java → Tabs and Indents  
+File → Settings → Editor → Code Style
+Java → Tabs and Indents  
 
 - Indent : 2
 - Tab size : 2
