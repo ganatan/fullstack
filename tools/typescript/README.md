@@ -1,4 +1,3 @@
 # Typescript
 
-Documentation technique Typescript.
-
+- [Installation](./001-installation.md)
