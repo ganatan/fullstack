@@ -4,4 +4,5 @@
 
 - [Installation](./001-installation.md)
 - [Concepts](./002-concepts.md)
-- [Test](./003-tests.md)
+- [Tests](./003-tests.md)
+- [Gitflow](./004-gitflow.md)
