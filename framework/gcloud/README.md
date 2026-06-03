@@ -7,3 +7,4 @@
 - [Tests](./003-tests.md)
 - [Gitflow](./004-gitflow.md)
 - [Secops](./005-secops.md)
+- [architecture](./006-architecture.md)
