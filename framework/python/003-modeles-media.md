@@ -1,46 +1,22 @@
-# 003-integration-modele-media.md
+# Phase 3 - Connecter Django à PostgreSQL
 
-## Objectif
+## Contexte
 
-Intégrer le modèle métier Media dans Django.
+Le projet Django existe déjà.
 
-Le schéma PostgreSQL existe déjà.
+Les tables PostgreSQL existent déjà.
 
-Les données de référence existent déjà.
+Les données PostgreSQL sont déjà insérées.
 
-Aucun travail de modélisation n'est nécessaire.
+Django ne doit pas créer les tables.
 
-L'objectif est de faire correspondre les modèles Django avec le schéma PostgreSQL existant.
-
----
-
-# Entrées
-
-Schéma PostgreSQL :
-
-- continent
-- country
-- city
-- person
-- profession
-- media_type
-- media
-
-Tables de liaison :
-
-- person_nationality
-- person_profession
-- media_person
+Django doit seulement se connecter à la base PostgreSQL existante.
 
 ---
 
-# Travail à réaliser
+# 1. Installer le driver PostgreSQL
 
-## Étape 1
-
-Configurer PostgreSQL dans Django.
-
-Installer :
+Dans le dossier `backend-django`, avec l'environnement virtuel activé :
 
 ```bash
 pip install psycopg[binary]
@@ -48,80 +24,102 @@ pip install psycopg[binary]
 
 ---
 
-## Étape 2
+# 2. Mettre à jour requirements.txt
 
-Configurer :
-
-```python
-DATABASES
+```bash
+pip freeze > requirements.txt
 ```
 
-dans :
+---
+
+# 3. Modifier config/settings.py
+
+Ouvrir :
 
 ```text
 config/settings.py
 ```
 
----
-
-## Étape 3
-
-Créer les classes Django :
-
-- Continent
-- Country
-- City
-- Person
-- Profession
-- MediaType
-- Media
-
----
-
-## Étape 4
-
-Créer les relations :
-
-- Person ↔ Country
-- Person ↔ Profession
-- Media ↔ Person
-
----
-
-## Étape 5
-
-Mapper exactement les noms PostgreSQL.
-
-Exemples :
+Remplacer le bloc `DATABASES` par :
 
 ```python
-db_table = "continent"
-```
-
-```python
-db_table = "country"
-```
-
-```python
-db_table = "media"
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'media',
+        'USER': 'postgres',
+        'PASSWORD': 'Trustno1',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 ```
 
 ---
 
-## Étape 6
+# 4. Déclarer les applications Django
 
-Tester la connexion PostgreSQL.
+Dans `config/settings.py`, chercher :
+
+```python
+INSTALLED_APPS = [
+```
+
+Ajouter :
+
+```python
+'rest_framework',
+'media',
+```
+
+Exemple :
+
+```python
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
+    'rest_framework',
+    'media',
+]
+```
+
+---
+
+# 5. Tester la configuration Django
 
 ```bash
-python manage.py shell
+python manage.py check
 ```
 
-Puis :
+Résultat attendu :
 
-```python
-from media.models import Person
+```text
+System check identified no issues
+```
 
-Person.objects.count()
+---
+
+# 6. Tester la connexion PostgreSQL depuis Django
+
+```bash
+python manage.py dbshell
+```
+
+Résultat attendu :
+
+```text
+media=#
+```
+
+Tester une requête :
+
+```sql
+SELECT COUNT(*) FROM person;
 ```
 
 Résultat attendu :
@@ -130,44 +128,50 @@ Résultat attendu :
 10
 ```
 
----
+Quitter PostgreSQL :
 
-# Livrable
-
-Les modèles Django correspondent exactement au schéma PostgreSQL existant.
-
-Aucune API REST.
-
-Aucune vue.
-
-Aucun serializer.
-
-Seulement :
-
-- PostgreSQL
-- Django ORM
-- Modèle métier
+```sql
+\q
 ```
 
 ---
 
-Ensuite seulement :
+# 7. Règle importante
+
+Ne pas exécuter :
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Pour l'instant.
+
+Les tables existent déjà dans PostgreSQL.
+
+Django doit simplement les utiliser.
+
+---
+
+# Résultat de la phase 3
+
+À la fin de cette phase :
 
 ```text
-Phase 4
-Configuration Django REST Framework
-
-Phase 5
-Serializers
-
-Phase 6
-Views
-
-Phase 7
-Routes
-
-Phase 8
-Tests API
+Django est connecté à PostgreSQL
+La base media est utilisée
+L'utilisateur postgres fonctionne
+Le mot de passe Trustno1 fonctionne
+Les tables existantes sont accessibles
+Aucune table Django n'a été créée
 ```
 
-Là on est beaucoup plus proche d'un projet réel que d'un tutoriel Django académique.
+---
+
+# Phase suivante
+
+Phase 4 :
+
+```text
+Mapper les tables PostgreSQL existantes avec les modèles Django
+```
