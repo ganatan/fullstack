@@ -1,330 +1,156 @@
-# backend-django
+# Installation Python 3.13 sous Windows 11
 
-## Objectif
+## 1. Télécharger Python
 
-Créer une API REST cinéma avec Django et Django REST Framework.
+https://www.python.org/downloads/
 
-Cette API servira de référence pour les futurs projets :
-
-- backend-symfony
-- backend-cpp
-
-Tous les backends exposeront les mêmes routes et les mêmes données.
+Télécharger la dernière version Python 3.13 x64.
 
 ---
 
-# Version 1
+## 2. Lancer l'installation
 
-Fonctionnalités :
+Cocher :
 
-- API REST
-- SQLite
-- Django REST Framework
-- données seedées
-- endpoints consultables avec curl ou Postman
+☑ Add python.exe to PATH
 
----
+Cliquer sur :
 
-# Stack technique
+Install Now
 
-- Python
-- Django
-- Django REST Framework
-- SQLite
-- pytest
-- pytest-django
+Attendre la fin de l'installation.
 
 ---
 
-# Création du projet
+## 3. Vérifier l'installation
+
+Ouvrir un terminal Windows :
+
+```bash
+python --version
+```
+
+ou
+
+```bash
+py --version
+```
+
+Résultat attendu :
+
+```text
+Python 3.13.x
+```
+
+---
+
+## 4. Vérifier pip
+
+```bash
+pip --version
+```
+
+Résultat attendu :
+
+```text
+pip xx.x.x
+```
+
+---
+
+## 5. Créer le projet
 
 ```bash
 mkdir backend-django
 cd backend-django
+```
 
+---
+
+## 6. Créer un environnement virtuel
+
+```bash
 python -m venv .venv
+```
 
-.venv\Scripts\activate
+---
 
-pip install django djangorestframework pytest pytest-django
+## 7. Activer l'environnement
 
+PowerShell :
+
+```bash
+.venv\Scripts\Activate.ps1
+```
+
+Invite de commande :
+
+```bash
+.venv\Scripts\activate.bat
+```
+
+Résultat attendu :
+
+```text
+(.venv)
+```
+
+au début de la ligne.
+
+---
+
+## 8. Mettre pip à jour
+
+```bash
+python -m pip install --upgrade pip
+```
+
+---
+
+## 9. Installer Django
+
+```bash
+pip install django djangorestframework
+```
+
+---
+
+## 10. Vérifier Django
+
+```bash
+django-admin --version
+```
+
+Résultat attendu :
+
+```text
+5.x.x
+```
+
+---
+
+## 11. Créer le projet
+
+```bash
 django-admin startproject config .
+```
 
+---
+
+## 12. Créer l'application
+
+```bash
 python manage.py startapp movies
 ```
 
 ---
 
-# Structure cible
-
-```text
-backend-django/
-├── config/
-│   ├── settings.py
-│   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
-│
-├── movies/
-│   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   ├── urls.py
-│   ├── admin.py
-│   └── tests.py
-│
-├── manage.py
-├── requirements.txt
-└── README.md
-```
-
----
-
-# Domaine métier
-
-Entités :
-
-- Person
-- Movie
-- Genre
-- Country
-
----
-
-# Modèle Person
-
-```text
-id
-firstName
-lastName
-birthDate
-nationality
-```
-
-Exemple :
-
-```json
-{
-  "id": 1,
-  "firstName": "Christopher",
-  "lastName": "Nolan",
-  "nationality": "UK"
-}
-```
-
----
-
-# Modèle Movie
-
-```text
-id
-title
-releaseYear
-genreId
-directorId
-```
-
-Exemple :
-
-```json
-{
-  "id": 1,
-  "title": "Inception",
-  "releaseYear": 2010,
-  "genreId": 1,
-  "directorId": 1
-}
-```
-
----
-
-# Modèle Genre
-
-```text
-id
-name
-```
-
-Exemple :
-
-```json
-{
-  "id": 1,
-  "name": "Science Fiction"
-}
-```
-
----
-
-# Modèle Country
-
-```text
-id
-name
-code
-```
-
-Exemple :
-
-```json
-{
-  "id": 1,
-  "name": "France",
-  "code": "FR"
-}
-```
-
----
-
-# API Version 1
-
-## Health
-
-```http
-GET /api/health
-```
-
----
-
-## Persons
-
-```http
-GET /api/persons
-GET /api/persons/{id}
-```
-
----
-
-## Movies
-
-```http
-GET /api/movies
-GET /api/movies/{id}
-```
-
----
-
-## Genres
-
-```http
-GET /api/genres
-GET /api/genres/{id}
-```
-
----
-
-## Countries
-
-```http
-GET /api/countries
-GET /api/countries/{id}
-```
-
----
-
-# Étapes de développement
-
-## Étape 1
-
-Configurer Django.
-
----
-
-## Étape 2
-
-Configurer Django REST Framework.
-
----
-
-## Étape 3
-
-Créer les modèles :
-
-- Person
-- Movie
-- Genre
-- Country
-
----
-
-## Étape 4
-
-Créer les migrations.
+## 13. Lancer le serveur
 
 ```bash
-python manage.py makemigrations
-python manage.py migrate
+python manage.py runserver
 ```
 
----
+Ouvrir :
 
-## Étape 5
-
-Créer les serializers.
-
----
-
-## Étape 6
-
-Créer les vues REST.
-
----
-
-## Étape 7
-
-Configurer les routes.
-
----
-
-## Étape 8
-
-Ajouter des données initiales.
-
-Exemples :
-
-- Christopher Nolan
-- Ridley Scott
-- Denis Villeneuve
-
-Films :
-
-- Inception
-- Alien
-- Blade Runner
-- Dune
-
----
-
-## Étape 9
-
-Tester avec curl.
-
-```bash
-curl http://localhost:8000/api/health
-
-curl http://localhost:8000/api/persons
-
-curl http://localhost:8000/api/movies
-```
-
----
-
-# Livrables
-
-- API REST fonctionnelle
-- Base SQLite
-- Données cinéma
-- README
-- Documentation
-- Tests unitaires
-
----
-
-# Étape suivante
-
-Une fois backend-django terminé :
-
-- backend-symfony
-- backend-cpp
-
-avec exactement les mêmes routes, les mêmes données et les mêmes réponses JSON.
+http://localhost:8000
