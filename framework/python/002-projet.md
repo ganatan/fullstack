@@ -2,14 +2,52 @@
 
 ## Objectif
 
-Créer une API REST cinéma avec Django et Django REST Framework.
+Créer une implémentation Django de l'application **media**.
 
-Cette API servira de référence pour les futurs projets :
+Cette implémentation fait partie du laboratoire **ganatan-labs** et doit exposer exactement les mêmes données et les mêmes routes que :
 
+- backend-node
+- backend-springboot
 - backend-symfony
 - backend-cpp
 
-Tous les backends exposeront les mêmes routes et les mêmes données.
+L'objectif est de comparer plusieurs technologies backend autour du même domaine métier.
+
+---
+
+# Architecture globale
+
+```text
+ganatan-labs/
+│
+├── frontend-angular/
+├── frontend-react/
+│
+├── backend-node/
+├── backend-springboot/
+├── backend-django/
+├── backend-symfony/
+├── backend-cpp/
+│
+└── docs/
+```
+
+---
+
+# Domaine métier
+
+Application :
+
+```text
+media
+```
+
+Entités :
+
+- Person
+- Movie
+- Genre
+- Country
 
 ---
 
@@ -21,7 +59,8 @@ Fonctionnalités :
 - SQLite
 - Django REST Framework
 - données seedées
-- endpoints consultables avec curl ou Postman
+- endpoints testables avec curl
+- réponses JSON compatibles avec les autres backends
 
 ---
 
@@ -50,7 +89,7 @@ pip install django djangorestframework pytest pytest-django
 
 django-admin startproject config .
 
-python manage.py startapp movies
+python manage.py startapp media
 ```
 
 ---
@@ -65,7 +104,7 @@ backend-django/
 │   ├── asgi.py
 │   └── wsgi.py
 │
-├── movies/
+├── media/
 │   ├── models.py
 │   ├── serializers.py
 │   ├── views.py
@@ -80,18 +119,9 @@ backend-django/
 
 ---
 
-# Domaine métier
-
-Entités :
-
-- Person
-- Movie
-- Genre
-- Country
-
----
-
 # Modèle Person
+
+Attributs :
 
 ```text
 id
@@ -115,6 +145,8 @@ Exemple :
 ---
 
 # Modèle Movie
+
+Attributs :
 
 ```text
 id
@@ -140,6 +172,8 @@ Exemple :
 
 # Modèle Genre
 
+Attributs :
+
 ```text
 id
 name
@@ -157,6 +191,8 @@ Exemple :
 ---
 
 # Modèle Country
+
+Attributs :
 
 ```text
 id
@@ -176,7 +212,9 @@ Exemple :
 
 ---
 
-# API Version 1
+# Contrat API commun
+
+Tous les backends doivent exposer exactement les mêmes routes.
 
 ## Health
 
@@ -219,6 +257,35 @@ GET /api/genres/{id}
 GET /api/countries
 GET /api/countries/{id}
 ```
+
+---
+
+# Données initiales
+
+Réalisateurs :
+
+- Christopher Nolan
+- Ridley Scott
+- Denis Villeneuve
+
+Films :
+
+- Inception
+- Alien
+- Blade Runner
+- Dune
+
+Genres :
+
+- Science Fiction
+- Thriller
+- Action
+
+Pays :
+
+- France
+- United Kingdom
+- United States
 
 ---
 
@@ -278,26 +345,13 @@ Configurer les routes.
 
 ## Étape 8
 
-Ajouter des données initiales.
-
-Exemples :
-
-- Christopher Nolan
-- Ridley Scott
-- Denis Villeneuve
-
-Films :
-
-- Inception
-- Alien
-- Blade Runner
-- Dune
+Ajouter les données initiales.
 
 ---
 
 ## Étape 9
 
-Tester avec curl.
+Tester les endpoints.
 
 ```bash
 curl http://localhost:8000/api/health
@@ -320,11 +374,16 @@ curl http://localhost:8000/api/movies
 
 ---
 
-# Étape suivante
+# Étapes suivantes
 
-Une fois backend-django terminé :
+Créer les implémentations équivalentes :
 
 - backend-symfony
 - backend-cpp
 
-avec exactement les mêmes routes, les mêmes données et les mêmes réponses JSON.
+avec :
+
+- les mêmes routes
+- les mêmes données
+- les mêmes réponses JSON
+- le même domaine métier
