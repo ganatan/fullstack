@@ -4,4 +4,8 @@
 - [Modeles media](./003-modeles-media.md)
 - [Modeles django par tables](./004-modeles-django-par-table.md)
 - [Serializers django rest](./005-serializers-django-rest-framework.md)
+- [Vues django rest](./006-vues-api-django-rest-framework.md)
+- [Routes django rest](./007-routes-api-django-rest-framework.md)
+- [Tests django rest](./008-tests-api-django-rest-framework.md)
+
 
