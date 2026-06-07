@@ -1,3 +1,3 @@
 ### Python Django
-- [Projet](./001-projet.md)
-- [Installation Python](./002-installation-python.md)
+- [Installation Python](./001-installation-python.md)
+- [Projet](./002-projet.md)
