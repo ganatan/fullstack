@@ -1,4 +1,4 @@
-# Installation Java 8 Ancien Monde
+# Installation Java 8 Ancien Monde avec IntelliJ
 
 ## 1. Télécharger Oracle JDK 8
 
@@ -111,8 +111,6 @@ Ajouter :
 %JAVA_HOME%\bin
 ```
 
-Important :
-
 Supprimer toute référence à :
 
 ```text
@@ -125,7 +123,7 @@ ou
 javapath
 ```
 
-car ce répertoire prend souvent la priorité et fait pointer Windows vers une autre version de Java (Java 21, Java 25, Java 26, etc.).
+afin d'éviter que Windows utilise une autre version de Java.
 
 ---
 
@@ -201,25 +199,29 @@ D:\hal\java\jdk-08\bin\javac.exe
 
 ---
 
-## 11. Installer Eclipse
+## 11. Installer IntelliJ Community
 
-https://www.eclipse.org/downloads/
+Télécharger :
+
+https://www.jetbrains.com/idea/download/
 
 Choisir :
 
 ```text
-Eclipse IDE for Java Developers
+IntelliJ IDEA Community Edition
 ```
 
 Installer dans :
 
 ```text
-D:\hal\eclipse
+D:\hal\intellij
 ```
 
 ---
 
 ## 12. Créer un Workspace
+
+Créer :
 
 ```text
 D:\hal\workspace-java8
@@ -227,12 +229,80 @@ D:\hal\workspace-java8
 
 ---
 
-## 13. Premier programme
+## 13. Créer le premier projet
+
+Lancer IntelliJ.
+
+```text
+New Project
+```
+
+Choisir :
+
+```text
+Java
+```
+
+Sélectionner le JDK :
+
+```text
+D:\hal\java\jdk-08
+```
+
+Nom du projet :
+
+```text
+java8-training
+```
+
+Emplacement :
+
+```text
+D:\hal\workspace-java8\java8-training
+```
+
+---
+
+## 14. Vérifier la configuration Java 8
+
+Dans IntelliJ :
+
+```text
+File
+Settings
+Project Structure
+```
+
+Vérifier :
+
+```text
+Project SDK : 1.8
+Project language level : 8
+```
+
+Puis :
+
+```text
+Settings
+Build, Execution, Deployment
+Compiler
+Java Compiler
+```
+
+Vérifier :
+
+```text
+Target bytecode version : 8
+```
+
+---
+
+## 15. Premier programme
 
 Créer :
 
 ```text
-HelloWorld.java
+src\HelloWorld.java
 ```
 
 ```java
@@ -244,19 +314,23 @@ public class HelloWorld {
 }
 ```
 
-Compiler :
+---
 
-```bash
-javac HelloWorld.java
+## 16. Exécuter
+
+Dans IntelliJ :
+
+```text
+Run
 ```
 
-Exécuter :
+ou
 
-```bash
-java HelloWorld
+```text
+Shift + F10
 ```
 
-Résultat :
+Résultat attendu :
 
 ```text
 Bonjour Danny
@@ -269,11 +343,11 @@ Bonjour Danny
 ```text
 D:\hal\java\jdk-08
 D:\hal\java\jre-08
-D:\hal\eclipse
+D:\hal\intellij
 D:\hal\workspace-java8
 
 Java 8u202
-Eclipse
+IntelliJ Community
 Maven
 SVN
 Tomcat 8
