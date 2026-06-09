@@ -1,17 +1,6 @@
 # Installation Java 8 Ancien Monde
 
-## Objectif
-
-Installer un environnement proche des projets Java 8 historiques :
-
-* Oracle JDK 8u202
-* Eclipse
-* Maven
-* SVN
-
----
-
-# 1. Télécharger Oracle JDK 8
+## 1. Télécharger Oracle JDK 8
 
 Archive Oracle :
 
@@ -34,7 +23,7 @@ Java 8 Update 202
 
 ---
 
-# Alternative
+## Alternative
 
 Si l'accès Oracle pose problème :
 
@@ -48,11 +37,19 @@ Architecture : x64
 Package Type : JDK
 ```
 
-Pour un entretien Java 8, aucune différence pratique.
+---
+
+## 2. Créer l'arborescence
+
+Créer :
+
+```text
+D:\hal\java
+```
 
 ---
 
-# 2. Installer
+## 3. Installer
 
 Lancer :
 
@@ -60,17 +57,17 @@ Lancer :
 jdk-8u202-windows-x64.exe
 ```
 
-Installer dans :
+Modifier le répertoire proposé par Oracle :
 
 ```text
-C:\Program Files\Java\jdk1.8.0_202
+D:\hal\java\jdk-08
 ```
 
 ---
 
-# 3. Configurer JAVA_HOME
+## 4. Configurer JAVA_HOME
 
-Créer :
+Créer la variable système :
 
 ```text
 JAVA_HOME
@@ -79,12 +76,12 @@ JAVA_HOME
 Valeur :
 
 ```text
-C:\Program Files\Java\jdk1.8.0_202
+D:\hal\java\jdk-08
 ```
 
 ---
 
-# 4. Modifier PATH
+## 5. Modifier PATH
 
 Ajouter :
 
@@ -94,9 +91,23 @@ Ajouter :
 
 ---
 
-# 5. Vérifier
+## 6. Vérifier JAVA_HOME
 
 Ouvrir un terminal :
+
+```bash
+echo %JAVA_HOME%
+```
+
+Résultat :
+
+```text
+D:\hal\java\jdk-08
+```
+
+---
+
+## 7. Vérifier Java
 
 ```bash
 java -version
@@ -112,7 +123,7 @@ Java HotSpot(TM) 64-Bit Server VM
 
 ---
 
-# 6. Vérifier le compilateur
+## 8. Vérifier le compilateur
 
 ```bash
 javac -version
@@ -126,21 +137,7 @@ javac 1.8.0_202
 
 ---
 
-# 7. Vérifier JAVA_HOME
-
-```bash
-echo %JAVA_HOME%
-```
-
-Résultat :
-
-```text
-C:\Program Files\Java\jdk1.8.0_202
-```
-
----
-
-# 8. Installer Eclipse
+## 9. Installer Eclipse
 
 https://www.eclipse.org/downloads/
 
@@ -150,9 +147,23 @@ Choisir :
 Eclipse IDE for Java Developers
 ```
 
+Installer dans :
+
+```text
+D:\hal\eclipse
+```
+
 ---
 
-# 9. Premier programme
+## 10. Créer un Workspace
+
+```text
+D:\hal\workspace-java8
+```
+
+---
+
+## 11. Premier programme
 
 Créer :
 
@@ -189,13 +200,16 @@ Bonjour Danny
 
 ---
 
-# Environnement cible Naval Group
+## Environnement Naval Group
 
 ```text
-Windows
-Oracle JDK 8u202
+D:\hal\java\jdk-08
+D:\hal\eclipse
+D:\hal\workspace-java8
+
+Java 8u202
 Eclipse
-Maven 3.x
+Maven
 SVN
 Tomcat 8
 ```
