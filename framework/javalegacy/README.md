@@ -6,3 +6,4 @@
 - [Projet Intellij](./003-premier-projet-intellij-java8.md)
 - [Variables](./004-variables-types-et-operateurs-java8.md)
 - [conditions Boucles](./005-conditions-et-boucles-java8.md)
+- [Classes](./006-classes-objets-et-constructeurs-java8.md)
