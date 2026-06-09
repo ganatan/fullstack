@@ -49,7 +49,7 @@ D:\hal\java
 
 ---
 
-## 3. Installer
+## 3. Installer le JDK
 
 Lancer :
 
@@ -57,7 +57,7 @@ Lancer :
 jdk-8u202-windows-x64.exe
 ```
 
-Modifier le répertoire proposé par Oracle :
+Modifier le répertoire proposé :
 
 ```text
 D:\hal\java\jdk-08
@@ -65,7 +65,29 @@ D:\hal\java\jdk-08
 
 ---
 
-## 4. Configurer JAVA_HOME
+## 4. Installer le JRE
+
+Lors de l'installation Oracle, conserver l'installation du JRE.
+
+Modifier le répertoire proposé :
+
+```text
+D:\hal\java\jre-08
+```
+
+Au final :
+
+```text
+D:\hal\java
+|
++-- jdk-08
+|
++-- jre-08
+```
+
+---
+
+## 5. Configurer JAVA_HOME
 
 Créer la variable système :
 
@@ -81,7 +103,7 @@ D:\hal\java\jdk-08
 
 ---
 
-## 5. Modifier PATH
+## 6. Modifier PATH
 
 Ajouter :
 
@@ -91,7 +113,7 @@ Ajouter :
 
 ---
 
-## 6. Vérifier JAVA_HOME
+## 7. Vérifier JAVA_HOME
 
 Ouvrir un terminal :
 
@@ -107,7 +129,7 @@ D:\hal\java\jdk-08
 
 ---
 
-## 7. Vérifier Java
+## 8. Vérifier Java
 
 ```bash
 java -version
@@ -123,7 +145,7 @@ Java HotSpot(TM) 64-Bit Server VM
 
 ---
 
-## 8. Vérifier le compilateur
+## 9. Vérifier le compilateur
 
 ```bash
 javac -version
@@ -137,7 +159,7 @@ javac 1.8.0_202
 
 ---
 
-## 9. Installer Eclipse
+## 10. Installer Eclipse
 
 https://www.eclipse.org/downloads/
 
@@ -155,7 +177,7 @@ D:\hal\eclipse
 
 ---
 
-## 10. Créer un Workspace
+## 11. Créer un Workspace
 
 ```text
 D:\hal\workspace-java8
@@ -163,7 +185,7 @@ D:\hal\workspace-java8
 
 ---
 
-## 11. Premier programme
+## 12. Premier programme
 
 Créer :
 
@@ -204,6 +226,7 @@ Bonjour Danny
 
 ```text
 D:\hal\java\jdk-08
+D:\hal\java\jre-08
 D:\hal\eclipse
 D:\hal\workspace-java8
 
