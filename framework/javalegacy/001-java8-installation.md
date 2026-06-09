@@ -57,7 +57,7 @@ Lancer :
 jdk-8u202-windows-x64.exe
 ```
 
-Modifier le répertoire proposé :
+Installer dans :
 
 ```text
 D:\hal\java\jdk-08
@@ -67,15 +67,15 @@ D:\hal\java\jdk-08
 
 ## 4. Installer le JRE
 
-Lors de l'installation Oracle, conserver l'installation du JRE.
+Conserver l'installation du JRE.
 
-Modifier le répertoire proposé :
+Installer dans :
 
 ```text
 D:\hal\java\jre-08
 ```
 
-Au final :
+Résultat :
 
 ```text
 D:\hal\java
@@ -103,7 +103,7 @@ D:\hal\java\jdk-08
 
 ---
 
-## 6. Modifier PATH
+## 6. Configurer PATH
 
 Ajouter :
 
@@ -111,17 +111,33 @@ Ajouter :
 %JAVA_HOME%\bin
 ```
 
+Important :
+
+Supprimer toute référence à :
+
+```text
+C:\Program Files\Common Files\Oracle\Java\javapath
+```
+
+ou
+
+```text
+javapath
+```
+
+car ce répertoire prend souvent la priorité et fait pointer Windows vers une autre version de Java (Java 21, Java 25, Java 26, etc.).
+
 ---
 
 ## 7. Vérifier JAVA_HOME
 
-Ouvrir un terminal :
+Ouvrir un nouveau terminal :
 
 ```bash
 echo %JAVA_HOME%
 ```
 
-Résultat :
+Résultat attendu :
 
 ```text
 D:\hal\java\jdk-08
@@ -159,7 +175,33 @@ javac 1.8.0_202
 
 ---
 
-## 10. Installer Eclipse
+## 10. Vérifier les exécutables utilisés
+
+```bash
+where java
+```
+
+Résultat attendu :
+
+```text
+D:\hal\java\jdk-08\bin\java.exe
+```
+
+Puis :
+
+```bash
+where javac
+```
+
+Résultat attendu :
+
+```text
+D:\hal\java\jdk-08\bin\javac.exe
+```
+
+---
+
+## 11. Installer Eclipse
 
 https://www.eclipse.org/downloads/
 
@@ -177,7 +219,7 @@ D:\hal\eclipse
 
 ---
 
-## 11. Créer un Workspace
+## 12. Créer un Workspace
 
 ```text
 D:\hal\workspace-java8
@@ -185,7 +227,7 @@ D:\hal\workspace-java8
 
 ---
 
-## 12. Premier programme
+## 13. Premier programme
 
 Créer :
 
