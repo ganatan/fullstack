@@ -1,10 +1,10 @@
-# Linux
+# 004-installation-wsl2-ubuntu-java8.md
 
-# Installation de Linux (WSL2) sous Windows 11
+# Installation de Linux (WSL2 Ubuntu) sous Windows 11
 
 ## Objectif
 
-Installer un véritable environnement Linux sous Windows afin de pouvoir exécuter :
+Installer un véritable environnement Linux directement dans Windows afin de pouvoir exécuter :
 
 ```text
 Java
@@ -20,64 +20,9 @@ comme sur un serveur Linux.
 
 ---
 
-# 1. Vérifier la version de Windows
+# 1. Vérifier que WSL est installé
 
 Ouvrir PowerShell :
-
-```powershell
-winver
-```
-
-Vérifier :
-
-```text
-Windows 11
-```
-
-ou
-
-```text
-Windows 10 version 2004 minimum
-```
-
----
-
-# 2. Vérifier si WSL est déjà installé
-
-Ouvrir PowerShell en administrateur :
-
-```powershell
-wsl --version
-```
-
-Si la commande répond :
-
-```text
-WSL version: 2.x.x
-Kernel version: x.x.x
-```
-
-WSL est déjà installé.
-
----
-
-# 3. Installer WSL2
-
-Dans PowerShell administrateur :
-
-```powershell
-wsl --install
-```
-
-Attendre la fin de l'installation.
-
-Redémarrer Windows.
-
----
-
-# 4. Vérifier l'installation
-
-Après redémarrage :
 
 ```powershell
 wsl --version
@@ -87,77 +32,90 @@ Résultat attendu :
 
 ```text
 WSL version: 2.x.x
-Kernel version: x.x.x
-WSLg version: x.x.x
 ```
 
 ---
 
-# 5. Installer Ubuntu
-
-Lister les distributions disponibles :
+# 2. Vérifier les distributions installées
 
 ```powershell
-wsl --list --online
+wsl --list --verbose
 ```
 
 Exemple :
 
 ```text
-Ubuntu
-Ubuntu-22.04
-Ubuntu-24.04
-Debian
-openSUSE
+NAME              STATE     VERSION
+docker-desktop    Stopped   2
+Ubuntu            Stopped   2
 ```
 
-Installer Ubuntu :
+Dans notre cas :
 
-```powershell
-wsl --install -d Ubuntu
+```text
+Ubuntu est déjà installée.
 ```
+
+Il ne faut donc pas réinstaller Ubuntu.
 
 ---
 
-# 6. Premier démarrage Linux
+# 3. Lancer Ubuntu
 
-Lancer :
+Commande recommandée :
 
 ```powershell
-ubuntu
+wsl -d Ubuntu
 ```
 
 ou :
 
 ```powershell
-wsl
+wsl --distribution Ubuntu
+```
+
+---
+
+# 4. Premier lancement
+
+Si Ubuntu n'a jamais été démarrée :
+
+```text
+Installing...
+Creating default Unix user account...
 ```
 
 Créer :
 
 ```text
-Nom utilisateur
-Mot de passe
+Nom utilisateur Linux
+Mot de passe Linux
 ```
 
 Exemple :
 
 ```text
-Username : mulder
+Username : danny
 Password : ********
 ```
 
 ---
 
-# 7. Vérifier Linux
+# 5. Vérifier Ubuntu
 
-Dans le terminal Linux :
+Une fois connecté :
+
+```text
+danny@PC:~$
+```
+
+Vérifier :
 
 ```bash
 uname -a
 ```
 
-Résultat attendu :
+Résultat :
 
 ```text
 Linux ...
@@ -165,16 +123,21 @@ Linux ...
 
 ---
 
-# 8. Mettre Ubuntu à jour
+# 6. Mettre Ubuntu à jour
 
 ```bash
 sudo apt update
+```
+
+Puis :
+
+```bash
 sudo apt upgrade -y
 ```
 
 ---
 
-# 9. Vérifier l'accès aux disques Windows
+# 7. Vérifier l'accès aux disques Windows
 
 Sous Linux :
 
@@ -189,26 +152,26 @@ c
 d
 ```
 
-Le disque :
+---
+
+# 8. Accéder au disque D
+
+Sous Windows :
 
 ```text
 D:\hal
 ```
 
-devient :
+Sous Linux :
 
 ```text
 /mnt/d/hal
 ```
 
----
-
-# 10. Accéder au workspace Java
-
 Exemple :
 
 ```bash
-cd /mnt/d/hal/workspace-java8
+cd /mnt/d/hal
 ```
 
 Lister :
@@ -217,26 +180,14 @@ Lister :
 ls
 ```
 
-Résultat :
-
-```text
-java8-training
-```
-
 ---
 
-# 11. Installer Java 8
+# 9. Installer Java
 
-Rechercher les versions disponibles :
-
-```bash
-sudo apt search openjdk
-```
-
-Installer Java 8 :
+Java 21 :
 
 ```bash
-sudo apt install openjdk-8-jdk
+sudo apt install openjdk-21-jdk -y
 ```
 
 Vérifier :
@@ -245,70 +196,37 @@ Vérifier :
 java -version
 ```
 
-Résultat attendu :
-
-```text
-openjdk version "1.8"
-```
-
----
-
-# 12. Vérifier le compilateur
-
-```bash
-javac -version
-```
-
 Résultat :
 
 ```text
-javac 1.8.x
+openjdk version "21"
 ```
 
 ---
 
-# 13. Exécuter un programme Java
-
-Créer :
+# 10. Installer Maven
 
 ```bash
-nano HelloWorld.java
+sudo apt install maven -y
 ```
 
-Code :
-
-```java
-public class HelloWorld {
-
-    public static void main(String[] args) {
-        System.out.println("Bonjour Linux");
-    }
-}
-```
-
-Compiler :
+Vérifier :
 
 ```bash
-javac HelloWorld.java
+mvn -version
 ```
 
-Exécuter :
+---
 
-```bash
-java HelloWorld
-```
+# 11. Exécuter un JAR créé sous Windows
 
-Résultat :
+Supposons :
 
 ```text
-Bonjour Linux
+D:\hal\workspace-java8\java8-training\hello.jar
 ```
 
----
-
-# 14. Exécuter un JAR créé sous Windows
-
-Se placer dans le projet :
+Sous Linux :
 
 ```bash
 cd /mnt/d/hal/workspace-java8/java8-training
@@ -335,29 +253,12 @@ java -jar hello.jar
 Résultat :
 
 ```text
-Bonjour mulder
+Bonjour Danny
 ```
 
 ---
 
-# 15. Vérifier les distributions installées
-
-Depuis PowerShell :
-
-```powershell
-wsl -l -v
-```
-
-Exemple :
-
-```text
-NAME      STATE     VERSION
-Ubuntu    Running   2
-```
-
----
-
-# 16. Arrêter Linux
+# 12. Arrêter Linux
 
 Depuis PowerShell :
 
@@ -367,53 +268,67 @@ wsl --shutdown
 
 ---
 
-# 17. Architecture finale
+# Dépannage
+
+## Erreur
 
 ```text
-Windows 11
-|
-+-- IntelliJ
-|
-+-- Java 8
-|
-+-- WSL2
-    |
-    +-- Ubuntu
-        |
-        +-- Java 8
-        +-- Maven
-        +-- Git
-        +-- Tomcat
-        +-- Docker
+ubuntu : Le terme 'ubuntu' n'est pas reconnu
+```
+
+Cause :
+
+```text
+Le raccourci Ubuntu n'est pas présent dans le PATH Windows.
+```
+
+Solution :
+
+```powershell
+wsl -d Ubuntu
+```
+
+---
+
+## Erreur
+
+```text
+sudo: not found
+```
+
+Cause :
+
+```text
+Vous n'êtes pas dans Ubuntu.
+Vous êtes dans une autre distribution WSL.
+```
+
+Vérifier :
+
+```powershell
+wsl --list --verbose
+```
+
+Puis lancer :
+
+```powershell
+wsl -d Ubuntu
 ```
 
 ---
 
 # Résumé
 
-Installation :
+Lister les distributions :
 
 ```powershell
-wsl --install
+wsl --list --verbose
 ```
 
-Lancement :
+Lancer Ubuntu :
 
 ```powershell
-wsl
-```
-
-Mise à jour :
-
-```bash
-sudo apt update
-sudo apt upgrade -y
-```
-
-Accès disque D :
-
-```bash
-cd /mnt/d
+wsl -d Ubuntu
 ```
 
 Version Linux :
@@ -422,16 +337,23 @@ Version Linux :
 uname -a
 ```
 
-Version Java :
+Mettre à jour :
 
 ```bash
-java -version
+sudo apt update
+sudo apt upgrade -y
 ```
 
-Exécution d'un JAR :
+Installer Java :
+
+```bash
+sudo apt install openjdk-21-jdk -y
+```
+
+Exécuter un JAR :
 
 ```bash
 java -jar hello.jar
 ```
 
-Vous disposez maintenant d'un véritable environnement Linux directement dans Windows.
+Vous disposez maintenant d'un véritable Linux Ubuntu dans Windows, capable d'exécuter les mêmes applications Java qu'un serveur Linux.
