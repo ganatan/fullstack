@@ -1,4 +1,4 @@
-# 004-installation-wsl2-ubuntu-java8.md
+# 004-installation-wsl2-ubuntu-java.md
 
 # Installation de Linux (WSL2 Ubuntu) sous Windows 11
 
@@ -7,7 +7,8 @@
 Installer un véritable environnement Linux directement dans Windows afin de pouvoir exécuter :
 
 ```text
-Java
+Java 8
+Java 21
 Maven
 Tomcat
 Git
@@ -127,11 +128,6 @@ Linux ...
 
 ```bash
 sudo apt update
-```
-
-Puis :
-
-```bash
 sudo apt upgrade -y
 ```
 
@@ -172,19 +168,14 @@ Exemple :
 
 ```bash
 cd /mnt/d/hal
-```
-
-Lister :
-
-```bash
 ls
 ```
 
 ---
 
-# 9. Installer Java
+# 9. Installer Java 21
 
-Java 21 :
+Installer :
 
 ```bash
 sudo apt install openjdk-21-jdk -y
@@ -194,17 +185,113 @@ Vérifier :
 
 ```bash
 java -version
+javac -version
 ```
 
-Résultat :
+Résultat attendu :
 
 ```text
 openjdk version "21"
+javac 21
 ```
 
 ---
 
-# 10. Installer Maven
+# 10. Installer Java 8
+
+Selon la version d'Ubuntu, Java 8 peut être disponible directement :
+
+```bash
+sudo apt install openjdk-8-jdk -y
+```
+
+Vérifier :
+
+```bash
+java -version
+javac -version
+```
+
+Résultat attendu :
+
+```text
+openjdk version "1.8"
+javac 1.8
+```
+
+---
+
+# 11. Vérifier les versions installées
+
+```bash
+ls /usr/lib/jvm
+```
+
+Exemple :
+
+```text
+java-8-openjdk-amd64
+java-21-openjdk-amd64
+```
+
+---
+
+# 12. Choisir la version Java active
+
+Afficher les versions disponibles :
+
+```bash
+sudo update-alternatives --config java
+```
+
+Exemple :
+
+```text
+Selection    Path
+-----------------------------------------
+0            java-21-openjdk-amd64
+1            java-8-openjdk-amd64
+2            java-21-openjdk-amd64
+```
+
+Choisir :
+
+```text
+1
+```
+
+pour Java 8.
+
+ou :
+
+```text
+2
+```
+
+pour Java 21.
+
+---
+
+# 13. Choisir la version du compilateur
+
+```bash
+sudo update-alternatives --config javac
+```
+
+Sélectionner la même version que Java.
+
+Vérifier :
+
+```bash
+java -version
+javac -version
+```
+
+---
+
+# 14. Installer Maven
+
+Installer :
 
 ```bash
 sudo apt install maven -y
@@ -216,9 +303,23 @@ Vérifier :
 mvn -version
 ```
 
+Exemple :
+
+```text
+Apache Maven 3.x
+Java version: 21
+```
+
+ou :
+
+```text
+Apache Maven 3.x
+Java version: 1.8
+```
+
 ---
 
-# 11. Exécuter un JAR créé sous Windows
+# 15. Exécuter un JAR créé sous Windows
 
 Supposons :
 
@@ -258,7 +359,51 @@ Bonjour Danny
 
 ---
 
-# 12. Arrêter Linux
+# 16. Copier un projet Windows vers Linux
+
+Créer un répertoire Linux :
+
+```bash
+mkdir -p ~/projects
+```
+
+Copie :
+
+```bash
+cp -r /mnt/d/hal/workspace-java8/java8-training ~/projects/
+```
+
+Vérifier :
+
+```bash
+ls ~/projects
+```
+
+---
+
+# 17. Connaître l'emplacement Linux
+
+Afficher le répertoire courant :
+
+```bash
+pwd
+```
+
+Exemple :
+
+```text
+/home/danny
+```
+
+Le répertoire personnel Linux est :
+
+```text
+/home/danny
+```
+
+---
+
+# 18. Arrêter Linux
 
 Depuis PowerShell :
 
@@ -274,12 +419,6 @@ wsl --shutdown
 
 ```text
 ubuntu : Le terme 'ubuntu' n'est pas reconnu
-```
-
-Cause :
-
-```text
-Le raccourci Ubuntu n'est pas présent dans le PATH Windows.
 ```
 
 Solution :
@@ -300,7 +439,6 @@ Cause :
 
 ```text
 Vous n'êtes pas dans Ubuntu.
-Vous êtes dans une autre distribution WSL.
 ```
 
 Vérifier :
@@ -309,10 +447,26 @@ Vérifier :
 wsl --list --verbose
 ```
 
-Puis lancer :
+Puis :
 
 ```powershell
 wsl -d Ubuntu
+```
+
+---
+
+## Vérifier les distributions
+
+```powershell
+wsl --list --verbose
+```
+
+Exemple :
+
+```text
+NAME              STATE     VERSION
+docker-desktop    Stopped   2
+Ubuntu            Running   2
 ```
 
 ---
@@ -331,12 +485,6 @@ Lancer Ubuntu :
 wsl -d Ubuntu
 ```
 
-Version Linux :
-
-```bash
-uname -a
-```
-
 Mettre à jour :
 
 ```bash
@@ -344,10 +492,29 @@ sudo apt update
 sudo apt upgrade -y
 ```
 
-Installer Java :
+Installer Java 8 :
+
+```bash
+sudo apt install openjdk-8-jdk -y
+```
+
+Installer Java 21 :
 
 ```bash
 sudo apt install openjdk-21-jdk -y
+```
+
+Changer de version :
+
+```bash
+sudo update-alternatives --config java
+sudo update-alternatives --config javac
+```
+
+Installer Maven :
+
+```bash
+sudo apt install maven -y
 ```
 
 Exécuter un JAR :
@@ -356,4 +523,4 @@ Exécuter un JAR :
 java -jar hello.jar
 ```
 
-Vous disposez maintenant d'un véritable Linux Ubuntu dans Windows, capable d'exécuter les mêmes applications Java qu'un serveur Linux.
+Vous disposez maintenant d'un environnement Ubuntu complet capable d'exécuter des applications Java 8, Java 21, Maven, Spring Boot et Tomcat directement depuis Windows.
