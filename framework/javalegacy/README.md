@@ -12,5 +12,6 @@
 - [Heritage polymorphisme Exemple](./009-poo-heritage-interface-polymorphisme-java8.md)
 - [Creer executer jar](./010-creer-et-executer-un-jar-java8.md)
 - [Librairies Standard](./011-premiere-librairie-standard-java8.md)
-- [Librairies jar](./011-librairies-et-jar-java8.md)
+- [Premiere Librairie Externe](./012-premiere-librairie-externe-java8.md)
+- [Librairies jar](./013-librairies-et-jar-java8.md)
 
