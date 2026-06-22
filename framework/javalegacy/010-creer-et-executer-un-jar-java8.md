@@ -1,54 +1,38 @@
 # 010-creer-et-executer-un-jar-java8.md
 
-# Créer et exécuter un fichier JAR en Java 8
+# Créer et exécuter un JAR en Java 8
 
 ## Objectif
 
-À partir d'une application Java simple :
+Partir d'une application Java simple :
 
 ```text
-Main
+Main.java
+MathUtils.java
+```
+
+puis :
+
+```text
+Compiler
 ↓
-Compilation
+Créer un JAR
 ↓
-.class
-↓
-JAR
-↓
-Exécution
+Exécuter le JAR
 ```
 
 Sans Maven.
 
 ---
 
-# 1. Création du projet
+# 1. Créer les fichiers
 
-Créer :
-
-```text
-D:\demo\jar-demo
-│
-├── Main.java
-└── MathUtils.java
-```
-
----
-
-# 2. Classe MathUtils
-
-Fichier :
-
-```text
-MathUtils.java
-```
-
-Code :
+## MathUtils.java
 
 ```java
 public class MathUtils {
 
-  int sum(int numb1, int numb2) {
+  int sum(int numb1,int numb2) {
     int result = numb1 + numb2;
     System.out.println("00000000001:MathUtils:sum");
     return result;
@@ -58,15 +42,7 @@ public class MathUtils {
 
 ---
 
-# 3. Classe Main
-
-Fichier :
-
-```text
-Main.java
-```
-
-Code :
+## Main.java
 
 ```java
 public class Main {
@@ -85,18 +61,12 @@ public class Main {
 
 ---
 
-# 4. Compilation
+# 2. Compiler l'application
 
-Se placer dans :
-
-```text
-D:\demo\jar-demo
-```
-
-Compiler :
+Commande :
 
 ```bash
-javac Main.java MathUtils.java
+javac Main.java
 ```
 
 Résultat :
@@ -106,20 +76,23 @@ Main.class
 MathUtils.class
 ```
 
-Arborescence :
+Même si seule la classe Main est compilée explicitement :
+
+```bash
+javac Main.java
+```
+
+Java compile automatiquement :
 
 ```text
-jar-demo
-│
-├── Main.java
-├── MathUtils.java
-├── Main.class
-└── MathUtils.class
+MathUtils.java
 ```
+
+car elle est utilisée par Main.
 
 ---
 
-# 5. Exécution sans JAR
+# 3. Exécuter l'application
 
 Commande :
 
@@ -137,9 +110,9 @@ Résultat :
 
 ---
 
-# 6. Création du manifeste
+# 4. Créer le manifeste
 
-Créer :
+Créer le fichier :
 
 ```text
 manifest.txt
@@ -154,12 +127,12 @@ Main-Class: Main
 Attention :
 
 ```text
-Une ligne vide doit exister à la fin du fichier.
+Une ligne vide doit être présente à la fin du fichier.
 ```
 
 ---
 
-# 7. Création du JAR
+# 5. Créer le JAR
 
 Commande :
 
@@ -173,22 +146,9 @@ Résultat :
 app.jar
 ```
 
-Arborescence :
-
-```text
-jar-demo
-│
-├── Main.java
-├── MathUtils.java
-├── Main.class
-├── MathUtils.class
-├── manifest.txt
-└── app.jar
-```
-
 ---
 
-# 8. Vérifier le contenu du JAR
+# 6. Vérifier le contenu du JAR
 
 Commande :
 
@@ -207,7 +167,7 @@ MathUtils.class
 
 ---
 
-# 9. Exécuter le JAR
+# 7. Exécuter le JAR
 
 Commande :
 
@@ -225,89 +185,66 @@ Résultat :
 
 ---
 
-# 10. Ce qu'est réellement un JAR
+# Comprendre ce qui se passe
 
-Un JAR est simplement une archive ZIP contenant :
-
-```text
-.class
-```
-
-et éventuellement :
-
-```text
-META-INF/MANIFEST.MF
-```
-
-Exemple :
-
-```text
-app.jar
-│
-├── META-INF
-│   └── MANIFEST.MF
-│
-├── Main.class
-└── MathUtils.class
-```
-
----
-
-# 11. Afficher le manifeste
-
-Commande :
+## Compilation
 
 ```bash
-jar xf app.jar META-INF/MANIFEST.MF
+javac Main.java
 ```
 
-Contenu :
-
-```text
-Manifest-Version: 1.0
-Main-Class: Main
-```
-
----
-
-# 12. Différence entre .class et .jar
-
-Un fichier :
-
-```text
-Main.class
-```
-
-est une seule classe compilée.
-
-Un fichier :
-
-```text
-app.jar
-```
-
-regroupe plusieurs classes compilées.
-
----
-
-# 13. Pourquoi utiliser un JAR ?
-
-Sans JAR :
+génère :
 
 ```text
 Main.class
 MathUtils.class
-AutreClasse.class
-...
 ```
 
-Avec JAR :
+---
+
+## Création du JAR
+
+```bash
+jar cfm app.jar manifest.txt Main.class MathUtils.class
+```
+
+regroupe les classes dans :
 
 ```text
 app.jar
 ```
 
-Un seul fichier à distribuer.
+---
+
+## Manifest
+
+```text
+Main-Class: Main
+```
+
+indique à Java :
+
+```text
+Quelle classe contient la méthode main()
+```
+
+---
+
+## Exécution
+
+```bash
+java -jar app.jar
+```
+
+Java :
+
+```text
+Lit le manifest
+↓
+Trouve Main
+↓
+Exécute Main.main()
+```
 
 ---
 
@@ -316,7 +253,7 @@ Un seul fichier à distribuer.
 Compiler :
 
 ```bash
-javac Main.java MathUtils.java
+javac Main.java
 ```
 
 Exécuter :
@@ -336,14 +273,18 @@ Créer le JAR :
 ```bash
 jar cfm app.jar manifest.txt Main.class MathUtils.class
 ```
+ou
+```bash
+jar cfm app.jar manifest.txt *.class
+```
 
-Vérifier :
+Afficher le contenu :
 
 ```bash
 jar tf app.jar
 ```
 
-Exécuter :
+Exécuter le JAR :
 
 ```bash
 java -jar app.jar
@@ -352,13 +293,17 @@ java -jar app.jar
 Cycle complet :
 
 ```text
-Code Java
+Main.java
+MathUtils.java
 ↓
-Compilation
+javac
 ↓
-.class
+Main.class
+MathUtils.class
 ↓
-JAR
+jar
 ↓
-java -jar
+app.jar
+↓
+java -jar app.jar
 ```
