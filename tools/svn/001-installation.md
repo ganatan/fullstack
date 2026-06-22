@@ -87,18 +87,21 @@ clic droit
 
 ---
 
-# 4. Créer un premier projet
+# 4. Créer l'arborescence de démonstration
 
-Créer le dossier :
+Créer les répertoires :
 
 ```text
-D:\svn-test
+D:\demo
+D:\demo\svn-test
+D:\demo\workspace
+D:\demo\workspace2
 ```
 
 Créer le fichier :
 
 ```text
-README.md
+D:\demo\svn-test\README.md
 ```
 
 Contenu :
@@ -116,7 +119,7 @@ Ouvrir une invite de commande.
 Commande :
 
 ```bash
-svn import D:\svn-test https://localhost/svn/demo-svn/trunk -m "Initial import"
+svn import D:\demo\svn-test https://localhost/svn/demo-svn/trunk -m "Initial import"
 ```
 
 Résultat attendu :
@@ -129,28 +132,22 @@ Committed revision 1
 
 # 6. Effectuer un checkout
 
-Créer le dossier :
-
-```text
-D:\workspace
-```
-
 Commande :
 
 ```bash
-svn checkout https://localhost/svn/demo-svn/trunk D:\workspace
+svn checkout https://localhost/svn/demo-svn/trunk D:\demo\workspace
 ```
 
 ou
 
 ```bash
-svn co https://localhost/svn/demo-svn/trunk D:\workspace
+svn co https://localhost/svn/demo-svn/trunk D:\demo\workspace
 ```
 
 Résultat :
 
 ```text
-D:\workspace
+D:\demo\workspace
     README.md
 ```
 
@@ -161,7 +158,7 @@ D:\workspace
 Se placer dans le workspace :
 
 ```bash
-cd D:\workspace
+cd D:\demo\workspace
 ```
 
 Commande :
@@ -196,7 +193,7 @@ aucune modification
 Modifier :
 
 ```text
-README.md
+D:\demo\workspace\README.md
 ```
 
 Nouveau contenu :
@@ -293,7 +290,7 @@ r2 Ajout version 2
 Créer :
 
 ```text
-notes.txt
+D:\demo\workspace\notes.txt
 ```
 
 Commande :
@@ -398,23 +395,17 @@ Updated to revision 5
 
 # 17. Simuler un deuxième développeur
 
-Créer :
-
-```text
-D:\workspace2
-```
-
-Checkout :
+Effectuer un second checkout :
 
 ```bash
-svn checkout https://localhost/svn/demo-svn/trunk D:\workspace2
+svn checkout https://localhost/svn/demo-svn/trunk D:\demo\workspace2
 ```
 
 Vous avez maintenant :
 
 ```text
-workspace
-workspace2
+D:\demo\workspace
+D:\demo\workspace2
 ```
 
 Simulation :
@@ -428,18 +419,40 @@ workspace2 = Collègue
 
 # 18. Créer un conflit
 
-Dans workspace :
+Dans :
 
 ```text
-modifier README.md
-commit
+D:\demo\workspace
 ```
 
-Dans workspace2 :
+Modifier :
 
 ```text
-modifier README.md
-commit
+README.md
+```
+
+Puis :
+
+```bash
+svn commit
+```
+
+Dans :
+
+```text
+D:\demo\workspace2
+```
+
+Modifier également :
+
+```text
+README.md
+```
+
+Puis :
+
+```bash
+svn commit
 ```
 
 Résultat :
