@@ -11,6 +11,8 @@ Installer un environnement SVN complet sur son poste Windows afin de comprendre 
 - commit
 - log
 - conflits
+- utilisateurs
+- authentification
 
 comme dans un projet Java legacy chez Naval Group.
 
@@ -39,7 +41,40 @@ VisualSVN Server Manager
 
 ---
 
-# 2. Créer un dépôt SVN
+# 2. Créer un utilisateur SVN
+
+Ouvrir :
+
+```text
+VisualSVN Server Manager
+```
+
+Créer un utilisateur :
+
+```text
+Users
+→ Create User
+```
+
+Exemple :
+
+```text
+User name : danny
+Password  : danny123
+```
+
+Valider.
+
+Vous disposez maintenant d'un compte SVN :
+
+```text
+Login    : danny
+Password : danny123
+```
+
+---
+
+# 3. Créer un dépôt SVN
 
 Dans VisualSVN Server :
 
@@ -70,7 +105,41 @@ https://localhost/svn/demo-svn
 
 ---
 
-# 3. Installer TortoiseSVN
+# 4. Donner les droits au dépôt
+
+Dans :
+
+```text
+Repositories
+→ demo-svn
+→ Properties
+→ Security
+```
+
+Ajouter :
+
+```text
+danny
+```
+
+avec les droits :
+
+```text
+Read / Write
+```
+
+Valider.
+
+Le dépôt est maintenant accessible avec :
+
+```text
+Login    : danny
+Password : danny123
+```
+
+---
+
+# 5. Installer TortoiseSVN
 
 Télécharger :
 
@@ -87,9 +156,9 @@ clic droit
 
 ---
 
-# 4. Créer l'arborescence de démonstration
+# 6. Créer l'arborescence de démonstration
 
-Créer les répertoires :
+Créer :
 
 ```text
 D:\demo
@@ -98,7 +167,7 @@ D:\demo\workspace
 D:\demo\workspace2
 ```
 
-Créer le fichier :
+Créer :
 
 ```text
 D:\demo\svn-test\README.md
@@ -112,14 +181,55 @@ Mon premier projet SVN
 
 ---
 
-# 5. Importer le projet dans SVN
+# 7. Créer l'arborescence standard SVN
+
+Dans VisualSVN :
+
+```text
+Repositories
+→ demo-svn
+```
+
+Créer :
+
+```text
+trunk
+branches
+tags
+```
+
+Résultat :
+
+```text
+demo-svn
+│
+├── trunk
+├── branches
+└── tags
+```
+
+---
+
+# 8. Importer le projet dans SVN
 
 Ouvrir une invite de commande.
 
 Commande :
 
 ```bash
-svn import D:\demo\svn-test https://localhost/svn/demo-svn/trunk -m "Initial import"
+svn import D:\demo\svn-test https://localhost/svn/demo-svn/trunk --username danny -m "Initial import"
+```
+
+SVN demande :
+
+```text
+Password for 'danny':
+```
+
+Saisir :
+
+```text
+danny123
 ```
 
 Résultat attendu :
@@ -130,18 +240,30 @@ Committed revision 1
 
 ---
 
-# 6. Effectuer un checkout
+# 9. Effectuer un checkout
 
 Commande :
 
 ```bash
-svn checkout https://localhost/svn/demo-svn/trunk D:\demo\workspace
+svn checkout https://localhost/svn/demo-svn/trunk D:\demo\workspace --username danny
 ```
 
 ou
 
 ```bash
-svn co https://localhost/svn/demo-svn/trunk D:\demo\workspace
+svn co https://localhost/svn/demo-svn/trunk D:\demo\workspace --username danny
+```
+
+SVN demande :
+
+```text
+Password for 'danny':
+```
+
+Saisir :
+
+```text
+danny123
 ```
 
 Résultat :
@@ -153,9 +275,9 @@ D:\demo\workspace
 
 ---
 
-# 7. Vérifier l'état du dépôt
+# 10. Vérifier l'état du dépôt
 
-Se placer dans le workspace :
+Se placer dans :
 
 ```bash
 cd D:\demo\workspace
@@ -165,12 +287,6 @@ Commande :
 
 ```bash
 svn status
-```
-
-ou
-
-```bash
-svn st
 ```
 
 Résultat :
@@ -188,7 +304,7 @@ aucune modification
 
 ---
 
-# 8. Modifier un fichier
+# 11. Modifier un fichier
 
 Modifier :
 
@@ -205,7 +321,7 @@ Version 2
 
 ---
 
-# 9. Voir les modifications
+# 12. Voir les modifications
 
 Commande :
 
@@ -219,15 +335,9 @@ Résultat :
 M README.md
 ```
 
-Signification :
-
-```text
-M = Modified
-```
-
 ---
 
-# 10. Voir le détail des modifications
+# 13. Voir le détail des modifications
 
 Commande :
 
@@ -235,29 +345,14 @@ Commande :
 svn diff
 ```
 
-Résultat :
-
-```text
-- Mon premier projet SVN
-
-+ Mon premier projet SVN
-+ Version 2
-```
-
 ---
 
-# 11. Commit des modifications
+# 14. Commit des modifications
 
 Commande :
 
 ```bash
 svn commit -m "Ajout version 2"
-```
-
-ou
-
-```bash
-svn ci -m "Ajout version 2"
 ```
 
 Résultat :
@@ -268,7 +363,7 @@ Committed revision 2
 
 ---
 
-# 12. Consulter l'historique
+# 15. Consulter l'historique
 
 Commande :
 
@@ -285,12 +380,12 @@ r2 Ajout version 2
 
 ---
 
-# 13. Ajouter un fichier
+# 16. Ajouter un fichier
 
 Créer :
 
 ```text
-D:\demo\workspace\notes.txt
+notes.txt
 ```
 
 Commande :
@@ -319,7 +414,7 @@ svn commit -m "Ajout notes"
 
 ---
 
-# 14. Supprimer un fichier
+# 17. Supprimer un fichier
 
 Commande :
 
@@ -347,31 +442,17 @@ svn commit -m "Suppression notes"
 
 ---
 
-# 15. Annuler une modification locale
+# 18. Annuler une modification locale
 
-Modifier :
-
-```text
-README.md
-```
-
-Puis :
+Commande :
 
 ```bash
 svn revert README.md
 ```
 
-Résultat :
-
-```text
-la dernière version du dépôt est restaurée
-```
-
 ---
 
-# 16. Mettre à jour son workspace
-
-Supposons qu'un collègue ait effectué un commit.
+# 19. Mettre à jour son workspace
 
 Commande :
 
@@ -379,29 +460,23 @@ Commande :
 svn update
 ```
 
-ou
+ou :
 
 ```bash
 svn up
 ```
 
-Résultat :
-
-```text
-Updated to revision 5
-```
-
 ---
 
-# 17. Simuler un deuxième développeur
+# 20. Simuler un deuxième développeur
 
 Effectuer un second checkout :
 
 ```bash
-svn checkout https://localhost/svn/demo-svn/trunk D:\demo\workspace2
+svn checkout https://localhost/svn/demo-svn/trunk D:\demo\workspace2 --username danny
 ```
 
-Vous avez maintenant :
+Résultat :
 
 ```text
 D:\demo\workspace
@@ -417,7 +492,7 @@ workspace2 = Collègue
 
 ---
 
-# 18. Créer un conflit
+# 21. Créer un conflit
 
 Dans :
 
@@ -465,17 +540,13 @@ SVN demandera une résolution manuelle.
 
 ---
 
-# 19. Structure classique d'un dépôt SVN
-
-Très souvent :
+# 22. Structure classique d'un dépôt SVN
 
 ```text
-project
+demo-svn
 │
 ├── trunk
-│
 ├── branches
-│
 └── tags
 ```
 
@@ -489,60 +560,19 @@ tags      = versions figées
 
 ---
 
-# 20. Les commandes indispensables pour la mission
-
-Voir les informations du dépôt :
+# 23. Commandes indispensables
 
 ```bash
 svn info
-```
-
-Mettre à jour :
-
-```bash
 svn update
-```
-
-Voir les modifications :
-
-```bash
 svn status
-```
-
-Voir les différences :
-
-```bash
 svn diff
-```
-
-Ajouter un fichier :
-
-```bash
-svn add fichier
-```
-
-Supprimer un fichier :
-
-```bash
-svn delete fichier
-```
-
-Annuler une modification :
-
-```bash
-svn revert fichier
-```
-
-Consulter l'historique :
-
-```bash
+svn add
+svn delete
+svn revert
 svn log
-```
-
-Commit :
-
-```bash
-svn commit -m "message"
+svn checkout
+svn commit
 ```
 
 ---
@@ -581,7 +611,15 @@ svn commit -m "Description de la correction"
 
 # Résumé
 
-Les commandes à connaître parfaitement :
+Compte de démonstration :
+
+```text
+URL      : https://localhost/svn/demo-svn
+Login    : danny
+Password : danny123
+```
+
+Commandes à connaître :
 
 ```bash
 svn checkout
@@ -596,22 +634,10 @@ svn info
 svn commit
 ```
 
-Le réflexe numéro 1 :
+Les trois réflexes quotidiens :
 
 ```bash
 svn update
-```
-
-Le réflexe numéro 2 :
-
-```bash
 svn status
-```
-
-Le réflexe numéro 3 :
-
-```bash
 svn diff
 ```
-
-Ces trois commandes couvrent plus de 90 % de l'utilisation quotidienne de SVN dans un projet Java legacy.
