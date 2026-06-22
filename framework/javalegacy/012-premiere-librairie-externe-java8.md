@@ -61,14 +61,15 @@ https://repo1.maven.org/maven2/commons-io/commons-io/2.11.0/
 Créer :
 
 ```text
-D:\demo
+D:\demo\app-java-8
 │
-├── Main.java
-├── MathUtils.java
+├── lib
+│   ├── commons-lang3-3.12.0.jar
+│   └── commons-io-2.11.0.jar
 │
-└── lib
-    ├── commons-lang3-3.12.0.jar
-    └── commons-io-2.11.0.jar
+└── src
+    ├── Main.java
+    └── MathUtils.java
 ```
 
 ---
@@ -78,7 +79,7 @@ D:\demo
 Fichier :
 
 ```text
-MathUtils.java
+src\MathUtils.java
 ```
 
 Code :
@@ -101,7 +102,7 @@ public class MathUtils {
 Fichier :
 
 ```text
-Main.java
+src\Main.java
 ```
 
 Code :
@@ -151,12 +152,22 @@ public class Main {
 
 ---
 
-# 5. Compiler sans les librairies
+# 5. Se placer dans le répertoire src
 
 Commande :
 
 ```bash
-javac Main.java
+cd D:\demo\app-java-8\src
+```
+
+---
+
+# 6. Compiler sans les librairies
+
+Commande :
+
+```bash
+javac Main.java MathUtils.java
 ```
 
 Résultat :
@@ -166,16 +177,16 @@ package org.apache.commons.lang3 does not exist
 package org.apache.commons.io does not exist
 ```
 
-Java ne trouve pas les classes.
+Java ne trouve pas les librairies externes.
 
 ---
 
-# 6. Compiler avec les librairies
+# 7. Compiler avec les librairies
 
 Commande :
 
 ```bash
-javac -cp "lib/*" Main.java
+javac -cp "..\lib\*" Main.java MathUtils.java
 ```
 
 Résultat :
@@ -189,12 +200,12 @@ La compilation fonctionne.
 
 ---
 
-# 7. Exécuter l'application
+# 8. Exécuter l'application
 
 Commande :
 
 ```bash
-java -cp ".;lib/*" Main
+java -cp ".;..\lib\*" Main
 ```
 
 Résultat :
@@ -205,7 +216,11 @@ Résultat :
 00000000001:file:sum=120
 ```
 
-Un fichier est créé :
+---
+
+# 9. Vérifier le fichier créé
+
+Le programme crée :
 
 ```text
 sample.txt
@@ -219,18 +234,18 @@ sum=120
 
 ---
 
-# 8. Comprendre le classpath
+# 10. Comprendre le classpath
 
 Compilation :
 
 ```bash
-javac -cp "lib/*" Main.java
+javac -cp "..\lib\*" Main.java MathUtils.java
 ```
 
 Exécution :
 
 ```bash
-java -cp ".;lib/*" Main
+java -cp ".;..\lib\*" Main
 ```
 
 Signification :
@@ -238,16 +253,16 @@ Signification :
 ```text
 .
 =
-répertoire courant
+répertoire courant (src)
 
-lib/*
+..\lib\*
 =
 toutes les librairies du répertoire lib
 ```
 
 ---
 
-# 9. Les classes utilisées
+# 11. Les classes utilisées
 
 Code métier :
 
@@ -288,44 +303,7 @@ FileUtils.readFileToString(...)
 
 ---
 
-# 10. Ce qu'est réellement une librairie externe
-
-Le fichier :
-
-```text
-commons-lang3-3.12.0.jar
-```
-
-contient :
-
-```text
-StringUtils.class
-RandomStringUtils.class
-NumberUtils.class
-ArrayUtils.class
-...
-```
-
----
-
-Le fichier :
-
-```text
-commons-io-2.11.0.jar
-```
-
-contient :
-
-```text
-FileUtils.class
-IOUtils.class
-FilenameUtils.class
-...
-```
-
----
-
-# 11. Différence avec une librairie standard
+# 12. Différence avec une librairie standard
 
 Librairie standard :
 
@@ -354,14 +332,14 @@ import org.apache.commons.io.FileUtils;
 Compilation :
 
 ```bash
-javac -cp "lib/*" Main.java
+javac -cp "..\lib\*" Main.java MathUtils.java
 ```
 
 Les JAR doivent être téléchargés et ajoutés au classpath.
 
 ---
 
-# 12. Pourquoi Maven existe ?
+# 13. Pourquoi Maven existe ?
 
 Sans Maven :
 
@@ -410,26 +388,28 @@ Maven télécharge automatiquement les JAR et configure le classpath.
 
 # Résumé
 
-Notre application est composée de :
+Arborescence :
 
 ```text
-MathUtils
-+
-Apache Commons Lang
-+
-Apache Commons IO
+app-java-8
+│
+├── lib
+│
+└── src
 ```
 
 Compilation :
 
 ```bash
-javac -cp "lib/*" Main.java
+cd D:\demo\app-java-8\src
+
+javac -cp "..\lib\*" Main.java MathUtils.java
 ```
 
 Exécution :
 
 ```bash
-java -cp ".;lib/*" Main
+java -cp ".;..\lib\*" Main
 ```
 
 Une application Java réelle est généralement composée de :
