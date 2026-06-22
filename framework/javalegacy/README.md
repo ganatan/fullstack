@@ -10,3 +10,5 @@
 - [Classes](./007-classes-objets-et-constructeurs-java8.md)
 - [Heritage polymorphisme](./008-heritage-polymorphisme-java8.md)
 - [Heritage polymorphisme Exemple](./009-poo-heritage-interface-polymorphisme-java8.md)
+- [Librairies avec Java](./010-librairies-et-jar-java8.md)
+
