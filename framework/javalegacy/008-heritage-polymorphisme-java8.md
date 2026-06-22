@@ -84,7 +84,7 @@ public class Main {
             new Employee(
                 "Danny",
                 60,
-                "Naval Group");
+                "MCP Group");
 
         System.out.println(employee.getName());
         System.out.println(employee.getAge());
@@ -99,7 +99,7 @@ Résultat :
 ```text
 Danny
 60
-Naval Group
+MCP Group
 ```
 
 ---
@@ -164,7 +164,7 @@ Employee employee =
     new Employee(
         "Danny",
         60,
-        "Naval Group");
+        "MCP Group");
 
 employee.display();
 ```
@@ -206,7 +206,7 @@ employee.display();
 Résultat :
 
 ```text
-Danny - 60 - Naval Group
+Danny - 60 - MCP Group
 ```
 
 ---
@@ -234,7 +234,7 @@ Person person =
     new Employee(
         "Danny",
         60,
-        "Naval Group");
+        "MCP Group");
 ```
 
 Valide.
@@ -256,7 +256,7 @@ person.display();
 Résultat :
 
 ```text
-Danny - 60 - Naval Group
+Danny - 60 - MCP Group
 ```
 
 Java exécute la méthode réelle de l'objet.
@@ -270,7 +270,7 @@ Person person =
     new Employee(
         "Danny",
         60,
-        "Naval Group");
+        "MCP Group");
 ```
 
 Référence :
@@ -322,7 +322,7 @@ System.out.println(
 Résultat :
 
 ```text
-Naval Group
+MCP Group
 ```
 
 ---

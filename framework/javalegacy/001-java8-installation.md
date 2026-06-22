@@ -338,7 +338,7 @@ Bonjour Danny
 
 ---
 
-## Environnement Naval Group
+## Environnement 
 
 ```text
 D:\hal\java\jdk-08

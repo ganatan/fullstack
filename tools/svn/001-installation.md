@@ -14,7 +14,6 @@ Installer un environnement SVN complet sur son poste Windows afin de comprendre 
 - utilisateurs
 - authentification
 
-comme dans un projet Java legacy chez Naval Group.
 
 ---
 
