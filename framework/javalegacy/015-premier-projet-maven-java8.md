@@ -4,21 +4,26 @@
 
 ## Objectif
 
-Découvrir Maven en reprenant exactement notre exemple :
+Découvrir Maven progressivement en reprenant exactement notre exemple :
 
 ```text
 Main.java
 MathUtils.java
 ```
 
-et les librairies :
+Nous allons découvrir :
 
 ```text
-Apache Commons Lang
-Apache Commons IO
+Compilation Maven
+↓
+Packaging Maven
+↓
+Manifest Maven
+↓
+Dépendances Maven
 ```
 
-Cette fois Maven téléchargera automatiquement les dépendances.
+afin de comprendre ce que Maven automatise réellement.
 
 ---
 
@@ -92,6 +97,244 @@ src\main\java\Main.java
 Code :
 
 ```java
+public class Main {
+
+  public static void main(String[] args) {
+
+    MathUtils item = new MathUtils();
+
+    int result = item.sum(10, 110);
+
+    System.out.println("00000000001:");
+    System.out.println("00000000001:sum:" + result);
+  }
+}
+```
+
+---
+
+# 5. Créer le premier pom.xml
+
+Fichier :
+
+```text
+pom.xml
+```
+
+Contenu :
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.ganatan</groupId>
+  <artifactId>app-java8-maven</artifactId>
+  <version>1.0.0</version>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+</project>
+```
+
+---
+
+# 6. Compiler le projet
+
+Commande :
+
+```bash
+mvn compile
+```
+
+Résultat :
+
+```text
+BUILD SUCCESS
+```
+
+---
+
+# 7. Observer le répertoire target
+
+Résultat :
+
+```text
+target
+│
+└── classes
+    ├── Main.class
+    └── MathUtils.class
+```
+
+Maven a remplacé :
+
+```bash
+javac Main.java
+```
+
+par :
+
+```bash
+mvn compile
+```
+
+---
+
+# 8. Créer le JAR Maven
+
+Commande :
+
+```bash
+mvn package
+```
+
+Résultat :
+
+```text
+target
+└── app-java8-maven-1.0.0.jar
+```
+
+---
+
+# 9. Vérifier le contenu du JAR
+
+Commande :
+
+```bash
+jar tf target\app-java8-maven-1.0.0.jar
+```
+
+Résultat :
+
+```text
+META-INF/
+META-INF/MANIFEST.MF
+Main.class
+MathUtils.class
+```
+
+---
+
+# 10. Essayer d'exécuter le JAR
+
+Commande :
+
+```bash
+java -jar target\app-java8-maven-1.0.0.jar
+```
+
+Résultat :
+
+```text
+aucun attribut manifeste principal
+```
+
+ou :
+
+```text
+no main manifest attribute
+```
+
+---
+
+# Pourquoi ?
+
+Maven a créé automatiquement :
+
+```text
+META-INF/MANIFEST.MF
+```
+
+mais il ne connaît pas :
+
+```text
+la classe principale
+```
+
+---
+
+# 11. Ajouter Main-Class dans le manifest
+
+Modifier le pom.xml.
+
+Ajouter :
+
+```xml
+<build>
+  <plugins>
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <version>3.4.2</version>
+
+      <configuration>
+        <archive>
+          <manifest>
+            <mainClass>Main</mainClass>
+          </manifest>
+        </archive>
+      </configuration>
+
+    </plugin>
+
+  </plugins>
+</build>
+```
+
+---
+
+# 12. Recompiler
+
+Commande :
+
+```bash
+mvn clean package
+```
+
+---
+
+# 13. Exécuter le JAR
+
+Commande :
+
+```bash
+java -jar target\app-java8-maven-1.0.0.jar
+```
+
+Résultat :
+
+```text
+00000000001:MathUtils:sum
+00000000001:
+00000000001:sum:120
+```
+
+Cette fois Maven a généré :
+
+```text
+Main-Class: Main
+```
+
+dans le manifest.
+
+---
+
+# 14. Ajouter des dépendances Maven
+
+Modifier Main.java.
+
+Code :
+
+```java
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -136,66 +379,36 @@ public class Main {
 
 ---
 
-# 5. Créer le pom.xml
+# 15. Ajouter les dépendances au pom.xml
 
-Fichier :
-
-```text
-pom.xml
-```
-
-Contenu :
+Ajouter :
 
 ```xml
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<dependencies>
 
-  <modelVersion>4.0.0</modelVersion>
+  <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.12.0</version>
+  </dependency>
 
-  <groupId>com.ganatan</groupId>
-  <artifactId>app-java8-maven</artifactId>
-  <version>1.0.0</version>
+  <dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.11.0</version>
+  </dependency>
 
-  <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
-
-  <dependencies>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.11.0</version>
-    </dependency>
-
-  </dependencies>
-
-</project>
+</dependencies>
 ```
 
 ---
 
-# 6. Compiler le projet
-
-Se placer dans :
-
-```text
-D:\demo\app-java8-maven
-```
+# 16. Compiler
 
 Commande :
 
 ```bash
-mvn compile
+mvn clean package
 ```
 
 Résultat :
@@ -219,62 +432,7 @@ C:\Users\<user>\.m2\repository
 
 ---
 
-# 7. Observer le répertoire target
-
-Après compilation :
-
-```text
-target
-│
-└── classes
-    ├── Main.class
-    └── MathUtils.class
-```
-
----
-
-# 8. Créer le JAR Maven
-
-Commande :
-
-```bash
-mvn package
-```
-
-Résultat :
-
-```text
-BUILD SUCCESS
-```
-
-Maven crée :
-
-```text
-target
-└── app-java8-maven-1.0.0.jar
-```
-
----
-
-# 9. Vérifier le contenu du JAR
-
-Commande :
-
-```bash
-jar tf target\app-java8-maven-1.0.0.jar
-```
-
-Résultat :
-
-```text
-META-INF
-Main.class
-MathUtils.class
-```
-
----
-
-# 10. Essayer d'exécuter le JAR
+# 17. Exécuter le JAR
 
 Commande :
 
@@ -285,7 +443,7 @@ java -jar target\app-java8-maven-1.0.0.jar
 Résultat :
 
 ```text
-no main manifest attribute
+NoClassDefFoundError
 ```
 
 ou :
@@ -298,23 +456,23 @@ ClassNotFoundException
 
 # Pourquoi ?
 
-Le JAR Maven contient :
+Le JAR contient :
 
 ```text
 Main.class
 MathUtils.class
 ```
 
-mais pas :
+mais ne contient pas :
 
 ```text
-commons-lang3
-commons-io
+commons-lang3.jar
+commons-io.jar
 ```
 
 ---
 
-# 11. Ce que Maven a apporté
+# 18. Ce que Maven a apporté
 
 Avant Maven :
 
@@ -350,7 +508,7 @@ automatiquement.
 
 ---
 
-# 12. Où sont les librairies ?
+# 19. Où sont les librairies ?
 
 Maven stocke les dépendances dans :
 
@@ -373,43 +531,58 @@ Exemple :
 
 # Résumé
 
-Compilation :
-
-```bash
-mvn compile
-```
-
-Packaging :
-
-```bash
-mvn package
-```
-
-Dépendances :
-
-```xml
-<dependency>
-```
-
-Les librairies ne sont plus placées dans :
+Maven remplace progressivement :
 
 ```text
+javac
+jar
+manifest.txt
+classpath
 lib
 ```
 
-mais dans :
+par :
 
 ```text
+pom.xml
+mvn compile
+mvn package
 .m2/repository
 ```
 
-Maven automatise :
+Le cycle complet devient :
 
 ```text
-Téléchargement
-Classpath
-Compilation
-Packaging
+Code Java
+↓
+pom.xml
+↓
+mvn compile
+↓
+mvn package
+↓
+JAR Maven
 ```
 
-C'est exactement ce que nous faisions manuellement dans les tutoriels précédents.
+Limitation actuelle :
+
+```text
+Le JAR ne contient pas encore les dépendances externes.
+```
+
+La prochaine étape sera la création d'un :
+
+```text
+Fat JAR
+```
+
+contenant :
+
+```text
+Main.class
+MathUtils.class
+commons-lang3
+commons-io
+```
+
+dans un unique fichier exécutable.
