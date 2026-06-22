@@ -20,7 +20,11 @@ StringUtils
 FileUtils
 ```
 
-Très utilisées dans les applications Java.
+Tout en conservant notre code métier :
+
+```java
+MathUtils
+```
 
 ---
 
@@ -60,29 +64,7 @@ Créer :
 D:\demo
 │
 ├── Main.java
-│
-└── lib
-```
-
-Copier les deux fichiers :
-
-```text
-commons-lang3-3.12.0.jar
-commons-io-2.11.0.jar
-```
-
-dans :
-
-```text
-D:\demo\lib
-```
-
-Résultat :
-
-```text
-D:\demo
-│
-├── Main.java
+├── MathUtils.java
 │
 └── lib
     ├── commons-lang3-3.12.0.jar
@@ -91,7 +73,30 @@ D:\demo
 
 ---
 
-# 3. Créer l'application
+# 3. Créer la classe métier
+
+Fichier :
+
+```text
+MathUtils.java
+```
+
+Code :
+
+```java
+public class MathUtils {
+
+  int sum(int numb1, int numb2) {
+    int result = numb1 + numb2;
+    System.out.println("00000000001:MathUtils:sum");
+    return result;
+  }
+}
+```
+
+---
+
+# 4. Créer l'application
 
 Fichier :
 
@@ -111,9 +116,14 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
 
+    MathUtils item = new MathUtils();
+
+    int result = item.sum(10, 110);
+
     String value = "   ";
 
     System.out.println(
+      "00000000001:isBlank:" +
       StringUtils.isBlank(value)
     );
 
@@ -121,7 +131,7 @@ public class Main {
 
     FileUtils.writeStringToFile(
       file,
-      "Hello Danny",
+      "sum=" + result,
       "UTF-8"
     );
 
@@ -131,14 +141,17 @@ public class Main {
         "UTF-8"
       );
 
-    System.out.println(content);
+    System.out.println(
+      "00000000001:file:" +
+      content
+    );
   }
 }
 ```
 
 ---
 
-# 4. Compiler sans les librairies
+# 5. Compiler sans les librairies
 
 Commande :
 
@@ -157,7 +170,7 @@ Java ne trouve pas les classes.
 
 ---
 
-# 5. Compiler avec plusieurs librairies
+# 6. Compiler avec les librairies
 
 Commande :
 
@@ -169,13 +182,14 @@ Résultat :
 
 ```text
 Main.class
+MathUtils.class
 ```
 
 La compilation fonctionne.
 
 ---
 
-# 6. Exécuter avec plusieurs librairies
+# 7. Exécuter l'application
 
 Commande :
 
@@ -186,21 +200,26 @@ java -cp ".;lib/*" Main
 Résultat :
 
 ```text
-true
-Hello Danny
+00000000001:MathUtils:sum
+00000000001:isBlank:true
+00000000001:file:sum=120
 ```
 
-Un fichier :
+Un fichier est créé :
 
 ```text
 sample.txt
 ```
 
-est créé automatiquement.
+Contenu :
+
+```text
+sum=120
+```
 
 ---
 
-# 7. Comprendre le classpath
+# 8. Comprendre le classpath
 
 Compilation :
 
@@ -223,12 +242,22 @@ répertoire courant
 
 lib/*
 =
-tous les JAR du répertoire lib
+toutes les librairies du répertoire lib
 ```
 
 ---
 
-# 8. Les classes utilisées
+# 9. Les classes utilisées
+
+Code métier :
+
+```java
+MathUtils
+```
+
+Notre propre code.
+
+---
 
 Apache Commons Lang :
 
@@ -250,83 +279,53 @@ Apache Commons IO :
 FileUtils
 ```
 
-Exemple :
+Exemples :
 
 ```java
 FileUtils.writeStringToFile(...)
 FileUtils.readFileToString(...)
 ```
-
----
-
-# 9. Pourquoi utiliser ces librairies ?
-
-Sans Apache Commons Lang :
-
-```java
-boolean result =
-  value == null ||
-  value.trim().length() == 0;
-```
-
-Avec :
-
-```java
-StringUtils.isBlank(value);
-```
-
----
-
-Sans Apache Commons IO :
-
-```java
-FileWriter
-FileReader
-BufferedReader
-```
-
-Avec :
-
-```java
-FileUtils.writeStringToFile(...)
-FileUtils.readFileToString(...)
-```
-
-Le code est beaucoup plus simple.
 
 ---
 
 # 10. Ce qu'est réellement une librairie externe
 
-Chaque fichier :
+Le fichier :
 
 ```text
 commons-lang3-3.12.0.jar
-commons-io-2.11.0.jar
 ```
 
-contient des centaines de classes compilées.
-
-Par exemple :
+contient :
 
 ```text
 StringUtils.class
 RandomStringUtils.class
 NumberUtils.class
 ArrayUtils.class
+...
 ```
 
-et :
+---
+
+Le fichier :
+
+```text
+commons-io-2.11.0.jar
+```
+
+contient :
 
 ```text
 FileUtils.class
 IOUtils.class
 FilenameUtils.class
+...
 ```
 
 ---
 
-# 11. Différence avec les librairies standard
+# 11. Différence avec une librairie standard
 
 Librairie standard :
 
@@ -345,7 +344,7 @@ Aucune configuration supplémentaire.
 
 ---
 
-Librairies externes :
+Librairie externe :
 
 ```java
 import org.apache.commons.lang3.StringUtils;
@@ -405,30 +404,20 @@ Avec Maven :
 </dependency>
 ```
 
-Maven télécharge automatiquement :
-
-```text
-commons-lang3.jar
-commons-io.jar
-```
-
-et configure le classpath.
+Maven télécharge automatiquement les JAR et configure le classpath.
 
 ---
 
 # Résumé
 
-Télécharger :
+Notre application est composée de :
 
 ```text
-commons-lang3-3.12.0.jar
-commons-io-2.11.0.jar
-```
-
-Copie :
-
-```text
-D:\demo\lib
+MathUtils
++
+Apache Commons Lang
++
+Apache Commons IO
 ```
 
 Compilation :
@@ -443,26 +432,14 @@ Exécution :
 java -cp ".;lib/*" Main
 ```
 
-Différence fondamentale :
-
-```text
-Librairie standard
-=
-incluse dans le JDK
-
-Librairie externe
-=
-JAR supplémentaire à télécharger
-```
-
 Une application Java réelle est généralement composée de :
 
 ```text
 Votre code
 +
-Plusieurs librairies externes
+Librairies standard du JDK
 +
-Classpath
+Librairies externes
 ```
 
 C'est exactement ce que Maven automatise.
