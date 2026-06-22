@@ -1,71 +1,91 @@
-# 010-librairies-et-jar-java8.md
+# 013-creer-et-executer-un-jar-avec-librairies-externes-java8.md
 
-# Librairies et fichiers JAR en Java 8
+# Créer et exécuter un JAR avec des librairies externes en Java 8
 
 ## Objectif
 
-Comprendre :
+Partir d'une application Java simple :
 
 ```text
-Classe Java
+Main.java
+MathUtils.java
+```
+
+utilisant deux librairies externes :
+
+```text
+Apache Commons Lang
+Apache Commons IO
+```
+
+puis :
+
+```text
+Compiler
 ↓
-Compilation
+Créer un JAR
 ↓
-.class
-↓
-JAR
-↓
-Librairie
-↓
-Classpath
-↓
-Utilisation dans une autre application
+Exécuter l'application
 ```
 
 Sans Maven.
 
 ---
 
-# 1. Qu'est-ce qu'une librairie ?
+# 1. Télécharger les librairies
 
-Une librairie Java est simplement un ensemble de classes réutilisables.
+Télécharger :
 
-Exemple :
-
-```java
-public class MathUtils {
-
-  public int sum(int numb1, int numb2) {
-    return numb1 + numb2;
-  }
-}
+```text
+commons-lang3-3.12.0.jar
 ```
 
-Cette classe peut être utilisée dans plusieurs applications.
+depuis :
 
-Une fois compilée et regroupée dans un JAR, elle devient une librairie.
+```text
+https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/
+```
+
+Télécharger :
+
+```text
+commons-io-2.11.0.jar
+```
+
+depuis :
+
+```text
+https://repo1.maven.org/maven2/commons-io/commons-io/2.11.0/
+```
 
 ---
 
-# 2. Création de la librairie
-
-Créer l'arborescence :
+# 2. Créer l'arborescence
 
 ```text
-D:\demo
+D:\demo\app-java-8
 │
-└── library
+├── lib
+│   ├── commons-lang3-3.12.0.jar
+│   └── commons-io-2.11.0.jar
+│
+└── src
+    ├── Main.java
     └── MathUtils.java
 ```
 
-Code :
+---
+
+# 3. Créer la classe métier
+
+## MathUtils.java
 
 ```java
 public class MathUtils {
 
-  public int sum(int numb1, int numb2) {
+  int sum(int numb1, int numb2) {
     int result = numb1 + numb2;
-    System.out.println("MathUtils:sum");
+    System.out.println("00000000001:MathUtils:sum");
     return result;
   }
 }
@@ -73,67 +93,140 @@ public class MathUtils {
 
 ---
 
-# 3. Compilation de la librairie
+# 4. Créer l'application
+
+## Main.java
+
+```java
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+
+public class Main {
+
+  public static void main(String[] args) throws Exception {
+
+    MathUtils item = new MathUtils();
+
+    int result = item.sum(10, 110);
+
+    String value = "   ";
+
+    System.out.println(
+      "00000000001:isBlank:" +
+      StringUtils.isBlank(value)
+    );
+
+    File file = new File("sample.txt");
+
+    FileUtils.writeStringToFile(
+      file,
+      "sum=" + result,
+      "UTF-8"
+    );
+
+    String content =
+      FileUtils.readFileToString(
+        file,
+        "UTF-8"
+      );
+
+    System.out.println(
+      "00000000001:file:" +
+      content
+    );
+  }
+}
+```
+
+---
+
+# 5. Compiler l'application
 
 Se placer dans :
 
-```text
-D:\demo\library
+```bash
+cd D:\demo\app-java-8\src
 ```
 
 Compiler :
 
 ```bash
-javac MathUtils.java
+javac -cp "..\lib\*" Main.java MathUtils.java
 ```
 
 Résultat :
 
 ```text
+Main.class
 MathUtils.class
 ```
 
-Arborescence :
-
-```text
-library
-├── MathUtils.java
-└── MathUtils.class
-```
-
 ---
 
-# 4. Création du fichier JAR
-
-Créer le JAR :
-
-```bash
-jar cf math-utils.jar MathUtils.class
-```
-
-Résultat :
-
-```text
-math-utils.jar
-```
-
-Arborescence :
-
-```text
-library
-├── MathUtils.java
-├── MathUtils.class
-└── math-utils.jar
-```
-
----
-
-# 5. Vérification du contenu du JAR
+# 6. Vérifier l'exécution
 
 Commande :
 
 ```bash
-jar tf math-utils.jar
+java -cp ".;..\lib\*" Main
+```
+
+Résultat :
+
+```text
+00000000001:MathUtils:sum
+00000000001:isBlank:true
+00000000001:file:sum=120
+```
+
+---
+
+# 7. Créer le manifeste
+
+Créer :
+
+```text
+manifest.txt
+```
+
+Contenu :
+
+```text
+Main-Class: Main
+```
+
+Attention :
+
+```text
+Une ligne vide doit être présente à la fin du fichier.
+```
+
+---
+
+# 8. Créer le JAR
+
+Commande :
+
+```bash
+jar cfm app.jar manifest.txt Main.class MathUtils.class
+```
+
+Résultat :
+
+```text
+app.jar
+```
+
+---
+
+# 9. Vérifier le contenu du JAR
+
+Commande :
+
+```bash
+jar tf app.jar
 ```
 
 Résultat :
@@ -141,325 +234,242 @@ Résultat :
 ```text
 META-INF/
 META-INF/MANIFEST.MF
-MathUtils.class
-```
-
----
-
-# 6. Création d'une application
-
-Créer :
-
-```text
-D:\demo\application
-```
-
-Créer :
-
-```text
-D:\demo\application\Main.java
-```
-
-Code :
-
-```java
-public class Main {
-
-  public static void main(String[] args) {
-
-    MathUtils item = new MathUtils();
-
-    int result = item.sum(10, 110);
-
-    System.out.println("sum:" + result);
-  }
-}
-```
-
----
-
-# 7. Ajout de la librairie
-
-Créer :
-
-```text
-D:\demo\application\lib
-```
-
-Copier :
-
-```text
-math-utils.jar
-```
-
-dans :
-
-```text
-D:\demo\application\lib
-```
-
-Résultat :
-
-```text
-application
-│
-├── Main.java
-│
-└── lib
-    └── math-utils.jar
-```
-
----
-
-# 8. Compilation de l'application
-
-Se placer dans :
-
-```text
-D:\demo\application
-```
-
-Compiler :
-
-```bash
-javac -cp lib\math-utils.jar Main.java
-```
-
-Résultat :
-
-```text
 Main.class
+MathUtils.class
 ```
 
 ---
 
-# 9. Exécution de l'application
+# 10. Essayer d'exécuter le JAR seul
 
-Exécuter :
+Commande :
 
 ```bash
-java -cp .;lib\math-utils.jar Main
+java -jar app.jar
 ```
 
 Résultat :
 
 ```text
-MathUtils:sum
-sum:120
-```
-
----
-
-# 10. Qu'est-ce qu'un fichier JAR ?
-
-Un JAR est un fichier contenant des classes compilées.
-
-Exemple :
-
-```text
-math-utils.jar
-```
-
-Contient :
-
-```text
-MathUtils.class
-```
-
-Le JAR est l'équivalent Java d'une bibliothèque réutilisable.
-
----
-
-# 11. Qu'est-ce que le Classpath ?
-
-Le classpath indique à Java où trouver les classes.
-
-Compilation :
-
-```bash
-javac -cp lib\math-utils.jar Main.java
-```
-
-Exécution :
-
-```bash
-java -cp .;lib\math-utils.jar Main
-```
-
-Signification :
-
-```text
-.
-=
-répertoire courant
-
-lib\math-utils.jar
-=
-librairie externe
-```
-
----
-
-# 12. Librairies du JDK
-
-Lorsque l'on utilise :
-
-```java
-String name = "Danny";
+NoClassDefFoundError
 ```
 
 ou :
 
-```java
-List<String> names = new ArrayList<>();
-```
-
-on utilise déjà des librairies fournies par Java :
-
 ```text
-java.lang
-java.util
-java.io
-java.net
-```
-
-Ces librairies sont intégrées au JDK.
-
----
-
-# 13. Librairies externes
-
-Exemple :
-
-```java
-import org.apache.commons.lang3.StringUtils;
-```
-
-Cette classe ne fait pas partie du JDK.
-
-Elle provient d'une librairie externe :
-
-```text
-commons-lang3.jar
+ClassNotFoundException
 ```
 
 ---
 
-# 14. Exemples de librairies courantes
+# Pourquoi ?
+
+Le JAR contient :
+
+```text
+Main.class
+MathUtils.class
+```
+
+mais ne contient pas :
+
+```text
+commons-lang3-3.12.0.jar
+commons-io-2.11.0.jar
+```
+
+---
+
+# 11. Exécuter avec les librairies
+
+Commande :
+
+```bash
+java -cp "app.jar;..\lib\*" Main
+```
+
+Résultat :
+
+```text
+00000000001:MathUtils:sum
+00000000001:isBlank:true
+00000000001:file:sum=120
+```
+
+Cette fois Java trouve :
+
+```text
+app.jar
++
+commons-lang3.jar
++
+commons-io.jar
+```
+
+---
+
+# 12. Comprendre ce qui se passe
+
+Compilation :
+
+```bash
+javac -cp "..\lib\*" Main.java MathUtils.java
+```
+
+Java utilise :
 
 ```text
 commons-lang3.jar
+commons-io.jar
 ```
 
-Manipulation des chaînes de caractères.
+pour compiler.
+
+---
+
+Création du JAR :
+
+```bash
+jar cfm app.jar manifest.txt Main.class MathUtils.class
+```
+
+Le JAR contient uniquement :
 
 ```text
+Main.class
+MathUtils.class
+```
+
+---
+
+Exécution :
+
+```bash
+java -cp "app.jar;..\lib\*" Main
+```
+
+Java charge :
+
+```text
+app.jar
+commons-lang3.jar
+commons-io.jar
+```
+
+---
+
+# 13. Limite de cette approche
+
+L'application est composée de :
+
+```text
+app.jar
+commons-lang3.jar
+commons-io.jar
+```
+
+Il faut distribuer :
+
+```text
+3 fichiers
+```
+
+ensemble.
+
+---
+
+# 14. Pourquoi Maven existe ?
+
+Sans Maven :
+
+```text
+app.jar
+commons-lang3.jar
+commons-io.jar
+jackson.jar
 log4j.jar
-```
-
-Gestion des logs.
-
-```text
-jackson-databind.jar
-```
-
-Manipulation du JSON.
-
-```text
 junit.jar
-```
-
-Tests unitaires.
-
-```text
 mockito.jar
+...
 ```
 
-Mocks pour les tests.
-
----
-
-# 15. Avant Maven
-
-Avant Maven, les projets ressemblaient souvent à ceci :
+Il faut :
 
 ```text
-project
-│
-├── src
-│
-├── lib
-│   ├── commons-lang3.jar
-│   ├── log4j.jar
-│   └── junit.jar
-│
-└── bin
+Télécharger
+Copier
+Configurer le classpath
 ```
 
-Toutes les dépendances étaient copiées manuellement.
-
----
-
-# 16. Avec Maven
-
-Aujourd'hui Maven télécharge automatiquement les librairies :
-
-```xml
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-lang3</artifactId>
-    <version>3.12.0</version>
-</dependency>
-```
-
-Mais il est important de comprendre d'abord ce qu'est réellement un JAR.
+manuellement.
 
 ---
 
 # Résumé
 
-Une librairie Java est :
+Compiler :
+
+```bash
+javac -cp "..\lib\*" Main.java MathUtils.java
+```
+
+Exécuter :
+
+```bash
+java -cp ".;..\lib\*" Main
+```
+
+Créer le manifeste :
 
 ```text
-Une ou plusieurs classes compilées
+Main-Class: Main
 ```
 
-regroupées dans :
+Créer le JAR :
+
+```bash
+jar cfm app.jar manifest.txt Main.class MathUtils.class
+```
+
+Afficher le contenu :
+
+```bash
+jar tf app.jar
+```
+
+Exécuter avec les librairies :
+
+```bash
+java -cp "app.jar;..\lib\*" Main
+```
+
+Cycle complet :
 
 ```text
-un fichier JAR
+Main.java
+MathUtils.java
+↓
+javac
+↓
+Main.class
+MathUtils.class
+↓
+jar
+↓
+app.jar
+↓
+commons-lang3.jar
+commons-io.jar
+↓
+java -cp
+↓
+Application
 ```
 
-Les étapes sont :
+Important :
 
 ```text
-Code Java
-↓
-Compilation
-↓
-.class
-↓
-JAR
-↓
-Classpath
-↓
-Utilisation dans une autre application
+Un JAR classique ne contient pas automatiquement ses dépendances.
 ```
 
-Commandes importantes :
-
-```bash
-javac MathUtils.java
-```
-
-```bash
-jar cf math-utils.jar MathUtils.class
-```
-
-```bash
-javac -cp lib\math-utils.jar Main.java
-```
-
-```bash
-java -cp .;lib\math-utils.jar Main
-```
+C'est un problème que Maven et Spring Boot résolvent plus tard avec les "fat jars" ou "uber jars".
