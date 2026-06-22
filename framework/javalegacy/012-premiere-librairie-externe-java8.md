@@ -24,13 +24,45 @@ Très utilisée dans les applications Java.
 
 # 1. Télécharger la librairie
 
+Ouvrir :
+
+```text
+https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/
+```
+
 Télécharger :
 
 ```text
 commons-lang3-3.12.0.jar
 ```
 
-Puis créer :
+---
+
+# 2. Créer l'arborescence
+
+Créer :
+
+```text
+D:\demo
+│
+├── Main.java
+│
+└── lib
+```
+
+Copier :
+
+```text
+commons-lang3-3.12.0.jar
+```
+
+dans :
+
+```text
+D:\demo\lib
+```
+
+Résultat :
 
 ```text
 D:\demo
@@ -43,7 +75,7 @@ D:\demo
 
 ---
 
-# 2. Créer l'application
+# 3. Créer l'application
 
 Fichier :
 
@@ -75,7 +107,7 @@ public class Main {
 
 ---
 
-# 3. Compiler sans la librairie
+# 4. Compiler sans la librairie
 
 Commande :
 
@@ -94,9 +126,9 @@ Java ne trouve pas la classe.
 
 ---
 
-# 4. Compiler avec la librairie
+# 5. Compiler avec la librairie
 
-Commande Windows :
+Commande :
 
 ```bash
 javac -cp lib\commons-lang3-3.12.0.jar Main.java
@@ -112,9 +144,9 @@ La compilation fonctionne.
 
 ---
 
-# 5. Exécuter avec la librairie
+# 6. Exécuter avec la librairie
 
-Commande Windows :
+Commande :
 
 ```bash
 java -cp .;lib\commons-lang3-3.12.0.jar Main
@@ -131,7 +163,7 @@ false
 
 ---
 
-# 6. Comprendre le classpath
+# 7. Comprendre le classpath
 
 Compilation :
 
@@ -159,7 +191,7 @@ librairie externe
 
 ---
 
-# 7. Pourquoi utiliser StringUtils ?
+# 8. Pourquoi utiliser StringUtils ?
 
 Sans la librairie :
 
@@ -182,7 +214,7 @@ Le code est plus simple.
 
 ---
 
-# 8. Ce qu'est réellement une librairie externe
+# 9. Ce qu'est réellement une librairie externe
 
 Le fichier :
 
@@ -205,7 +237,7 @@ Toutes regroupées dans un seul JAR.
 
 ---
 
-# 9. Différence avec les librairies standard
+# 10. Différence avec les librairies standard
 
 Librairie standard :
 
@@ -240,7 +272,7 @@ Le JAR doit être ajouté au classpath.
 
 ---
 
-# 10. Pourquoi Maven existe ?
+# 11. Pourquoi Maven existe ?
 
 Sans Maven :
 
@@ -278,7 +310,7 @@ Avec Maven :
 Maven télécharge automatiquement :
 
 ```text
-commons-lang3.jar
+commons-lang3-3.12.0.jar
 ```
 
 et configure le classpath.
@@ -287,10 +319,16 @@ et configure le classpath.
 
 # Résumé
 
-Librairie utilisée :
+Télécharger :
 
 ```text
-Apache Commons Lang
+https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/
+```
+
+Copie du JAR :
+
+```text
+D:\demo\lib\commons-lang3-3.12.0.jar
 ```
 
 Classe utilisée :
@@ -320,7 +358,7 @@ déjà présente dans le JDK
 
 Librairie externe
 =
-JAR supplémentaire à fournir
+JAR supplémentaire à télécharger et fournir
 ```
 
 C'est exactement le problème que Maven résout automatiquement.
