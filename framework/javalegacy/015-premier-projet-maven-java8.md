@@ -4,26 +4,28 @@
 
 ## Objectif
 
-Découvrir Maven progressivement en reprenant exactement notre exemple :
+Découvrir Maven progressivement en repartant de notre application Java composée de :
 
 ```text
 Main.java
 MathUtils.java
 ```
 
-Nous allons découvrir :
+Nous allons voir successivement :
 
 ```text
 Compilation Maven
 ↓
-Packaging Maven
+Création d'un JAR
 ↓
 Manifest Maven
 ↓
 Dépendances Maven
+↓
+Fat JAR
 ```
 
-afin de comprendre ce que Maven automatise réellement.
+afin de comprendre précisément ce que Maven automatise.
 
 ---
 
@@ -63,7 +65,7 @@ D:\demo\app-java8-maven
 
 ---
 
-# 3. Créer la classe métier
+# 3. Créer la classe MathUtils
 
 Fichier :
 
@@ -86,7 +88,7 @@ public class MathUtils {
 
 ---
 
-# 4. Créer l'application
+# 4. Créer la classe Main
 
 Fichier :
 
@@ -115,13 +117,13 @@ public class Main {
 
 # 5. Premier pom.xml
 
-Fichier :
+Créer :
 
 ```text
 pom.xml
 ```
 
-Contenu complet :
+Contenu :
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -159,35 +161,18 @@ Résultat :
 BUILD SUCCESS
 ```
 
----
-
-# 7. Observer le répertoire target
-
-Résultat :
+Maven génère :
 
 ```text
 target
-│
 └── classes
     ├── Main.class
     └── MathUtils.class
 ```
 
-Maven a remplacé :
-
-```bash
-javac Main.java
-```
-
-par :
-
-```bash
-mvn compile
-```
-
 ---
 
-# 8. Créer le JAR Maven
+# 7. Créer le JAR Maven
 
 Commande :
 
@@ -204,7 +189,7 @@ target
 
 ---
 
-# 9. Vérifier le contenu du JAR
+# 8. Vérifier le contenu du JAR
 
 Commande :
 
@@ -223,7 +208,7 @@ MathUtils.class
 
 ---
 
-# 10. Essayer d'exécuter le JAR
+# 9. Exécuter le JAR
 
 Commande :
 
@@ -241,13 +226,13 @@ aucun attribut manifeste principal
 
 # Pourquoi ?
 
-Maven crée automatiquement :
+Maven crée bien un fichier :
 
 ```text
 META-INF/MANIFEST.MF
 ```
 
-mais ne sait pas quelle classe contient :
+mais il ne sait pas quelle classe contient :
 
 ```java
 public static void main(...)
@@ -255,15 +240,11 @@ public static void main(...)
 
 ---
 
-# 11. Deuxième pom.xml
+# 10. Deuxième pom.xml
 
-Ajout du plugin permettant de définir :
+Nous allons maintenant préciser la classe principale.
 
-```text
-Main-Class
-```
-
-Contenu complet :
+Remplacer le pom.xml par :
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -283,6 +264,7 @@ Contenu complet :
   </properties>
 
   <build>
+
     <plugins>
 
       <plugin>
@@ -301,6 +283,7 @@ Contenu complet :
       </plugin>
 
     </plugins>
+
   </build>
 
 </project>
@@ -308,7 +291,7 @@ Contenu complet :
 
 ---
 
-# 12. Recompiler
+# 11. Recompiler
 
 Commande :
 
@@ -318,7 +301,7 @@ mvn clean package
 
 ---
 
-# 13. Exécuter le JAR
+# 12. Exécuter le JAR
 
 Commande :
 
@@ -334,7 +317,7 @@ Résultat :
 00000000001:sum:120
 ```
 
-Cette fois Maven a généré :
+Maven a maintenant ajouté :
 
 ```text
 Main-Class: Main
@@ -344,7 +327,7 @@ dans le manifest.
 
 ---
 
-# 14. Ajouter des librairies externes
+# 13. Ajouter des librairies externes
 
 Modifier Main.java.
 
@@ -395,11 +378,9 @@ public class Main {
 
 ---
 
-# 15. Troisième pom.xml
+# 14. Troisième pom.xml
 
-Ajout des dépendances Apache Commons.
-
-Contenu complet :
+Ajouter les dépendances Maven.
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -435,6 +416,7 @@ Contenu complet :
   </dependencies>
 
   <build>
+
     <plugins>
 
       <plugin>
@@ -453,6 +435,7 @@ Contenu complet :
       </plugin>
 
     </plugins>
+
   </build>
 
 </project>
@@ -460,7 +443,7 @@ Contenu complet :
 
 ---
 
-# 16. Compiler
+# 15. Recompiler
 
 Commande :
 
@@ -489,7 +472,7 @@ C:\Users\<user>\.m2\repository
 
 ---
 
-# 17. Exécuter le JAR
+# 16. Exécuter le JAR
 
 Commande :
 
@@ -517,116 +500,235 @@ MathUtils.class
 mais ne contient pas :
 
 ```text
-commons-lang3.jar
-commons-io.jar
+commons-lang3
+commons-io
 ```
 
 ---
 
-# 18. Ce que Maven a apporté
+# 17. Créer un Fat JAR
 
-Avant Maven :
+Nous allons maintenant construire un JAR contenant :
 
 ```text
-Télécharger les JAR
-Créer lib
-Configurer le classpath
+Application
++
+Toutes les dépendances
 ```
 
-manuellement.
+---
 
-Avec Maven :
+# 18. Quatrième pom.xml
+
+Remplacer le pom.xml par :
 
 ```xml
-<dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.ganatan</groupId>
+  <artifactId>app-java8-maven</artifactId>
+  <version>1.0.0</version>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.7.1</version>
+
+        <configuration>
+
+          <archive>
+            <manifest>
+              <mainClass>Main</mainClass>
+            </manifest>
+          </archive>
+
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+
+        </configuration>
+
+        <executions>
+
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+
+            <goals>
+              <goal>single</goal>
+            </goals>
+
+          </execution>
+
+        </executions>
+
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
 ```
-
-suffit.
-
-Maven :
-
-```text
-Télécharge
-Versionne
-Configure le classpath
-Compile
-Package
-```
-
-automatiquement.
 
 ---
 
-# 19. Où sont les librairies ?
+# 19. Générer le Fat JAR
 
-```text
-C:\Users\<user>\.m2\repository
+Commande :
+
+```bash
+mvn clean package
 ```
 
-Exemple :
+Résultat :
 
 ```text
-.m2
-└── repository
-    ├── commons-io
-    └── org
-        └── apache
-            └── commons
+target
+│
+├── app-java8-maven-1.0.0.jar
+│
+└── app-java8-maven-1.0.0-jar-with-dependencies.jar
+```
+
+---
+
+# 20. Vérifier le contenu
+
+Commande :
+
+```bash
+jar tf target\app-java8-maven-1.0.0-jar-with-dependencies.jar
+```
+
+On retrouve notamment :
+
+```text
+Main.class
+MathUtils.class
+
+org/apache/commons/lang3/StringUtils.class
+
+org/apache/commons/io/FileUtils.class
+```
+
+Cette fois les dépendances sont intégrées.
+
+---
+
+# 21. Exécuter le Fat JAR
+
+Commande :
+
+```bash
+java -jar target\app-java8-maven-1.0.0-jar-with-dependencies.jar
+```
+
+Résultat :
+
+```text
+00000000001:MathUtils:sum
+00000000001:isBlank:true
+00000000001:file:sum=120
 ```
 
 ---
 
 # Résumé
 
-Premier pom.xml :
+Sans Maven :
 
 ```text
-Compilation Maven
-Packaging Maven
+javac
+jar
+manifest.txt
+classpath
+lib
 ```
 
-Deuxième pom.xml :
+Avec Maven :
 
 ```text
-Manifest Maven
-Main-Class
+pom.xml
+mvn compile
+mvn package
+dependency
+plugin
 ```
 
-Troisième pom.xml :
+Avec le Fat JAR :
 
 ```text
-Dépendances Maven
-Apache Commons
+Application
++
+Toutes les dépendances
+=
+Un seul fichier exécutable
 ```
 
-Maven automatise :
+Commande finale :
+
+```bash
+java -jar target\app-java8-maven-1.0.0-jar-with-dependencies.jar
+```
+
+Nous avons maintenant couvert l'ensemble du cycle Maven classique :
 
 ```text
-Téléchargement
-Classpath
+Code Java
+↓
 Compilation
+↓
 Packaging
-```
-
-Limitation actuelle :
-
-```text
-Le JAR ne contient pas encore les dépendances externes.
-```
-
-La prochaine étape sera la création d'un :
-
-```text
+↓
+Manifest
+↓
+Dépendances
+↓
 Fat JAR
 ```
-
-contenant :
-
-```text
-Main.class
-MathUtils.class
-commons-lang3
-commons-io
-```
-
-dans un unique fichier exécutable.
