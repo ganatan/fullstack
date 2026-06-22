@@ -1,30 +1,38 @@
-# 012-premiere-librairie-externe-java8.md
+# 012-premieres-librairies-externes-java8.md
 
-# Utilisation d'une librairie externe en Java 8
+# Utilisation de plusieurs librairies externes en Java 8
 
 ## Objectif
 
-Découvrir comment utiliser une librairie externe sans Maven.
+Découvrir comment utiliser plusieurs librairies externes sans Maven.
 
 Nous allons utiliser :
 
 ```text
 Apache Commons Lang
+Apache Commons IO
 ```
 
-et sa classe :
+et les classes :
 
 ```java
 StringUtils
+FileUtils
 ```
 
-Très utilisée dans les applications Java.
+Très utilisées dans les applications Java.
 
 ---
 
-# 1. Télécharger la librairie
+# 1. Télécharger les librairies
 
-Ouvrir :
+Télécharger :
+
+```text
+commons-lang3-3.12.0.jar
+```
+
+depuis :
 
 ```text
 https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/
@@ -33,7 +41,13 @@ https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/
 Télécharger :
 
 ```text
-commons-lang3-3.12.0.jar
+commons-io-2.11.0.jar
+```
+
+depuis :
+
+```text
+https://repo1.maven.org/maven2/commons-io/commons-io/2.11.0/
 ```
 
 ---
@@ -50,10 +64,11 @@ D:\demo
 └── lib
 ```
 
-Copier :
+Copier les deux fichiers :
 
 ```text
 commons-lang3-3.12.0.jar
+commons-io-2.11.0.jar
 ```
 
 dans :
@@ -70,7 +85,8 @@ D:\demo
 ├── Main.java
 │
 └── lib
-    └── commons-lang3-3.12.0.jar
+    ├── commons-lang3-3.12.0.jar
+    └── commons-io-2.11.0.jar
 ```
 
 ---
@@ -86,28 +102,43 @@ Main.java
 Code :
 
 ```java
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
 
 public class Main {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
-    String value1 = null;
-    String value2 = "";
-    String value3 = "   ";
-    String value4 = "Danny";
+    String value = "   ";
 
-    System.out.println(StringUtils.isBlank(value1));
-    System.out.println(StringUtils.isBlank(value2));
-    System.out.println(StringUtils.isBlank(value3));
-    System.out.println(StringUtils.isBlank(value4));
+    System.out.println(
+      StringUtils.isBlank(value)
+    );
+
+    File file = new File("sample.txt");
+
+    FileUtils.writeStringToFile(
+      file,
+      "Hello Danny",
+      "UTF-8"
+    );
+
+    String content =
+      FileUtils.readFileToString(
+        file,
+        "UTF-8"
+      );
+
+    System.out.println(content);
   }
 }
 ```
 
 ---
 
-# 4. Compiler sans la librairie
+# 4. Compiler sans les librairies
 
 Commande :
 
@@ -119,19 +150,19 @@ Résultat :
 
 ```text
 package org.apache.commons.lang3 does not exist
-cannot find symbol StringUtils
+package org.apache.commons.io does not exist
 ```
 
-Java ne trouve pas la classe.
+Java ne trouve pas les classes.
 
 ---
 
-# 5. Compiler avec la librairie
+# 5. Compiler avec plusieurs librairies
 
 Commande :
 
 ```bash
-javac -cp lib\commons-lang3-3.12.0.jar Main.java
+javac -cp "lib/*" Main.java
 ```
 
 Résultat :
@@ -144,22 +175,28 @@ La compilation fonctionne.
 
 ---
 
-# 6. Exécuter avec la librairie
+# 6. Exécuter avec plusieurs librairies
 
 Commande :
 
 ```bash
-java -cp .;lib\commons-lang3-3.12.0.jar Main
+java -cp ".;lib/*" Main
 ```
 
 Résultat :
 
 ```text
 true
-true
-true
-false
+Hello Danny
 ```
+
+Un fichier :
+
+```text
+sample.txt
+```
+
+est créé automatiquement.
 
 ---
 
@@ -168,13 +205,13 @@ false
 Compilation :
 
 ```bash
-javac -cp lib\commons-lang3-3.12.0.jar Main.java
+javac -cp "lib/*" Main.java
 ```
 
 Exécution :
 
 ```bash
-java -cp .;lib\commons-lang3-3.12.0.jar Main
+java -cp ".;lib/*" Main
 ```
 
 Signification :
@@ -184,42 +221,88 @@ Signification :
 =
 répertoire courant
 
-lib\commons-lang3-3.12.0.jar
+lib/*
 =
-librairie externe
+tous les JAR du répertoire lib
 ```
 
 ---
 
-# 8. Pourquoi utiliser StringUtils ?
+# 8. Les classes utilisées
 
-Sans la librairie :
+Apache Commons Lang :
 
 ```java
-String value = "   ";
+StringUtils
+```
 
+Exemple :
+
+```java
+StringUtils.isBlank(value);
+```
+
+---
+
+Apache Commons IO :
+
+```java
+FileUtils
+```
+
+Exemple :
+
+```java
+FileUtils.writeStringToFile(...)
+FileUtils.readFileToString(...)
+```
+
+---
+
+# 9. Pourquoi utiliser ces librairies ?
+
+Sans Apache Commons Lang :
+
+```java
 boolean result =
   value == null ||
   value.trim().length() == 0;
 ```
 
-Avec la librairie :
+Avec :
 
 ```java
-boolean result =
-  StringUtils.isBlank(value);
+StringUtils.isBlank(value);
 ```
-
-Le code est plus simple.
 
 ---
 
-# 9. Ce qu'est réellement une librairie externe
+Sans Apache Commons IO :
 
-Le fichier :
+```java
+FileWriter
+FileReader
+BufferedReader
+```
+
+Avec :
+
+```java
+FileUtils.writeStringToFile(...)
+FileUtils.readFileToString(...)
+```
+
+Le code est beaucoup plus simple.
+
+---
+
+# 10. Ce qu'est réellement une librairie externe
+
+Chaque fichier :
 
 ```text
 commons-lang3-3.12.0.jar
+commons-io-2.11.0.jar
 ```
 
 contient des centaines de classes compilées.
@@ -233,11 +316,17 @@ NumberUtils.class
 ArrayUtils.class
 ```
 
-Toutes regroupées dans un seul JAR.
+et :
+
+```text
+FileUtils.class
+IOUtils.class
+FilenameUtils.class
+```
 
 ---
 
-# 10. Différence avec les librairies standard
+# 11. Différence avec les librairies standard
 
 Librairie standard :
 
@@ -256,33 +345,36 @@ Aucune configuration supplémentaire.
 
 ---
 
-Librairie externe :
+Librairies externes :
 
 ```java
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FileUtils;
 ```
 
 Compilation :
 
 ```bash
-javac -cp lib\commons-lang3-3.12.0.jar Main.java
+javac -cp "lib/*" Main.java
 ```
 
-Le JAR doit être ajouté au classpath.
+Les JAR doivent être téléchargés et ajoutés au classpath.
 
 ---
 
-# 11. Pourquoi Maven existe ?
+# 12. Pourquoi Maven existe ?
 
 Sans Maven :
 
 ```text
 lib
 ├── commons-lang3.jar
+├── commons-io.jar
 ├── jackson.jar
 ├── log4j.jar
 ├── junit.jar
-└── mockito.jar
+├── mockito.jar
+└── ...
 ```
 
 Il faut :
@@ -305,12 +397,19 @@ Avec Maven :
     <artifactId>commons-lang3</artifactId>
     <version>3.12.0</version>
 </dependency>
+
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.11.0</version>
+</dependency>
 ```
 
 Maven télécharge automatiquement :
 
 ```text
-commons-lang3-3.12.0.jar
+commons-lang3.jar
+commons-io.jar
 ```
 
 et configure le classpath.
@@ -322,31 +421,26 @@ et configure le classpath.
 Télécharger :
 
 ```text
-https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.12.0/
+commons-lang3-3.12.0.jar
+commons-io-2.11.0.jar
 ```
 
-Copie du JAR :
+Copie :
 
 ```text
-D:\demo\lib\commons-lang3-3.12.0.jar
-```
-
-Classe utilisée :
-
-```java
-StringUtils
+D:\demo\lib
 ```
 
 Compilation :
 
 ```bash
-javac -cp lib\commons-lang3-3.12.0.jar Main.java
+javac -cp "lib/*" Main.java
 ```
 
 Exécution :
 
 ```bash
-java -cp .;lib\commons-lang3-3.12.0.jar Main
+java -cp ".;lib/*" Main
 ```
 
 Différence fondamentale :
@@ -354,11 +448,21 @@ Différence fondamentale :
 ```text
 Librairie standard
 =
-déjà présente dans le JDK
+incluse dans le JDK
 
 Librairie externe
 =
-JAR supplémentaire à télécharger et fournir
+JAR supplémentaire à télécharger
 ```
 
-C'est exactement le problème que Maven résout automatiquement.
+Une application Java réelle est généralement composée de :
+
+```text
+Votre code
++
+Plusieurs librairies externes
++
+Classpath
+```
+
+C'est exactement ce que Maven automatise.
