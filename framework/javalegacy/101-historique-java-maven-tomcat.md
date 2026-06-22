@@ -220,7 +220,7 @@ Maven 3.9.11
 
 ---
 
-# Cas typique Naval Group
+# Cas typique 
 
 Probabilité élevée :
 
@@ -237,7 +237,7 @@ Linux
 
 ---
 
-# Cas typique BPCE
+# Cas typique 
 
 ```text
 Java 8
@@ -250,7 +250,7 @@ Tomcat 8.5
 
 ---
 
-# Cas typique Airbus Helicopters
+# Cas typique 
 
 ```text
 Java 17
@@ -295,7 +295,6 @@ Docker
 
 # Résumé
 
-Pour préparer efficacement une mission Java 8 type Naval Group :
 
 ```text
 Java 8
