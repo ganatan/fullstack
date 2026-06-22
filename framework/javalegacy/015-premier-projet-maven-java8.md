@@ -113,7 +113,7 @@ public class Main {
 
 ---
 
-# 5. Créer le premier pom.xml
+# 5. Premier pom.xml
 
 Fichier :
 
@@ -121,7 +121,7 @@ Fichier :
 pom.xml
 ```
 
-Contenu :
+Contenu complet :
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -237,57 +237,73 @@ Résultat :
 aucun attribut manifeste principal
 ```
 
-ou :
-
-```text
-no main manifest attribute
-```
-
 ---
 
 # Pourquoi ?
 
-Maven a créé automatiquement :
+Maven crée automatiquement :
 
 ```text
 META-INF/MANIFEST.MF
 ```
 
-mais il ne connaît pas :
+mais ne sait pas quelle classe contient :
 
-```text
-la classe principale
+```java
+public static void main(...)
 ```
 
 ---
 
-# 11. Ajouter Main-Class dans le manifest
+# 11. Deuxième pom.xml
 
-Modifier le pom.xml.
+Ajout du plugin permettant de définir :
 
-Ajouter :
+```text
+Main-Class
+```
+
+Contenu complet :
 
 ```xml
-<build>
-  <plugins>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-jar-plugin</artifactId>
-      <version>3.4.2</version>
+  <modelVersion>4.0.0</modelVersion>
 
-      <configuration>
-        <archive>
-          <manifest>
-            <mainClass>Main</mainClass>
-          </manifest>
-        </archive>
-      </configuration>
+  <groupId>com.ganatan</groupId>
+  <artifactId>app-java8-maven</artifactId>
+  <version>1.0.0</version>
 
-    </plugin>
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
 
-  </plugins>
-</build>
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
 ```
 
 ---
@@ -328,7 +344,7 @@ dans le manifest.
 
 ---
 
-# 14. Ajouter des dépendances Maven
+# 14. Ajouter des librairies externes
 
 Modifier Main.java.
 
@@ -379,26 +395,67 @@ public class Main {
 
 ---
 
-# 15. Ajouter les dépendances au pom.xml
+# 15. Troisième pom.xml
 
-Ajouter :
+Ajout des dépendances Apache Commons.
+
+Contenu complet :
 
 ```xml
-<dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-lang3</artifactId>
-    <version>3.12.0</version>
-  </dependency>
+  <modelVersion>4.0.0</modelVersion>
 
-  <dependency>
-    <groupId>commons-io</groupId>
-    <artifactId>commons-io</artifactId>
-    <version>2.11.0</version>
-  </dependency>
+  <groupId>com.ganatan</groupId>
+  <artifactId>app-java8-maven</artifactId>
+  <version>1.0.0</version>
 
-</dependencies>
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
 ```
 
 ---
@@ -446,12 +503,6 @@ Résultat :
 NoClassDefFoundError
 ```
 
-ou :
-
-```text
-ClassNotFoundException
-```
-
 ---
 
 # Pourquoi ?
@@ -484,8 +535,6 @@ Configurer le classpath
 
 manuellement.
 
----
-
 Avec Maven :
 
 ```xml
@@ -510,8 +559,6 @@ automatiquement.
 
 # 19. Où sont les librairies ?
 
-Maven stocke les dépendances dans :
-
 ```text
 C:\Users\<user>\.m2\repository
 ```
@@ -531,37 +578,34 @@ Exemple :
 
 # Résumé
 
-Maven remplace progressivement :
+Premier pom.xml :
 
 ```text
-javac
-jar
-manifest.txt
-classpath
-lib
+Compilation Maven
+Packaging Maven
 ```
 
-par :
+Deuxième pom.xml :
 
 ```text
-pom.xml
-mvn compile
-mvn package
-.m2/repository
+Manifest Maven
+Main-Class
 ```
 
-Le cycle complet devient :
+Troisième pom.xml :
 
 ```text
-Code Java
-↓
-pom.xml
-↓
-mvn compile
-↓
-mvn package
-↓
-JAR Maven
+Dépendances Maven
+Apache Commons
+```
+
+Maven automatise :
+
+```text
+Téléchargement
+Classpath
+Compilation
+Packaging
 ```
 
 Limitation actuelle :
