@@ -1,106 +1,30 @@
-# Déployer une application Java 8 sur un serveur Linux
+# Déployer un JAR exécutable Java 8 sur un serveur Linux
 
 ## Objectif
 
-Déployer la première application Java 8 sur un serveur Linux et l'exécuter en ligne de commande.
-
-L'application utilisée est :
-
-```text
-app-java-8-read-file
-```
+Déployer une application Java 8 sous la forme d'un JAR exécutable sur un serveur Linux et l'exécuter en ligne de commande.
 
 ---
 
-# 1. Compiler l'application
+# 1. Vérifier les droits
 
-Se placer dans le répertoire :
+Afficher l'utilisateur courant :
 
 ```bash
-cd D:\demo\app-java-8-read-file\src
+whoami
 ```
 
-Compiler :
+Vérifier les droits :
 
 ```bash
-javac *.java
+sudo -l
 ```
+
+Si la commande échoue, contacter l'administrateur système.
 
 ---
 
-# 2. Créer le JAR
-
-Créer un JAR exécutable :
-
-```bash
-jar cfe app.jar Main *.class
-```
-
-Vérifier son contenu :
-
-```bash
-jar tf app.jar
-```
-
-Résultat :
-
-```text
-META-INF/
-META-INF/MANIFEST.MF
-Main.class
-FileTxtLib.class
-```
-
----
-
-# 3. Préparer l'application
-
-Créer l'arborescence suivante :
-
-```text
-app-java-8-read-file
-│
-├── app.jar
-├── input
-│   └── files.txt
-├── output
-└── logs
-```
-
----
-
-# 4. Copier l'application sur Linux
-
-Par exemple :
-
-```text
-/opt/demo
-```
-
-On obtient :
-
-```text
-/opt/demo
-│
-├── app.jar
-├── input
-├── output
-└── logs
-```
-
----
-
-# 5. Se connecter au serveur
-
-Connexion SSH :
-
-```bash
-ssh utilisateur@192.168.1.100
-```
-
----
-
-# 6. Vérifier Java
+# 2. Vérifier Java
 
 Afficher la version :
 
@@ -108,32 +32,128 @@ Afficher la version :
 java -version
 ```
 
-Afficher le compilateur :
+Si Java est installé :
+
+```text
+openjdk version "1.8.0_xxx"
+```
+
+ou
+
+```text
+java version "1.8.0_xxx"
+```
+
+Passer directement à l'étape suivante.
+
+---
+
+# 3. Installer Java 8
+
+## Ubuntu / Debian
+
+Mettre à jour les paquets :
+
+```bash
+sudo apt update
+```
+
+Installer Java 8 :
+
+```bash
+sudo apt install openjdk-8-jdk
+```
+
+Vérifier :
+
+```bash
+java -version
+```
+
+---
+
+## RedHat / CentOS
+
+Installer Java :
+
+```bash
+sudo yum install java-1.8.0-openjdk-devel
+```
+
+Vérifier :
+
+```bash
+java -version
+```
+
+---
+
+# 4. Vérifier le compilateur
 
 ```bash
 javac -version
 ```
 
+Résultat :
+
+```text
+javac 1.8.0_xxx
+```
+
 ---
 
-# 7. Se placer dans le répertoire
+# 5. Créer le répertoire de déploiement
+
+Créer le répertoire :
+
+```bash
+sudo mkdir -p /opt/demo
+```
+
+Donner les droits à l'utilisateur :
+
+```bash
+sudo chown $USER:$USER /opt/demo
+```
+
+Se placer dans le répertoire :
 
 ```bash
 cd /opt/demo
 ```
 
-Lister les fichiers :
+---
+
+# 6. Copier le JAR
+
+Depuis Windows :
+
+```bash
+scp filetxtlib.jar utilisateur@192.168.1.100:/opt/demo
+```
+
+Ou copier le fichier avec WinSCP.
+
+---
+
+# 7. Vérifier le contenu
 
 ```bash
 ls -l
 ```
 
+Résultat :
+
+```text
+filetxtlib.jar
+```
+
 ---
 
-# 8. Exécuter l'application
+# 8. Exécuter le JAR
 
 ```bash
-java -jar app.jar
+java -jar filetxtlib.jar
 ```
 
 Résultat :
@@ -141,51 +161,23 @@ Résultat :
 ```text
 Main:
 FileTxtLib:constructor
-Created : hello.txt
-Created : java.txt
-Created : spring.txt
-Created : angular.txt
+FileTxtLib:show
 ```
 
 ---
 
-# 9. Vérifier les fichiers générés
-
-Lister le répertoire :
+# 9. Créer un répertoire de logs
 
 ```bash
-ls output
-```
-
-Résultat :
-
-```text
-angular.txt
-hello.txt
-java.txt
-spring.txt
-```
-
-Afficher un fichier :
-
-```bash
-cat output/hello.txt
-```
-
-Résultat :
-
-```text
-Hello World
+mkdir logs
 ```
 
 ---
 
-# 10. Consulter les journaux
-
-Rediriger la sortie :
+# 10. Rediriger les sorties
 
 ```bash
-java -jar app.jar > logs/application.log
+java -jar filetxtlib.jar > logs/application.log
 ```
 
 Afficher le journal :
@@ -194,7 +186,53 @@ Afficher le journal :
 cat logs/application.log
 ```
 
-Ou suivre le journal en temps réel :
+---
+
+# 11. Exécuter en arrière-plan
+
+```bash
+nohup java -jar filetxtlib.jar > logs/application.log 2>&1 &
+```
+
+---
+
+# 12. Vérifier le processus
+
+```bash
+ps -ef | grep java
+```
+
+Exemple :
+
+```text
+java -jar filetxtlib.jar
+```
+
+---
+
+# 13. Arrêter l'application
+
+```bash
+kill PID
+```
+
+ou
+
+```bash
+pkill -f filetxtlib.jar
+```
+
+---
+
+# 14. Vérifier les journaux
+
+Afficher les dernières lignes :
+
+```bash
+tail -20 logs/application.log
+```
+
+Suivre le journal :
 
 ```bash
 tail -f logs/application.log
@@ -202,27 +240,7 @@ tail -f logs/application.log
 
 ---
 
-# 11. Exécuter en arrière-plan
-
-```bash
-nohup java -jar app.jar > logs/application.log 2>&1 &
-```
-
-Lister les processus Java :
-
-```bash
-ps -ef | grep java
-```
-
-Arrêter l'application :
-
-```bash
-kill PID
-```
-
----
-
-# 12. Vérifier l'adresse IP du serveur
+# 15. Vérifier l'adresse IP
 
 ```bash
 hostname -I
@@ -236,19 +254,32 @@ ip addr
 
 ---
 
-# 13. Arborescence finale
+# 16. Vérifier les variables Java
+
+Afficher :
+
+```bash
+echo $JAVA_HOME
+```
+
+```bash
+echo $PATH
+```
+
+Trouver Java :
+
+```bash
+which java
+```
+
+---
+
+# 17. Arborescence finale
 
 ```text
 /opt/demo
 │
-├── app.jar
-├── input
-│   └── files.txt
-├── output
-│   ├── hello.txt
-│   ├── java.txt
-│   ├── spring.txt
-│   └── angular.txt
+├── filetxtlib.jar
 └── logs
     └── application.log
 ```
@@ -257,34 +288,56 @@ ip addr
 
 # Résumé
 
-Compilation :
+Installer Java :
 
 ```bash
-javac *.java
+sudo apt update
+sudo apt install openjdk-8-jdk
 ```
 
-Création du JAR :
+Vérifier Java :
 
 ```bash
-jar cfe app.jar Main *.class
+java -version
+javac -version
+```
+
+Créer le répertoire :
+
+```bash
+sudo mkdir -p /opt/demo
+sudo chown $USER:$USER /opt/demo
+```
+
+Copie :
+
+```bash
+scp filetxtlib.jar utilisateur@192.168.1.100:/opt/demo
 ```
 
 Exécution :
 
 ```bash
-java -jar app.jar
+java -jar filetxtlib.jar
 ```
 
 Journalisation :
 
 ```bash
-java -jar app.jar > logs/application.log
+java -jar filetxtlib.jar > logs/application.log
 ```
 
-Exécution en arrière-plan :
+Arrière-plan :
 
 ```bash
-nohup java -jar app.jar > logs/application.log 2>&1 &
+nohup java -jar filetxtlib.jar > logs/application.log 2>&1 &
+```
+
+Surveillance :
+
+```bash
+ps -ef | grep java
+tail -f logs/application.log
 ```
 
 Arrêt :
@@ -295,16 +348,18 @@ kill PID
 
 ---
 
-# Objectif
+# À retenir
 
-À l'issue de ce tutoriel, l'application est capable de :
+Avant de déployer une application Java sur un serveur Linux, il faut toujours vérifier :
 
-* être compilée ;
-* être distribuée sous forme d'un JAR exécutable ;
-* être copiée sur un serveur Linux ;
-* être exécutée en ligne de commande ;
-* générer des fichiers ;
-* produire des journaux ;
-* fonctionner en arrière-plan.
+* les droits de l'utilisateur ;
+* la présence de Java 8 (`java` et `javac`) ;
+* la création du répertoire de déploiement ;
+* la copie du JAR ;
+* le lancement de l'application ;
+* la gestion des journaux ;
+* le fonctionnement en arrière-plan ;
+* l'arrêt propre du processus.
 
-Cette base servira ensuite aux applications plus avancées (Timer, JSON, HTTP Server, Socket, etc.).
+Ces étapes constituent la base du déploiement d'une application Java 8 sur un serveur Linux.
+Ensuite, il sera possible d'automatiser le démarrage avec un script `start.sh`, un script `stop.sh`, puis un service `systemd`.
