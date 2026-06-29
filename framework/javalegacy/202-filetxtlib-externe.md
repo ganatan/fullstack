@@ -128,7 +128,7 @@ javac -cp ".\lib\*" *.java
 
 ---
 
-# 8. Exécuter
+# 8. Exécuter l'application
 
 Commande :
 
@@ -170,10 +170,18 @@ Main.class
 FileTxtLib.class
 ```
 
-Exécuter le JAR :
+---
+
+# 10. Exécuter le JAR
+
+Le JAR ne contient que les classes de l'application.
+
+Il ne contient pas les librairies externes.
+
+Il faut donc les ajouter au classpath lors de l'exécution :
 
 ```bash
-java -jar filetxtlib.jar
+java -cp "filetxtlib.jar;.\lib\*" Main
 ```
 
 Résultat :
@@ -182,6 +190,7 @@ Résultat :
 Main:
 FileTxtLib:constructor
 FileTxtLib:show
+StringUtils.isBlank = true
 ```
 
 ---
@@ -204,32 +213,10 @@ Création du JAR :
 
 ```bash
 jar cfe filetxtlib.jar Main *.class
-jar tf filetxtlib.jar
-java -jar filetxtlib.jar
 ```
 
+Exécution du JAR avec la librairie externe :
 
-
-
-import org.apache.commons.lang3.StringUtils;
-
-public class Main {
-
-  public static void main(String[] args) {
-
-    System.out.println("Main:");
-
-    FileTxtLib fileTxtLib = new FileTxtLib();
-
-    fileTxtLib.show();
-
-    String value = "   ";
-
-    System.out.println(
-        "StringUtils.isBlank = " +
-            StringUtils.isBlank(value)
-    );
-
-  }
-
-}
+```bash
+java -cp "filetxtlib.jar;.\lib\*" Main
+```

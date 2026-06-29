@@ -79,13 +79,11 @@ javac -cp ".\lib\*" *.java
 java -cp ".;.\lib\*" Main
 ```
 
-
 ```bash
 javac -cp ".\lib\*" *.java
 jar cfe filetxtlib.jar Main *.class
 jar tf filetxtlib.jar
-java -jar filetxtlib.jar
-
+java -cp "filetxtlib.jar;.\lib\*" Main
 ```
 
 
