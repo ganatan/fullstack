@@ -32,6 +32,7 @@
 
 
 ## Applications
-- [File Txt Library](./301-file-txt-library.md)
-- [Timer Scrute Files Txt](./302-app-java-8-timer.md)
+- [File Txt Library](./applications/301-file-txt-library.md)
+- [Timer Scrute Files Txt](./applications/302-app-java-8-timer.md)
+- [Timer Scrute JSON Files](./applications/303-app-java-8-timer-json.md)
 
