@@ -23,8 +23,8 @@
 
 
 ## Essentiels
-- [Appli jar avec Lib interne: Compile et Execution](./201-filetxtlib.md)
-- [Appli jar avec Lib interne et extern: Compile et Execution](./202-filetxtlib-externe.md)
+- [Appli jar avec Lib interne](./201-filetxtlib.md)
+- [Appli jar avec Lib interne et externe](./202-filetxtlib-externe.md)
 
 
 
