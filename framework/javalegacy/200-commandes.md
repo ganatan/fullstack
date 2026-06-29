@@ -23,7 +23,18 @@ public class FileTxtLib {
 ```
 
 ```bash
+java -version
+```
+
+
+```bash
+java Main
 javac *.java
+```
+
+
+```bash
+java Main
 jar cfe filetxtlib.jar Main *.class
 jar tf filetxtlib.jar
 java -jar filetxtlib.jar

@@ -34,6 +34,14 @@ Compiler toutes les classes Java :
 javac *.java
 ```
 
+## Execution Simple
+
+```bash
+java -version
+java Main
+```
+
+
 ## Création du JAR
 
 Créer un JAR exécutable en indiquant la classe principale et en ajoutant toutes les classes compilées :
