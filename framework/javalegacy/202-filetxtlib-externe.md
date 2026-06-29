@@ -92,18 +92,12 @@ public class Main {
 
 ---
 
-# 5. Se placer dans le répertoire `src`
+# 5. Compiler sans la librairie
+
+Commande :
 
 ```bash
-cd D:\demo\app-java-8\src
-```
-
----
-
-# 6. Compiler sans la librairie
-
-```bash
-javac *.java
+javac src\*.java
 ```
 
 Résultat :
@@ -116,18 +110,22 @@ Java ne trouve pas la librairie externe.
 
 ---
 
-# 7. Compiler avec la librairie
+# 6. Compiler avec la librairie
+
+Commande :
 
 ```bash
-javac -cp "..\lib\*" *.java
+javac -cp ".\lib\*" src\*.java
 ```
 
 ---
 
-# 8. Exécuter
+# 7. Exécuter
+
+Commande :
 
 ```bash
-java -cp ".;..\lib\*" Main
+java -cp ".\lib\*;src" Main
 ```
 
 Résultat :
@@ -141,18 +139,12 @@ StringUtils.isBlank = true
 
 ---
 
-# 9. Créer un JAR exécutable
-
-Compiler :
-
-```bash
-javac *.java
-```
+# 8. Créer un JAR exécutable
 
 Créer le JAR :
 
 ```bash
-jar cfe filetxtlib.jar Main *.class
+jar cfe filetxtlib.jar Main -C src .
 ```
 
 Vérifier son contenu :
@@ -188,23 +180,22 @@ FileTxtLib:show
 
 # Résumé
 
-Compilation avec la librairie :
+Compilation :
 
 ```bash
-javac -cp "..\lib\*" *.java
+javac -cp ".\lib\*" src\*.java
 ```
 
 Exécution :
 
 ```bash
-java -cp ".;..\lib\*" Main
+java -cp ".\lib\*;src" Main
 ```
 
 Création du JAR :
 
 ```bash
-javac *.java
-jar cfe filetxtlib.jar Main *.class
+jar cfe filetxtlib.jar Main -C src .
 jar tf filetxtlib.jar
 java -jar filetxtlib.jar
 ```
