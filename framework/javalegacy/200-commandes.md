@@ -45,8 +45,7 @@ java -jar filetxtlib.jar
 
 
 
-
-## Appli et Lib Interne et externe
+## Appli et Lib Interne et externe 2 jars
 
 ```java
 import org.apache.commons.lang3.StringUtils;
@@ -87,3 +86,14 @@ java -cp "filetxtlib.jar;.\lib\*" Main
 ```
 
 
+
+
+## Appli et Lib Interne et externe 1 seul jar
+
+```bash
+javac -cp ".\lib\*" *.java
+jar xf .\lib\commons-lang3-3.12.0.jar
+jar cfe filetxtlib-fat.jar Main *.class org
+jar tf filetxtlib-fat.jar
+java -jar filetxtlib-fat.jar
+```
