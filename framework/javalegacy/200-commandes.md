@@ -28,13 +28,13 @@ java -version
 
 
 ```bash
-java Main
 javac *.java
+java Main
 ```
 
 
 ```bash
-java Main
+javac *.java
 jar cfe filetxtlib.jar Main *.class
 jar tf filetxtlib.jar
 java -jar filetxtlib.jar

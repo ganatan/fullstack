@@ -31,13 +31,13 @@ public class FileTxtLib {
 Compiler toutes les classes Java :
 
 ```bash
+java -version
 javac *.java
 ```
 
 ## Execution Simple
 
 ```bash
-java -version
 java Main
 ```
 
