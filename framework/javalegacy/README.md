@@ -37,3 +37,4 @@
 
 ## Linux
 - [commandes](./linux/401-commandes.md)
+- [Déploiement](./linux/402-deploiement-linux.md)
