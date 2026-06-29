@@ -92,7 +92,7 @@ public class Main {
 
 ---
 
-# 5. Se placer dans le répertoire src
+# 5. Se placer dans le répertoire `src`
 
 ```bash
 cd D:\demo\app-java-8\src
@@ -103,7 +103,7 @@ cd D:\demo\app-java-8\src
 # 6. Compiler sans la librairie
 
 ```bash
-javac Main.java FileTxtLib.java
+javac *.java
 ```
 
 Résultat :
@@ -119,7 +119,7 @@ Java ne trouve pas la librairie externe.
 # 7. Compiler avec la librairie
 
 ```bash
-javac -cp "..\lib\*" Main.java FileTxtLib.java
+javac -cp "..\lib\*" *.java
 ```
 
 ---
@@ -141,60 +141,57 @@ StringUtils.isBlank = true
 
 ---
 
-# 9. Comprendre le classpath
+# 9. Créer un JAR exécutable
 
-Compilation :
-
-```bash
-javac -cp "..\lib\*" Main.java FileTxtLib.java
-```
-
-Exécution :
+Compiler :
 
 ```bash
-java -cp ".;..\lib\*" Main
+javac *.java
 ```
 
-Le classpath indique à Java où trouver :
+Créer le JAR :
 
-- les classes du projet (`.`)
-- les librairies externes (`..\lib\*`)
-
----
-
-# 10. Les classes utilisées
-
-Notre code :
-
-```java
-FileTxtLib
+```bash
+jar cfe filetxtlib.jar Main *.class
 ```
 
-Librairie externe :
+Vérifier son contenu :
 
-```java
-StringUtils
+```bash
+jar tf filetxtlib.jar
 ```
 
-Exemple :
+Résultat :
 
-```java
-StringUtils.isBlank(value);
+```text
+META-INF/
+META-INF/MANIFEST.MF
+Main.class
+FileTxtLib.class
 ```
 
----
+Exécuter le JAR :
 
+```bash
+java -jar filetxtlib.jar
+```
+
+Résultat :
+
+```text
+Main:
+FileTxtLib:constructor
+FileTxtLib:show
+```
 
 ---
 
 # Résumé
 
-Compilation :
+Compilation avec la librairie :
 
 ```bash
-cd D:\demo\app-java-8\src
-
-javac -cp "..\lib\*" Main.java FileTxtLib.java
+javac -cp "..\lib\*" *.java
 ```
 
 Exécution :
@@ -203,3 +200,11 @@ Exécution :
 java -cp ".;..\lib\*" Main
 ```
 
+Création du JAR :
+
+```bash
+javac *.java
+jar cfe filetxtlib.jar Main *.class
+jar tf filetxtlib.jar
+java -jar filetxtlib.jar
+```
