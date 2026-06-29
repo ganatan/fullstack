@@ -207,3 +207,29 @@ jar cfe filetxtlib.jar Main *.class
 jar tf filetxtlib.jar
 java -jar filetxtlib.jar
 ```
+
+
+
+
+import org.apache.commons.lang3.StringUtils;
+
+public class Main {
+
+  public static void main(String[] args) {
+
+    System.out.println("Main:");
+
+    FileTxtLib fileTxtLib = new FileTxtLib();
+
+    fileTxtLib.show();
+
+    String value = "   ";
+
+    System.out.println(
+        "StringUtils.isBlank = " +
+            StringUtils.isBlank(value)
+    );
+
+  }
+
+}
