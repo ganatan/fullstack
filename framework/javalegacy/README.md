@@ -34,6 +34,7 @@
 - [Timer Scrute Files Txt](./applications/302-app-java-8-timer.md)
 - [Timer Scrute JSON Files](./applications/303-app-java-8-timer-json.md)
 - [Fichier text avec streams](./applications/304-text-streams.md)
+- [Multi exemples avec streams](./applications/305-exemples-streams.md)
 
 
 ## Linux
