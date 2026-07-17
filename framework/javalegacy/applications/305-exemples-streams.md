@@ -40,8 +40,12 @@ public void show() {
 
   try (Stream<String> lines = Files.lines(Paths.get(INPUT))) {
 
-    lines
-        .forEach(System.out::println);
+      lines.forEach(
+          line -> {
+            System.out.println("00000000001:" + line);
+          }
+      );
+
 
   } catch (IOException e) {
     e.printStackTrace();
