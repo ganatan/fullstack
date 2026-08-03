@@ -16,3 +16,4 @@
 - [For](./105-for.md)
 - [While](./106-while.md)
 - [Match](./107-match.md)
+- [Loop](./108-loop.md)
