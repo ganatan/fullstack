@@ -1,4 +1,4 @@
-# Analyse du code Rust avec `cargo clippy`
+# Analyse du code Rust avec Clippy
 
 Clippy est l’outil officiel de linting de Rust.
 
@@ -7,10 +7,11 @@ Il analyse le code sans l’exécuter afin de détecter :
 * les erreurs courantes ;
 * le code inutile ;
 * les mauvaises pratiques ;
-* les problèmes de performance ;
-* les constructions pouvant être simplifiées.
+* les constructions pouvant être simplifiées ;
+* certains problèmes de performance ;
+* les conventions Rust non respectées.
 
-Clippy complète le compilateur Rust avec des règles supplémentaires appelées **lints**.
+Clippy complète les vérifications réalisées par le compilateur Rust.
 
 ---
 
@@ -92,7 +93,9 @@ cargo clippy -- -D warnings
 
 L’option `-D warnings` transforme tous les avertissements en erreurs.
 
-La commande échoue dès qu’un avertissement Rust ou Clippy est détecté. Elle est particulièrement utile dans une chaîne CI/CD.
+La commande échoue dès qu’un avertissement Rust ou Clippy est détecté.
+
+Cette commande est particulièrement utile dans une chaîne CI/CD.
 
 ---
 
@@ -102,9 +105,15 @@ La commande échoue dès qu’un avertissement Rust ou Clippy est détecté. Ell
 cargo clippy --fix
 ```
 
-Clippy applique automatiquement les corrections qu’il considère comme sûres. Cette commande implique également l’analyse de toutes les cibles du projet.
+Clippy applique automatiquement certaines corrections considérées comme sûres.
 
-Il est recommandé de vérifier les modifications avec Git :
+Pour analyser toutes les cibles lors de la correction :
+
+```bash
+cargo clippy --fix --all-targets
+```
+
+Après la correction, vérifier les modifications :
 
 ```bash
 git diff
@@ -114,7 +123,7 @@ git diff
 
 ## 6. Configurer Clippy
 
-Créer un fichier `clippy.toml` à la racine du projet :
+Clippy peut utiliser deux fichiers de configuration différents :
 
 ```text
 hello-rust/
@@ -125,23 +134,67 @@ hello-rust/
     └── main.rs
 ```
 
-Clippy recherche un fichier nommé `clippy.toml` ou `.clippy.toml` dans le projet et ses répertoires parents. Seules certaines règles peuvent être configurées dans ce fichier.
+Le fichier `clippy.toml` configure les paramètres de certaines règles.
+
+Le fichier `Cargo.toml` permet d’activer les règles Clippy et de définir leur niveau.
 
 ---
 
-## 7. Limiter le nombre d’arguments d’une fonction
+## 7. Ajouter une règle spécifique
 
-Fichier `clippy.toml` :
+Nous allons limiter à quatre le nombre maximal d’arguments autorisés dans une fonction.
+
+Créer le fichier `clippy.toml` à la racine du projet :
 
 ```toml
 too-many-arguments-threshold = 4
 ```
 
-Cette règle indique qu’une fonction ne doit pas avoir plus de quatre arguments.
+Cette configuration modifie le seuil de la règle :
 
-La valeur par défaut de Clippy est `7`.
+```text
+clippy::too_many_arguments
+```
 
-Exemple :
+Par défaut, Clippy autorise davantage d’arguments avant de déclencher cette règle.
+
+---
+
+## 8. Activer la règle dans `Cargo.toml`
+
+Modifier le fichier `Cargo.toml` :
+
+```toml
+[package]
+name = "hello-rust"
+version = "0.1.0"
+edition = "2024"
+
+[lints.clippy]
+too_many_arguments = "deny"
+```
+
+Le niveau `deny` transforme la détection en erreur de compilation Clippy.
+
+Les principaux niveaux disponibles sont :
+
+```text
+allow
+warn
+deny
+forbid
+```
+
+* `allow` : désactive la règle ;
+* `warn` : affiche un avertissement ;
+* `deny` : transforme le problème en erreur ;
+* `forbid` : transforme le problème en erreur et empêche sa désactivation localement.
+
+---
+
+## 9. Exemple détecté par la règle
+
+Fichier `src/main.rs` :
 
 ```rust
 fn creer_utilisateur(
@@ -151,10 +204,7 @@ fn creer_utilisateur(
     ville: &str,
     pays: &str,
 ) {
-    println!(
-        "{} {} a {} ans et habite à {}, {}.",
-        prenom, nom, age, ville, pays
-    );
+    println!("{prenom} {nom}, {age} ans, {ville}, {pays}");
 }
 
 fn main() {
@@ -168,15 +218,25 @@ fn main() {
 }
 ```
 
+La fonction contient cinq arguments alors que la limite configurée est de quatre.
+
 Exécuter :
 
 ```bash
 cargo clippy
 ```
 
-Clippy signale que la fonction possède trop d’arguments.
+Clippy retourne une erreur liée à la règle :
 
-Une meilleure solution consiste à utiliser une structure :
+```text
+clippy::too_many_arguments
+```
+
+---
+
+## 10. Corriger avec une structure
+
+Une meilleure solution consiste à regrouper les données dans une structure.
 
 ```rust
 struct Utilisateur<'a> {
@@ -189,7 +249,7 @@ struct Utilisateur<'a> {
 
 fn creer_utilisateur(utilisateur: &Utilisateur) {
     println!(
-        "{} {} a {} ans et habite à {}, {}.",
+        "{} {}, {} ans, {}, {}",
         utilisateur.prenom,
         utilisateur.nom,
         utilisateur.age,
@@ -211,29 +271,13 @@ fn main() {
 }
 ```
 
----
-
-## 8. Activer les règles strictes
-
-Clippy propose un groupe de règles supplémentaires nommé `pedantic`.
-
-```bash
-cargo clippy -- -W clippy::pedantic
-```
-
-Ces règles sont plus strictes et peuvent parfois produire des avertissements discutables ou des faux positifs.
-
-Pour transformer ces avertissements en erreurs :
-
-```bash
-cargo clippy -- -D clippy::pedantic
-```
+La fonction ne reçoit désormais qu’un seul argument.
 
 ---
 
-## 9. Désactiver une règle ponctuellement
+## 11. Désactiver une règle ponctuellement
 
-Pour une fonction précise :
+Une règle peut être désactivée uniquement pour une fonction précise :
 
 ```rust
 #[allow(clippy::too_many_arguments)]
@@ -244,32 +288,57 @@ fn creer_utilisateur(
     ville: &str,
     pays: &str,
 ) {
-    println!(
-        "{} {} a {} ans et habite à {}, {}.",
-        prenom, nom, age, ville, pays
-    );
+    println!("{prenom} {nom}, {age} ans, {ville}, {pays}");
 }
 ```
 
-L’attribut `allow` désactive uniquement la règle indiquée sur l’élément concerné.
-
-Pour transformer une règle en avertissement :
+Pour afficher uniquement un avertissement :
 
 ```rust
 #[warn(clippy::too_many_arguments)]
 ```
 
-Pour transformer une règle en erreur :
+Pour transformer la détection en erreur :
 
 ```rust
 #[deny(clippy::too_many_arguments)]
 ```
 
-Clippy permet d’utiliser les niveaux `allow`, `warn` et `deny` sur l’ensemble du projet, un module ou une fonction.
+Pour empêcher toute désactivation locale :
+
+```rust
+#[forbid(clippy::too_many_arguments)]
+```
 
 ---
 
-## 10. Analyser toutes les cibles
+## 12. Activer les règles strictes
+
+Clippy propose un groupe de règles supplémentaires nommé `pedantic`.
+
+```bash
+cargo clippy -- -W clippy::pedantic
+```
+
+Pour transformer ces avertissements en erreurs :
+
+```bash
+cargo clippy -- -D clippy::pedantic
+```
+
+Le groupe `pedantic` est volontairement strict et peut produire des recommandations qui ne sont pas adaptées à tous les projets.
+
+Il peut aussi être activé dans `Cargo.toml` :
+
+```toml
+[lints.clippy]
+pedantic = "warn"
+too_many_arguments = "deny"
+```
+
+---
+
+## 13. Analyser toutes les cibles
 
 ```bash
 cargo clippy --all-targets
@@ -283,10 +352,50 @@ Cette commande analyse notamment :
 * les exemples ;
 * les benchmarks.
 
-Pour analyser également toutes les fonctionnalités Cargo :
+Pour analyser toutes les fonctionnalités Cargo :
 
 ```bash
 cargo clippy --all-targets --all-features
+```
+
+Pour transformer tous les avertissements en erreurs :
+
+```bash
+cargo clippy --all-targets --all-features -- -D warnings
+```
+
+---
+
+## 14. Configuration finale du projet
+
+Structure :
+
+```text
+hello-rust/
+├── Cargo.toml
+├── clippy.toml
+├── rustfmt.toml
+└── src/
+    └── main.rs
+```
+
+Fichier `clippy.toml` :
+
+```toml
+too-many-arguments-threshold = 4
+```
+
+Fichier `Cargo.toml` :
+
+```toml
+[package]
+name = "hello-rust"
+version = "0.1.0"
+edition = "2024"
+
+[lints.clippy]
+pedantic = "warn"
+too_many_arguments = "deny"
 ```
 
 ---
@@ -300,11 +409,12 @@ cargo clippy -- -D warnings
 cargo clippy -- -W clippy::pedantic
 cargo clippy --all-targets
 cargo clippy --all-targets --all-features
+cargo clippy --all-targets --all-features -- -D warnings
 ```
 
-* `cargo clippy` : analyse le projet.
-* `cargo clippy --fix` : applique certaines corrections automatiquement.
-* `cargo clippy -- -D warnings` : transforme les avertissements en erreurs.
-* `cargo clippy -- -W clippy::pedantic` : active les règles strictes.
-* `cargo clippy --all-targets` : analyse toutes les cibles.
+* `cargo clippy` : analyse le projet ;
+* `cargo clippy --fix` : applique certaines corrections automatiquement ;
+* `cargo clippy -- -D warnings` : transforme tous les avertissements en erreurs ;
+* `cargo clippy -- -W clippy::pedantic` : active les règles strictes ;
+* `cargo clippy --all-targets` : analyse toutes les cibles ;
 * `cargo clippy --all-targets --all-features` : analyse toutes les cibles et fonctionnalités.
