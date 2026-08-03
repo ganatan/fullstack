@@ -5,5 +5,6 @@
 - [Principes](./002-principes.md)
 - [Premier Projet](./003-projet-rust.md)
 - [Formattage](./004-formattage.md)
+- [Lint](./005-lint.md)
 - [Codage](./101-codage.md)
 - [Variables](./102-variables.md)
