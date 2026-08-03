@@ -19,3 +19,4 @@
 - [Loop](./108-loop.md)
 - [Fonction](./109-functions.md)
 - [Tableau](./110-tableau.md)
+- [Slices](./111-slices.md)
