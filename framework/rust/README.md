@@ -4,5 +4,6 @@
 - [Installation RUST](./001-installation.md)
 - [Principes](./002-principes.md)
 - [Premier Projet](./003-projet-rust.md)
-- [Codage](./004-codage.md)
-- [Variables](./005-variables.md)
+- [Formattage](./004-formattage.md)
+- [Codage](./101-codage.md)
+- [Variables](./102-variables.md)
