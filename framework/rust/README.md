@@ -17,3 +17,5 @@
 - [While](./106-while.md)
 - [Match](./107-match.md)
 - [Loop](./108-loop.md)
+- [Fonction](./109-functions.md)
+- [Tableau](./110-tableau.md)
