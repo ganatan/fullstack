@@ -1,23 +1,15 @@
 # Tests et couverture de code en Rust
 
-Rust intègre nativement un système de tests avec Cargo.
+Rust intègre nativement l’exécution des tests avec Cargo.
 
-La commande `cargo test` compile et exécute :
-
-* les tests unitaires ;
-* les tests d’intégration ;
-* les tests présents dans la documentation.
-
-Les fonctions de test sont identifiées avec l’attribut `#[test]`.
+La couverture de code peut être générée avec `cargo-llvm-cov`, qui utilise l’instrumentation LLVM du compilateur Rust.
 
 ---
 
 ## 1. Structure du projet
 
-Pour séparer correctement le code métier du programme principal, créer un fichier `src/lib.rs`.
-
 ```text
-hello-rust/
+rust-starter/
 ├── .cargo/
 │   └── config.toml
 ├── src/
@@ -30,11 +22,34 @@ hello-rust/
 └── rustfmt.toml
 ```
 
+Le projet est déclaré dans `Cargo.toml` avec le nom suivant :
+
+```toml
+[package]
+name = "rust-starter"
+version = "0.1.0"
+edition = "2024"
+```
+
+Dans le code Rust, les tirets du nom du package sont remplacés par des underscores :
+
+```text
+rust-starter → rust_starter
+```
+
+L’import correct est donc :
+
+```rust
+use rust_starter::{addition, division};
+```
+
 ---
 
-## 2. Créer les fonctions à tester
+# Code à tester
 
-Fichier `src/lib.rs` :
+## 2. Créer la bibliothèque
+
+Créer le fichier `src/lib.rs` :
 
 ```rust
 pub fn addition(a: i32, b: i32) -> i32 {
@@ -50,16 +65,20 @@ pub fn division(a: i32, b: i32) -> Option<i32> {
 }
 ```
 
-Les fonctions sont déclarées avec `pub` afin qu’elles puissent être utilisées depuis `main.rs` et depuis les tests d’intégration.
+Le mot-clé `pub` rend les fonctions accessibles depuis :
+
+- `src/main.rs` ;
+- les tests d’intégration ;
+- les autres crates utilisant cette bibliothèque.
 
 ---
 
-## 3. Utiliser les fonctions
+## 3. Utiliser la bibliothèque dans le programme
 
 Fichier `src/main.rs` :
 
 ```rust
-use hello_rust::{addition, division};
+use rust_starter::{addition, division};
 
 fn main() {
     let resultat = addition(10, 20);
@@ -73,15 +92,13 @@ fn main() {
 }
 ```
 
-Le nom du package `hello-rust` devient `hello_rust` dans le code Rust.
-
 Exécuter le programme :
 
 ```bash
 cargo run
 ```
 
-Résultat :
+Résultat attendu :
 
 ```text
 Addition : 30
@@ -94,7 +111,7 @@ Division : 5
 
 ## 4. Ajouter les tests unitaires
 
-Les tests unitaires sont généralement placés directement dans le fichier contenant le code testé.
+Les tests unitaires sont généralement placés dans le même fichier que le code testé.
 
 Modifier `src/lib.rs` :
 
@@ -144,7 +161,11 @@ L’attribut suivant transforme une fonction en test :
 #[test]
 ```
 
-Les tests unitaires sont habituellement placés dans les fichiers du répertoire `src`. Ils peuvent tester les éléments publics et privés du module parent.
+L’instruction suivante importe les éléments du module parent :
+
+```rust
+use super::*;
+```
 
 ---
 
@@ -167,12 +188,12 @@ test result: ok. 3 passed; 0 failed
 
 ---
 
-## 6. Les macros d’assertion
+## 6. Macros d’assertion
 
 ### Vérifier une condition
 
 ```rust
-assert!(resultat);
+assert!(resultat > 0);
 ```
 
 ### Vérifier une égalité
@@ -200,7 +221,9 @@ fn verifie_une_addition() {
 }
 ```
 
-Un test réussit lorsqu’il se termine normalement. Il échoue lorsqu’une assertion provoque une panique.
+Un test réussit lorsqu’il se termine normalement.
+
+Il échoue lorsqu’une assertion est fausse ou lorsqu’une panique non attendue se produit.
 
 ---
 
@@ -210,13 +233,15 @@ Un test réussit lorsqu’il se termine normalement. Il échoue lorsqu’une ass
 cargo test additionne_deux_nombres
 ```
 
-Cargo utilise le texte fourni comme filtre sur le nom des tests.
+Cargo utilise la valeur fournie comme filtre sur le nom des tests.
+
+Plusieurs tests peuvent être exécutés si leurs noms correspondent au filtre.
 
 ---
 
 ## 8. Afficher les sorties des tests
 
-Par défaut, les sorties produites par `println!` sont masquées lorsque le test réussit.
+Par défaut, les sorties produites avec `println!` sont masquées lorsque le test réussit.
 
 ```bash
 cargo test -- --nocapture
@@ -247,14 +272,14 @@ Pour utiliser un seul thread :
 cargo test -- --test-threads=1
 ```
 
-Cette option est utile lorsque plusieurs tests utilisent une même ressource externe :
+Cette option est utile lorsque les tests partagent une même ressource :
 
-* un fichier ;
-* une base de données ;
-* un port réseau ;
-* une variable globale.
+- un fichier ;
+- une base de données ;
+- un port réseau ;
+- une variable globale.
 
-Les arguments placés après `--` sont transmis au programme chargé d’exécuter les tests.
+Les arguments placés après `--` sont transmis au programme d’exécution des tests.
 
 ---
 
@@ -262,12 +287,10 @@ Les arguments placés après `--` sont transmis au programme chargé d’exécut
 
 ## 10. Créer un test d’intégration
 
-Les tests d’intégration sont placés dans le répertoire `tests`.
-
 Créer le fichier `tests/calculs.rs` :
 
 ```rust
-use hello_rust::{addition, division};
+use rust_starter::{addition, division};
 
 #[test]
 fn execute_plusieurs_calculs() {
@@ -283,9 +306,11 @@ fn gere_une_division_invalide() {
 }
 ```
 
-Les tests d’intégration utilisent uniquement l’API publique de la bibliothèque.
+Les tests d’intégration utilisent l’API publique de la bibliothèque.
 
-Chaque fichier placé directement dans `tests` est compilé comme une crate indépendante.
+Chaque fichier placé directement dans le répertoire `tests` est compilé comme une crate indépendante.
+
+C’est pour cette raison que les fonctions testées doivent être publiques.
 
 ---
 
@@ -295,62 +320,138 @@ Chaque fichier placé directement dans `tests` est compilé comme une crate ind�
 cargo test
 ```
 
-Cette commande exécute les tests unitaires et les tests d’intégration.
+Cette commande exécute notamment :
+
+- les tests unitaires ;
+- les tests d’intégration ;
+- les tests de documentation.
 
 ---
 
-## 12. Exécuter uniquement un fichier d’intégration
+## 12. Exécuter uniquement un fichier de tests d’intégration
 
-Pour le fichier suivant :
-
-```text
-tests/calculs.rs
-```
-
-Exécuter :
+Pour exécuter le fichier `tests/calculs.rs` :
 
 ```bash
 cargo test --test calculs
 ```
 
+Le nom utilisé correspond au nom du fichier sans l’extension `.rs`.
+
 ---
 
-## 13. Exécuter toutes les cibles et fonctionnalités
+## 13. Exécuter toutes les cibles
+
+```bash
+cargo test --all-targets
+```
+
+Cette commande peut inclure :
+
+- la bibliothèque ;
+- le programme principal ;
+- les tests ;
+- les exemples ;
+- les benchmarks.
+
+Avec toutes les fonctionnalités Cargo :
 
 ```bash
 cargo test --all-targets --all-features
 ```
 
-Cette commande peut notamment inclure :
+---
 
-* la bibliothèque ;
-* le programme principal ;
-* les tests unitaires ;
-* les tests d’intégration ;
-* les exemples ;
-* les fonctionnalités Cargo.
+# Tests provoquant une erreur
+
+## 14. Tester une fonction qui doit provoquer une panique
+
+Ajouter une fonction dans `src/lib.rs` :
+
+```rust
+pub fn division_obligatoire(a: i32, b: i32) -> i32 {
+    if b == 0 {
+        panic!("Division par zéro impossible");
+    }
+
+    a / b
+}
+```
+
+Ajouter le test suivant :
+
+```rust
+#[test]
+#[should_panic]
+fn panique_sur_une_division_par_zero() {
+    division_obligatoire(10, 0);
+}
+```
+
+Pour vérifier également le message de la panique :
+
+```rust
+#[test]
+#[should_panic(expected = "Division par zéro impossible")]
+fn panique_avec_le_message_attendu() {
+    division_obligatoire(10, 0);
+}
+```
+
+---
+
+# Tests retournant un résultat
+
+## 15. Utiliser `Result` dans un test
+
+Un test peut retourner un `Result`.
+
+```rust
+#[test]
+fn teste_une_addition_avec_resultat() -> Result<(), String> {
+    let resultat = addition(10, 20);
+
+    if resultat == 30 {
+        Ok(())
+    } else {
+        Err(format!("Résultat incorrect : {resultat}"))
+    }
+}
+```
+
+Le test réussit lorsqu’il retourne :
+
+```rust
+Ok(())
+```
+
+Le test échoue lorsqu’il retourne :
+
+```rust
+Err(...)
+```
 
 ---
 
 # Couverture de code
 
-Rust ne fournit pas directement une commande `cargo coverage`.
+Rust ne fournit pas directement de commande native `cargo coverage`.
 
-L’outil `cargo-llvm-cov` permet de générer la couverture du code en utilisant l’instrumentation LLVM du compilateur Rust.
+L’outil `cargo-llvm-cov` permet de générer la couverture du code en utilisant LLVM.
 
 ---
 
-## 14. Installer les outils LLVM
+## 16. Installer les outils LLVM
 
 ```bash
 rustup component add llvm-tools-preview
 ```
 
-Le composant `llvm-tools-preview` fournit les outils LLVM compatibles avec la toolchain Rust installée.
+Ce composant fournit les outils LLVM compatibles avec la version de Rust installée.
 
 ---
 
-## 15. Installer `cargo-llvm-cov`
+## 17. Installer `cargo-llvm-cov`
 
 ```bash
 cargo install cargo-llvm-cov --locked
@@ -362,11 +463,9 @@ Vérifier l’installation :
 cargo llvm-cov --version
 ```
 
-L’option `--locked` utilise les versions exactes des dépendances enregistrées par le projet `cargo-llvm-cov`.
-
 ---
 
-## 16. Calculer la couverture
+## 18. Générer la couverture
 
 À la racine du projet :
 
@@ -378,9 +477,7 @@ Cette commande :
 
 1. compile le projet avec l’instrumentation de couverture ;
 2. exécute les tests ;
-3. affiche le résumé de couverture dans le terminal.
-
-Par défaut, `cargo llvm-cov` exécute les tests avec `cargo test`, puis génère le rapport.
+3. affiche le rapport dans le terminal.
 
 Exemple de résultat :
 
@@ -393,11 +490,25 @@ src/main.rs           8                 8    0.00%
 TOTAL                 20                 8   60.00%
 ```
 
-Le résultat exact dépend de la version de Rust, de LLVM et du code analysé.
+Le résultat dépend du code et des tests réellement exécutés.
 
 ---
 
-## 17. Générer un rapport HTML
+## 19. Couvrir uniquement la bibliothèque
+
+Le fichier `src/main.rs` peut apparaître avec une couverture faible ou nulle, car les tests exécutent principalement le code de la bibliothèque.
+
+Pour mesurer uniquement la bibliothèque :
+
+```bash
+cargo llvm-cov --lib
+```
+
+Cette commande est adaptée au contrôle de la couverture du code métier placé dans `src/lib.rs`.
+
+---
+
+## 20. Générer un rapport HTML
 
 ```bash
 cargo llvm-cov --html
@@ -409,17 +520,21 @@ Le rapport est généré dans :
 target/llvm-cov/html/index.html
 ```
 
-Pour générer et ouvrir directement le rapport :
+Pour générer puis ouvrir directement le rapport :
 
 ```bash
 cargo llvm-cov --open
 ```
 
-Ces commandes sont fournies directement par `cargo-llvm-cov`.
+Pour limiter le rapport à la bibliothèque :
+
+```bash
+cargo llvm-cov --lib --open
+```
 
 ---
 
-## 18. Générer un rapport texte
+## 21. Générer un rapport texte
 
 ```bash
 cargo llvm-cov --text
@@ -427,7 +542,7 @@ cargo llvm-cov --text
 
 ---
 
-## 19. Générer un rapport JSON
+## 22. Générer un rapport JSON
 
 ```bash
 cargo llvm-cov --json --output-path coverage.json
@@ -441,31 +556,35 @@ coverage.json
 
 ---
 
-## 20. Générer un rapport LCOV
+## 23. Générer un rapport LCOV
 
 ```bash
 cargo llvm-cov --lcov --output-path lcov.info
 ```
 
-Le format LCOV peut être utilisé avec :
+Le format LCOV peut notamment être utilisé avec :
 
-* SonarQube ;
-* Codecov ;
-* Coveralls ;
-* certaines extensions d’éditeur ;
-* des pipelines CI/CD.
-
-Les formats HTML, texte, JSON et LCOV sont pris en charge par `cargo-llvm-cov`.
+- SonarQube ;
+- Codecov ;
+- Coveralls ;
+- certaines extensions d’éditeur ;
+- des pipelines CI/CD.
 
 ---
 
-## 21. Analyser tout le workspace
+## 24. Analyser toutes les fonctionnalités
+
+```bash
+cargo llvm-cov --all-features
+```
+
+Pour un workspace complet :
 
 ```bash
 cargo llvm-cov --workspace
 ```
 
-Avec toutes les fonctionnalités :
+Pour analyser tout le workspace avec toutes les fonctionnalités :
 
 ```bash
 cargo llvm-cov --workspace --all-features
@@ -479,46 +598,50 @@ cargo llvm-cov --workspace --all-features --html
 
 ---
 
-## 22. Imposer un minimum de couverture
+## 25. Imposer un minimum de couverture
 
 Pour imposer une couverture minimale de `80 %` sur les lignes :
+
+```bash
+cargo llvm-cov --lib --fail-under-lines 80
+```
+
+La commande échoue lorsque la couverture totale des lignes est inférieure à `80 %`.
+
+Pour un workspace complet :
 
 ```bash
 cargo llvm-cov --workspace --all-features --fail-under-lines 80
 ```
 
-La commande retourne une erreur lorsque la couverture totale des lignes est inférieure à `80 %`.
-
-Cette règle est particulièrement utile dans une chaîne CI/CD. `cargo-llvm-cov` prend également en charge des seuils sur les fonctions et les régions.
-
-Exemple avec une couverture minimale de fonctions :
+Pour imposer une couverture minimale sur les fonctions :
 
 ```bash
-cargo llvm-cov --workspace --all-features --fail-under-functions 80
+cargo llvm-cov --lib --fail-under-functions 80
 ```
+
+Ces commandes sont adaptées aux chaînes CI/CD.
 
 ---
 
-## 23. Nettoyer les anciennes données de couverture
+## 26. Nettoyer les données de couverture
 
 ```bash
 cargo llvm-cov clean --workspace
 ```
 
-Cette commande supprime les anciens artefacts pouvant fausser le rapport.
-
-`cargo-llvm-cov` effectue normalement un nettoyage automatique, sauf avec certaines options comme `--no-clean` ou `--no-report`.
+Cette commande supprime les anciennes données et les artefacts de couverture.
 
 ---
 
-# Configuration des commandes
+# Alias Cargo
 
-## 24. Ajouter des alias Cargo
+## 27. Créer le fichier de configuration
 
 Créer le fichier `.cargo/config.toml` :
 
 ```text
-hello-rust/
+rust-starter/
 ├── .cargo/
 │   └── config.toml
 ├── src/
@@ -531,22 +654,21 @@ hello-rust/
 └── rustfmt.toml
 ```
 
-Contenu du fichier `.cargo/config.toml` :
+Contenu de `.cargo/config.toml` :
 
 ```toml
 [alias]
 test-all = "test --all-targets --all-features"
-coverage = "llvm-cov --workspace --all-features"
-coverage-html = "llvm-cov --workspace --all-features --html"
-coverage-open = "llvm-cov --workspace --all-features --open"
-coverage-check = "llvm-cov --workspace --all-features --fail-under-lines 80"
+coverage = "llvm-cov --lib"
+coverage-all = "llvm-cov --workspace --all-features"
+coverage-html = "llvm-cov --lib --html"
+coverage-open = "llvm-cov --lib --open"
+coverage-check = "llvm-cov --lib --fail-under-lines 80"
 ```
-
-La table `[alias]` permet de créer des commandes Cargo personnalisées.
 
 ---
 
-## 25. Utiliser les alias
+## 28. Utiliser les alias
 
 Exécuter tous les tests :
 
@@ -554,10 +676,16 @@ Exécuter tous les tests :
 cargo test-all
 ```
 
-Afficher la couverture :
+Afficher la couverture de la bibliothèque :
 
 ```bash
 cargo coverage
+```
+
+Afficher la couverture complète :
+
+```bash
+cargo coverage-all
 ```
 
 Générer le rapport HTML :
@@ -566,13 +694,13 @@ Générer le rapport HTML :
 cargo coverage-html
 ```
 
-Générer et ouvrir le rapport :
+Générer puis ouvrir le rapport HTML :
 
 ```bash
 cargo coverage-open
 ```
 
-Vérifier le seuil minimal de `80 %` :
+Vérifier le seuil minimal de couverture :
 
 ```bash
 cargo coverage-check
@@ -597,6 +725,14 @@ pub fn division(a: i32, b: i32) -> Option<i32> {
     }
 }
 
+pub fn division_obligatoire(a: i32, b: i32) -> i32 {
+    if b == 0 {
+        panic!("Division par zéro impossible");
+    }
+
+    a / b
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -615,13 +751,21 @@ mod tests {
     fn refuse_la_division_par_zero() {
         assert_eq!(division(10, 0), None);
     }
+
+    #[test]
+    #[should_panic(expected = "Division par zéro impossible")]
+    fn panique_sur_une_division_par_zero() {
+        division_obligatoire(10, 0);
+    }
 }
 ```
+
+---
 
 ## Fichier `src/main.rs`
 
 ```rust
-use hello_rust::{addition, division};
+use rust_starter::{addition, division};
 
 fn main() {
     let resultat = addition(10, 20);
@@ -635,10 +779,12 @@ fn main() {
 }
 ```
 
+---
+
 ## Fichier `tests/calculs.rs`
 
 ```rust
-use hello_rust::{addition, division};
+use rust_starter::{addition, division};
 
 #[test]
 fn execute_plusieurs_calculs() {
@@ -654,43 +800,59 @@ fn gere_une_division_invalide() {
 }
 ```
 
+---
+
 ## Fichier `.cargo/config.toml`
 
 ```toml
 [alias]
 test-all = "test --all-targets --all-features"
-coverage = "llvm-cov --workspace --all-features"
-coverage-html = "llvm-cov --workspace --all-features --html"
-coverage-open = "llvm-cov --workspace --all-features --open"
-coverage-check = "llvm-cov --workspace --all-features --fail-under-lines 80"
+coverage = "llvm-cov --lib"
+coverage-all = "llvm-cov --workspace --all-features"
+coverage-html = "llvm-cov --lib --html"
+coverage-open = "llvm-cov --lib --open"
+coverage-check = "llvm-cov --lib --fail-under-lines 80"
 ```
 
 ---
 
 # Commandes essentielles
 
+## Tests
+
 ```bash
 cargo test
 cargo test additionne_deux_nombres
 cargo test --test calculs
 cargo test -- --nocapture
+cargo test -- --test-threads=1
 cargo test --all-targets --all-features
-
-rustup component add llvm-tools-preview
-cargo install cargo-llvm-cov --locked
-
-cargo llvm-cov
-cargo llvm-cov --html
-cargo llvm-cov --open
-cargo llvm-cov --workspace --all-features
-cargo llvm-cov --workspace --all-features --fail-under-lines 80
 ```
 
-Avec les alias :
+## Installation de la couverture
+
+```bash
+rustup component add llvm-tools-preview
+cargo install cargo-llvm-cov --locked
+```
+
+## Couverture
+
+```bash
+cargo llvm-cov
+cargo llvm-cov --lib
+cargo llvm-cov --html
+cargo llvm-cov --open
+cargo llvm-cov --lib --fail-under-lines 80
+cargo llvm-cov clean --workspace
+```
+
+## Alias
 
 ```bash
 cargo test-all
 cargo coverage
+cargo coverage-all
 cargo coverage-html
 cargo coverage-open
 cargo coverage-check
