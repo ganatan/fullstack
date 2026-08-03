@@ -12,3 +12,4 @@
 - [Codage](./101-codage.md)
 - [Variables](./102-variables.md)
 - [String](./103-string.md)
+- [Number](./104-number.md)

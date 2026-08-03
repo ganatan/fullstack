@@ -360,7 +360,7 @@ fn main() {
 ## 21. Insérer un caractère avec `insert`
 
 La méthode `insert()` ajoute un caractère à une position précise.  
-La position correspond à un indice d’octet valide dans la chaîne UTF-8.
+La position utilisée doit correspondre à un indice d’octet UTF-8 valide.
 
 ```rust
 fn main() {
@@ -377,7 +377,7 @@ fn main() {
 ## 22. Supprimer un caractère avec `remove`
 
 La méthode `remove()` supprime le caractère situé à une position précise.  
-Elle retourne le caractère qui a été retiré.
+Elle retourne le caractère retiré de la chaîne.
 
 ```rust
 fn main() {
@@ -395,7 +395,7 @@ fn main() {
 ## 23. Vider complètement une chaîne avec `clear`
 
 La méthode `clear()` supprime tout le contenu d’une `String`.  
-La variable existe toujours, mais elle devient vide.
+La variable existe toujours, mais sa longueur devient égale à zéro.
 
 ```rust
 fn main() {
@@ -413,7 +413,7 @@ fn main() {
 ## 24. Extraire une partie d’une chaîne avec `get`
 
 La méthode `get()` extrait une partie d’une chaîne selon une plage d’octets.  
-Elle retourne `None` lorsque les indices ne sont pas valides en UTF-8.
+Elle retourne `None` lorsque les indices sont invalides pour la chaîne UTF-8.
 
 ```rust
 fn main() {
@@ -430,7 +430,7 @@ fn main() {
 
 ## 25. Extraire plusieurs caractères Unicode
 
-La méthode `chars()` permet d’extraire des caractères sans manipuler les octets.  
+La méthode `chars()` permet de manipuler les caractères Unicode.  
 La méthode `take()` limite le nombre de caractères récupérés.
 
 ```rust
@@ -444,12 +444,281 @@ fn main() {
 
 ---
 
+## 26. Retirer le dernier caractère avec `pop`
+
+La méthode `pop()` retire le dernier caractère d’une `String`.  
+Elle retourne `Some(char)` ou `None` lorsque la chaîne est vide.
+
+```rust
+fn main() {
+    let mut texte = String::from("Rust!");
+
+    match texte.pop() {
+        Some(caractere) => println!("Caractère retiré : {caractere}"),
+        None => println!("La chaîne est vide"),
+    }
+
+    println!("Résultat : {texte}");
+}
+```
+
+---
+
+## 27. Tronquer une chaîne avec `truncate`
+
+La méthode `truncate()` conserve uniquement les octets situés avant une position.  
+La position doit correspondre à une frontière valide de caractère UTF-8.
+
+```rust
+fn main() {
+    let mut texte = String::from("Bonjour Rust");
+
+    texte.truncate(7);
+
+    println!("{texte}");
+}
+```
+
+---
+
+## 28. Filtrer les caractères avec `retain`
+
+La méthode `retain()` conserve uniquement les caractères respectant une condition.  
+Elle modifie directement la chaîne existante.
+
+```rust
+fn main() {
+    let mut texte = String::from("Bonjour Rust 2026");
+
+    texte.retain(|caractere| !caractere.is_numeric());
+
+    println!("{texte}");
+}
+```
+
+---
+
+## 29. Remplacer uniquement la première occurrence
+
+La méthode `replacen()` permet de limiter le nombre de remplacements.  
+Le dernier argument indique le nombre maximal d’occurrences à remplacer.
+
+```rust
+fn main() {
+    let texte = "Java Java Java";
+    let resultat = texte.replacen("Java", "Rust", 1);
+
+    println!("{resultat}");
+}
+```
+
+---
+
+## 30. Rechercher la position d’un texte avec `find`
+
+La méthode `find()` retourne la position de la première occurrence trouvée.  
+La position retournée correspond à un indice d’octet.
+
+```rust
+fn main() {
+    let texte = "Bonjour Rust";
+
+    match texte.find("Rust") {
+        Some(position) => println!("Position : {position}"),
+        None => println!("Texte introuvable"),
+    }
+}
+```
+
+---
+
+## 31. Rechercher la dernière occurrence avec `rfind`
+
+La méthode `rfind()` recherche depuis la fin de la chaîne.  
+Elle retourne la position de la dernière occurrence trouvée.
+
+```rust
+fn main() {
+    let texte = "Java Rust Java Rust";
+
+    match texte.rfind("Rust") {
+        Some(position) => println!("Dernière position : {position}"),
+        None => println!("Texte introuvable"),
+    }
+}
+```
+
+---
+
+## 32. Découper une chaîne une seule fois avec `split_once`
+
+La méthode `split_once()` découpe la chaîne à la première occurrence du séparateur.  
+Elle retourne un tuple contenant la partie gauche et la partie droite.
+
+```rust
+fn main() {
+    let configuration = "port=8080";
+
+    match configuration.split_once('=') {
+        Some((cle, valeur)) => {
+            println!("Clé : {cle}");
+            println!("Valeur : {valeur}");
+        }
+        None => println!("Format incorrect"),
+    }
+}
+```
+
+---
+
+## 33. Parcourir les lignes avec `lines`
+
+La méthode `lines()` découpe une chaîne selon les retours à la ligne.  
+Elle retourne un itérateur permettant de parcourir chaque ligne.
+
+```rust
+fn main() {
+    let texte = "Première ligne\nDeuxième ligne\nTroisième ligne";
+
+    for ligne in texte.lines() {
+        println!("{ligne}");
+    }
+}
+```
+
+---
+
+## 34. Répéter une chaîne avec `repeat`
+
+La méthode `repeat()` répète une chaîne un nombre précis de fois.  
+Elle retourne une nouvelle valeur de type `String`.
+
+```rust
+fn main() {
+    let texte = "Rust ";
+
+    let resultat = texte.repeat(3);
+
+    println!("{resultat}");
+}
+```
+
+---
+
+## 35. Inverser une chaîne
+
+La méthode `rev()` inverse l’ordre des caractères d’un itérateur.  
+La méthode `collect()` reconstruit ensuite une nouvelle `String`.
+
+```rust
+fn main() {
+    let texte = "Rust";
+    let texte_inverse: String = texte.chars().rev().collect();
+
+    println!("{texte_inverse}");
+}
+```
+
+---
+
+## 36. Compter les occurrences d’un texte
+
+La méthode `matches()` retourne toutes les occurrences correspondant à un motif.  
+La méthode `count()` permet ensuite de compter les résultats.
+
+```rust
+fn main() {
+    let texte = "Rust Java Rust Node Rust";
+
+    let nombre = texte.matches("Rust").count();
+
+    println!("Nombre d'occurrences : {nombre}");
+}
+```
+
+---
+
+## 37. Supprimer un préfixe avec `strip_prefix`
+
+La méthode `strip_prefix()` retire un préfixe uniquement s’il est présent.  
+Elle retourne `Some(&str)` lorsque le préfixe correspond.
+
+```rust
+fn main() {
+    let adresse = "https://www.ganatan.com";
+
+    match adresse.strip_prefix("https://") {
+        Some(resultat) => println!("{resultat}"),
+        None => println!("Préfixe introuvable"),
+    }
+}
+```
+
+---
+
+## 38. Supprimer un suffixe avec `strip_suffix`
+
+La méthode `strip_suffix()` retire une terminaison uniquement si elle est présente.  
+Elle retourne une référence vers la partie restante de la chaîne.
+
+```rust
+fn main() {
+    let fichier = "document.txt";
+
+    match fichier.strip_suffix(".txt") {
+        Some(nom) => println!("{nom}"),
+        None => println!("Extension incorrecte"),
+    }
+}
+```
+
+---
+
+## 39. Comparer sans tenir compte de la casse ASCII
+
+La méthode `eq_ignore_ascii_case()` compare deux chaînes sans tenir compte des majuscules.  
+Cette méthode est limitée aux caractères ASCII.
+
+```rust
+fn main() {
+    let langage = "Rust";
+
+    let resultat = langage.eq_ignore_ascii_case("RUST");
+
+    println!("Chaînes identiques : {resultat}");
+}
+```
+
+---
+
+## 40. Parcourir les octets avec `bytes`
+
+La méthode `bytes()` retourne les octets UTF-8 composant une chaîne.  
+Elle est utile pour comprendre la représentation binaire du texte.
+
+```rust
+fn main() {
+    let texte = "Rust";
+
+    for octet in texte.bytes() {
+        println!("{octet}");
+    }
+}
+```
+
+---
+
 # Points essentiels
 
 - `&str` représente une référence vers une chaîne ;
 - `String` représente une chaîne possédée et modifiable ;
+- une `String` doit être déclarée avec `mut` pour être modifiée ;
 - `len()` retourne un nombre d’octets ;
 - `chars().count()` retourne un nombre de caractères Unicode ;
-- une `String` doit être déclarée avec `mut` pour être modifiée ;
+- `chars()` permet de parcourir les caractères Unicode ;
+- `bytes()` permet de parcourir les octets UTF-8 ;
+- certaines méthodes retournent une nouvelle `String` ;
+- certaines méthodes modifient directement la chaîne existante ;
 - Rust n’autorise pas l’accès direct avec une syntaxe comme `texte[0]` ;
+- les indices utilisés avec `get()`, `insert()`, `remove()` et `truncate()` sont des indices d’octets ;
 - les chaînes Rust utilisent l’encodage UTF-8.
