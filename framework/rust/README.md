@@ -14,3 +14,5 @@
 - [String](./103-string.md)
 - [Number](./104-number.md)
 - [For](./105-for.md)
+- [While](./106-while.md)
+- [Match](./107-match.md)
