@@ -41,7 +41,7 @@ cargo --version
 Créer le projet :
 
 ```bash
-cargo new rust-starter --bin --edition 2024
+cargo new rust-starter
 ```
 
 Entrer dans le projet :
