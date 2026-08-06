@@ -2,6 +2,8 @@
 
 | Framework | Tools | Database | Concepts |  |
 |---|---|---|---|---|
+| [CRUD](./framework/crud-mcp/001-principes.md) |  |  |  |  |
+|  |  |  |  |  |
 | [Spring Boot](./framework/springboot/README.md) | [Quarkus](./framework/quarkus/README.md) | [RUST](./framework/rust/README.md) | [Angular](./framework/angular/README.md) | [Kafka](./framework/kafka/README.md) |
 | [Git](./tools/git/README.md) | [GitLab](./tools/gitlab/README.md) | [postgresql](./database/postgresql/README.md) | [Linux](./tools/linux/README.md) | [Spring](./framework/spring/README.md) |
 | [Java](./framework/java/README.md) | [Eclipse](./tools/eclipse/README.md) | [Maven](./tools/maven/README.md) | [Intellij](./tools/Intellij/README.md) | [Windows](./windows/windows.md) |
