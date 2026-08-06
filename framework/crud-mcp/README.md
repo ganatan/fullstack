@@ -9,6 +9,7 @@
 
 ###  SpringBoot
 - [Initialisation](./springboot/001-initialisation.md)
+- [Root Controller](./springboot/002-root-controller.md)
 
 ###  Quarkus
 - [Initialisation](./quarkus/001-initialisation.md)
