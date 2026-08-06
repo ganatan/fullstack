@@ -13,6 +13,7 @@
 
 ###  Quarkus
 - [Initialisation](./quarkus/001-initialisation.md)
+- [Root Controller](./quarkus/002-root-controller.md)
 
 ###  Rust
 - [Initialisation](./rust/001-initialisation.md)

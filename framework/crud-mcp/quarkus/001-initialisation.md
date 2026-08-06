@@ -32,67 +32,7 @@ Maven
 
 Conserver les autres valeurs proposées par défaut.
 
----
-
-## 📦 Sélection du preset
-
-Sélectionner le preset :
-
-```text
-REST service
-```
-
-Ce preset permet de créer :
-
-- des contrôleurs REST ;
-- des routes HTTP ;
-- des réponses JSON ;
-- des données stockées en dur ;
-- une application sans base de données.
-
-Ne pas sélectionner :
-
-```text
-REST service with database
-```
-
-La base de données sera ajoutée plus tard.
-
----
-
-## 📦 Extension REST
-
-Vérifier que l’extension suivante est sélectionnée :
-
-```text
-REST Jackson
-```
-
-Identifiant Maven :
-
-```text
-io.quarkus:quarkus-rest-jackson
-```
-
-Cette extension permet :
-
-- de créer des routes REST ;
-- de recevoir des payloads JSON ;
-- de retourner des objets Java en JSON ;
-- de sérialiser et désérialiser les données avec Jackson.
-
----
-
-## 🚫 Extensions non nécessaires
-
-Ne pas ajouter pour l’instant :
-
-```text
-Hibernate ORM with Panache
-JDBC Driver - PostgreSQL
-```
-
-Ces extensions seront ajoutées lorsque la base de données et les repositories seront mis en place.
+Aucune extension supplémentaire n’est nécessaire pour cette première étape.
 
 ---
 
@@ -140,7 +80,7 @@ quarkus-starter/
 
 ---
 
-## ▶️ Lancement du projet
+## ▶️ Lancement depuis un terminal
 
 Se placer dans le dossier du projet :
 
@@ -160,21 +100,144 @@ cd quarkus-starter
 ./mvnw quarkus:dev
 ```
 
-L’application est disponible à l’adresse suivante :
+La console affiche le démarrage de l’application Quarkus.
+
+Pour arrêter l’application :
 
 ```text
-http://localhost:8080
+Ctrl + C
 ```
 
 ---
 
-## 🔍 Dev UI
+## ▶️ Lancement depuis IntelliJ IDEA
 
-L’interface de développement Quarkus est disponible à l’adresse suivante :
+### 1. Ouvrir le projet
+
+Dans IntelliJ IDEA, ouvrir le dossier :
 
 ```text
-http://localhost:8080/q/dev-ui
+quarkus-starter
 ```
+
+IntelliJ doit détecter automatiquement le fichier :
+
+```text
+pom.xml
+```
+
+Si Maven n’est pas détecté :
+
+```text
+Clic droit sur pom.xml
+Add as Maven Project
+```
+
+---
+
+### 2. Créer une configuration Maven
+
+Ouvrir :
+
+```text
+Run
+Edit Configurations
+```
+
+Cliquer sur :
+
+```text
++
+Maven
+```
+
+Configurer la nouvelle configuration :
+
+```text
+Name              : Quarkus Dev
+Command line      : quarkus:dev
+Working directory : D:\demo\quarkus-starter
+Profiles          :
+```
+
+Le champ `Profiles` reste vide.
+
+Le dossier de travail doit être le dossier contenant le fichier :
+
+```text
+pom.xml
+```
+
+Il est également possible d’utiliser :
+
+```text
+$ProjectFileDir$
+```
+
+comme `Working directory`.
+
+---
+
+### 3. Enregistrer la configuration
+
+Cliquer sur :
+
+```text
+Apply
+OK
+```
+
+---
+
+### 4. Lancer l’application
+
+Dans la barre supérieure d’IntelliJ, sélectionner :
+
+```text
+Quarkus Dev
+```
+
+Puis cliquer sur :
+
+```text
+Run ▶
+```
+
+Cette configuration exécute l’équivalent de :
+
+```powershell
+.\mvnw.cmd quarkus:dev
+```
+
+---
+
+## 🐞 Lancement en mode Debug
+
+Sélectionner la configuration :
+
+```text
+Quarkus Dev
+```
+
+Puis cliquer sur :
+
+```text
+Debug 🐞
+```
+
+Il est alors possible d’utiliser des points d’arrêt dans IntelliJ.
+
+---
+
+## 🔄 Rechargement automatique
+
+La commande suivante lance Quarkus en mode développement :
+
+```text
+quarkus:dev
+```
+
+Les modifications du code sont automatiquement détectées et recompilées.
 
 ---
 
@@ -206,6 +269,12 @@ target/quarkus-app/
 java -jar target/quarkus-app/quarkus-run.jar
 ```
 
+Le dossier complet suivant doit être conservé :
+
+```text
+target/quarkus-app/
+```
+
 ---
 
 ## ✅ Configuration retenue
@@ -214,9 +283,8 @@ java -jar target/quarkus-app/quarkus-run.jar
 Group      : com.ganatan.starter
 Artifact   : quarkus-starter
 Build Tool : Maven
-Preset     : REST service
-Extension  : REST Jackson
+Extension  : aucune
 Database   : aucune
 ```
 
-La première étape consistera à créer un `RootController` avec des données en dur.
+Cette première étape consiste uniquement à générer, lancer et compiler une application Quarkus simple.
