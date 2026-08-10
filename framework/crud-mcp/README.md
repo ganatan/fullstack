@@ -5,7 +5,7 @@
 - [Erreurs](./basics/002-erreurs.md)
 
 ###  Database
-- [Principes](./database/001-init.md)
+- [Initialisation](./database/001-init.md)
 
 ## Java 25
 - [Installation Java 25](./basics/003-java25-installation.md)
