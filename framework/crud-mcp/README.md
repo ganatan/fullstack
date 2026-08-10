@@ -25,4 +25,5 @@
 - [Crud Controller](./rust/003-crud-controller.md)
 - [DTO](./rust/004-dto.md)
 - [Service](./rust/005-service.md)
+- [Repository](./rust/006-repository.md)
 
