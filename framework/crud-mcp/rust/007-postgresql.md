@@ -1046,18 +1046,58 @@ async fn main() {
             )
             .await
             .expect(
-                "Connexion base impossible",
+                "Connexion à la database impossible",
             );
 
-    let app = Router::new()
-        .merge(
-            root::controller::routes(),
-        )
-        .merge(
-            person::controller::routes(
-                pool,
+    println!(
+        "Connexion à la database réussie"
+    );
+
+    let persons =
+        sqlx::query_as::<
+            _,
+            (
+                i32,
+                String,
+                String,
+                i32,
             ),
+        >(
+            "SELECT * FROM person ORDER BY id",
+        )
+        .fetch_all(
+            &pool,
+        )
+        .await
+        .expect(
+            "Lecture de la table person impossible",
         );
+
+    println!(
+        "Persons trouvées : {}",
+        persons.len()
+    );
+
+    for person in persons {
+        println!(
+            "{} - {} {} - city_id: {}",
+            person.0,
+            person.1,
+            person.2,
+            person.3
+        );
+    }
+
+    let app =
+        Router::new()
+            .merge(
+                root::controller::routes(),
+            )
+            .merge(
+                person::controller::routes(
+                    pool,
+                ),
+            );
 
     let listener =
         TcpListener::bind(
