@@ -30,5 +30,6 @@
 - [Service](./rust/005-service.md)
 - [Repository](./rust/006-repository.md)
 - [PostgreSQL](./rust/007-postgresql.md)
-- [Test Postman](./rust/008-test-postman.md)
+- [Tests](./rust/008-tests.md)
+- [Test Postman](./rust/009-test-postman.md)
 
