@@ -379,7 +379,7 @@ impl PersonRepository {
                     first_name,
                     last_name,
                     city_id
-                FROM persons
+                FROM person
                 ORDER BY id
                 "#,
             )
@@ -414,7 +414,7 @@ impl PersonRepository {
                     first_name,
                     last_name,
                     city_id
-                FROM persons
+                FROM person
                 WHERE id = $1
                 "#,
             )
@@ -444,7 +444,7 @@ impl PersonRepository {
                 PersonRow,
             >(
                 r#"
-                INSERT INTO persons (
+                INSERT INTO person (
                     first_name,
                     last_name,
                     city_id
@@ -490,7 +490,7 @@ impl PersonRepository {
                 PersonRow,
             >(
                 r#"
-                UPDATE persons
+                UPDATE person
                 SET
                     first_name = $1,
                     last_name = $2,
@@ -527,7 +527,7 @@ impl PersonRepository {
         let result =
             sqlx::query(
                 r#"
-                DELETE FROM persons
+                DELETE FROM person
                 WHERE id = $1
                 "#,
             )
