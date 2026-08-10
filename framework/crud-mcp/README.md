@@ -24,4 +24,5 @@
 - [Root Controller](./rust/002-root-controller.md)
 - [Crud Controller](./rust/003-crud-controller.md)
 - [DTO](./rust/004-dto.md)
+- [Service](./rust/005-service.md)
 
