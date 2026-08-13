@@ -1,72 +1,61 @@
-# Benchmark Rust vs Python avec JMeter
+# Benchmark Rust Release vs Rust Debug vs Python avec JMeter
 
-Comparaison des performances de deux backends utilisant la même API REST et la même base de données PostgreSQL.
+Comparaison des performances de trois backends utilisant le même endpoint REST et la même base de données PostgreSQL.
 
 ---
 
 ## Conditions du benchmark
 
-Le même scénario JMeter est utilisé pour les deux backends.
+Les trois backends sont soumis exactement au même scénario.
 
-| Paramètre               |                          Valeur |
-| ----------------------- | ------------------------------: |
-| Endpoint                |                  `GET /persons` |
-| URL                     | `http://localhost:3000/persons` |
-| Utilisateurs simultanés |                         **100** |
-| Ramp-up                 |                   **0 seconde** |
-| Loop Count              |                    **Infinite** |
-| Durée                   |                 **60 secondes** |
-| Timer                   |                       **Aucun** |
-| KeepAlive               |                      **Activé** |
-| Base de données         |                  **PostgreSQL** |
-| Action en cas d'erreur  |                      `Continue` |
+| Paramètre           |         Valeur | Explication simple                           |
+| ------------------- | -------------: | -------------------------------------------- |
+| **Threads / Users** |            100 | 100 utilisateurs virtuels sollicitent l'API  |
+| **Ramp-up**         |            0 s | Les 100 utilisateurs démarrent immédiatement |
+| **Loop Count**      |       Infinite | Les requêtes sont répétées sans limite       |
+| **Duration**        |           60 s | Le test dure une minute                      |
+| **Timer**           |          Aucun | Aucune pause entre deux requêtes             |
+| **KeepAlive**       |         Activé | Les connexions HTTP sont réutilisées         |
+| **Endpoint**        | `GET /persons` | Même opération pour les trois tests          |
+| **Database**        |     PostgreSQL | Même base de données                         |
 
-Le principe du test est simple :
+En pratique :
 
 ```text
 100 utilisateurs
-        ↓
-GET /persons
-        ↓
-nouvelle requête immédiatement
-        ↓
-GET /persons
-        ↓
-...
-        ↓
+      ↓
+GET /persons en continu
+      ↓
 pendant 60 secondes
 ```
-
-Chaque utilisateur exécute donc continuellement la requête pendant toute la durée du benchmark.
-
-L'objectif est de soumettre les deux backends à exactement la même charge et de mesurer leur capacité à répondre.
 
 ---
 
 ## Backends testés
 
-### Rust
+### Rust Release
 
 ```text
 Axum
 Tokio
 SQLx
 PostgreSQL
+cargo build --release
 ```
 
-Architecture :
+Version Rust compilée avec les optimisations du profil `release`.
+
+### Rust Debug
 
 ```text
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
+Axum
+Tokio
+SQLx
 PostgreSQL
+cargo run
 ```
 
----
+Version de développement, utilisée principalement pendant le codage et le débogage.
 
 ### Python
 
@@ -77,184 +66,104 @@ asyncpg
 PostgreSQL
 ```
 
-Architecture :
-
-```text
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
-PostgreSQL
-```
+FastAPI fournit l'API HTTP, Uvicorn exécute le serveur et `asyncpg` assure les accès PostgreSQL asynchrones.
 
 ---
 
 ## Résultats
 
-| Mesure            |            Rust |    Python |
-| ----------------- | --------------: | --------: |
-| Requêtes traitées |     **374 167** |    25 535 |
-| Débit             | **6 233 req/s** | 424 req/s |
-| Temps moyen       |       **13 ms** |    196 ms |
-| Temps minimum     |        **0 ms** |      1 ms |
-| Temps maximum     |      **141 ms** |    683 ms |
-| Écart-type        |     **4,63 ms** |  78,69 ms |
-| Erreurs           |         **0 %** |   **0 %** |
+| Mesure         |       Rust Release |    Rust Debug |      Python | Explication                       |
+| -------------- | -----------------: | ------------: | ----------: | --------------------------------- |
+| **Samples**    |        **754 772** |       351 280 |      24 464 | Requêtes traitées pendant le test |
+| **Throughput** | **12 575,8 req/s** | 5 852,1 req/s | 406,7 req/s | Requêtes traitées par seconde     |
+| **Average**    |           **6 ms** |         14 ms |      205 ms | Temps moyen de réponse            |
+| **Min**        |               0 ms |          0 ms |        1 ms | Réponse la plus rapide            |
+| **Max**        |          **48 ms** |        134 ms |      552 ms | Réponse la plus lente             |
+| **Std. Dev.**  |        **2,75 ms** |       5,07 ms |    74,26 ms | Variation des temps de réponse    |
+| **Error %**    |            **0 %** |       **0 %** |     **0 %** | Requêtes ayant échoué             |
 
----
-
-## Lecture des résultats
-
-### Rust
-
-```text
-374 167 requêtes traitées
-
-6 233 requêtes / seconde
-
-13 ms de temps de réponse moyen
-
-141 ms de temps de réponse maximum
-
-0 % d'erreur
-```
-
-### Python
-
-```text
-25 535 requêtes traitées
-
-424 requêtes / seconde
-
-196 ms de temps de réponse moyen
-
-683 ms de temps de réponse maximum
-
-0 % d'erreur
-```
+Les `Samples` et les `Throughput` sont cohérents avec une durée d'environ 60 secondes pour les trois tests.
 
 ---
 
 ## Comparaison
 
-### Débit
-
-Rust :
+### Rust Release vs Rust Debug
 
 ```text
-6 233 req/s
+Rust Release : 12 575,8 req/s
+Rust Debug   :  5 852,1 req/s
 ```
 
-Python :
+**Rust Release traite environ 2,15 fois plus de requêtes par seconde.**
+
+Le temps moyen passe également de :
 
 ```text
-424 req/s
+14 ms → 6 ms
 ```
 
-Rust traite donc environ :
-
-```text
-14,7 fois plus de requêtes par seconde
-```
+La compilation `release` apporte donc ici un gain très net.
 
 ---
 
-### Temps de réponse moyen
-
-Rust :
+### Rust Release vs Python
 
 ```text
-13 ms
+Rust Release : 12 575,8 req/s
+Python       :    406,7 req/s
 ```
 
-Python :
+**Rust Release traite environ 31 fois plus de requêtes par seconde.**
+
+Pour le temps moyen :
 
 ```text
-196 ms
+Rust Release :   6 ms
+Python       : 205 ms
 ```
 
-Le temps de réponse moyen de Python est environ :
+Python répond ici environ **34 fois plus lentement en moyenne**.
 
-```text
-15 fois supérieur
-```
-
----
-
-### Stabilité
-
-Écart-type Rust :
-
-```text
-4,63 ms
-```
-
-Écart-type Python :
-
-```text
-78,69 ms
-```
-
-Rust produit donc des temps de réponse beaucoup plus réguliers pendant le benchmark.
-
----
-
-### Erreurs
-
-Rust :
-
-```text
-0 %
-```
-
-Python :
-
-```text
-0 %
-```
-
-Les deux backends ont correctement supporté la charge sans générer d'erreur HTTP.
-
----
-
-## Conclusion
-
-Les deux backends terminent le benchmark avec :
+Les trois tests restent néanmoins à :
 
 ```text
 0 % d'erreur
 ```
 
-La différence apparaît principalement au niveau des performances.
+---
 
-Rust traite environ :
-
-```text
-15 fois plus de requêtes par seconde
-```
-
-et répond environ :
+## Conclusion
 
 ```text
-15 fois plus rapidement en moyenne
-```
+Rust Release
+12 575,8 req/s
+6 ms
+0 % erreur
 
-que Python dans ce scénario.
-
-### Résultat global
-
-```text
-Rust
-6 233 req/s
-13 ms
+Rust Debug
+5 852,1 req/s
+14 ms
+0 % erreur
 
 Python
-424 req/s
-196 ms
+406,7 req/s
+205 ms
+0 % erreur
 ```
 
-**Sur ce benchmark précis, le backend Rust est environ 15 fois plus performant que le backend Python.**
+### Impact du mode Release
 
-Ce résultat concerne uniquement les deux implémentations testées, leur configuration actuelle et ce scénario JMeter précis.
+**Rust Release est environ 2,15 fois plus performant en débit que Rust lancé avec `cargo run`.**
+
+### Comparaison finale
+
+**Sur ce benchmark précis, Rust Release atteint environ 31 fois le débit du backend Python.**
+
+Le résultat concerne uniquement :
+
+* ces implémentations ;
+* leurs configurations actuelles ;
+* ce scénario JMeter ;
+* cette machine ;
+* cette base PostgreSQL.
