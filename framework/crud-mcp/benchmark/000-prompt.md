@@ -1,191 +1,517 @@
-Analyse les trois captures JMeter suivantes.
+# Benchmark Rust vs Python avec JMeter
 
-* Image 1 : backend Rust compilé en `release`
-* Image 2 : backend Rust lancé avec `cargo run`
-* Image 3 : backend Python
-* Même endpoint : `GET /persons`
-* Même base PostgreSQL
-* Même configuration JMeter
+Apache JMeter permet de mesurer les performances d'une API HTTP sous charge.
 
-Conditions du benchmark :
+Endpoint testé :
 
 ```text
-Threads / Users : 100
-Ramp-up : 0 seconde
-Loop Count : Infinite
-Duration : 60 secondes
-Timer : aucun
-KeepAlive : activé
-Action en cas d'erreur : Continue
+GET http://localhost:3000/persons
 ```
 
-Backends :
+L'objectif est de comparer deux backends avec exactement le même scénario :
 
 ```text
-Rust Release
-Axum
-Tokio
-SQLx
-PostgreSQL
-cargo build --release
-```
-
-```text
-Rust Debug
-Axum
-Tokio
-SQLx
-PostgreSQL
-cargo run
-```
-
-```text
+Rust
 Python
-FastAPI
-Uvicorn
-asyncpg
-PostgreSQL
 ```
 
-Je veux une analyse courte, claire et accessible à un lecteur non expert.
+---
 
-## Conditions du benchmark
+## 1. Télécharger JMeter
 
-Présente un tableau :
+Télécharger Apache JMeter :
 
 ```text
-Paramètre | Valeur | Explication simple
+https://jmeter.apache.org/download_jmeter.cgi
 ```
 
-Explique brièvement :
+Sous Windows, télécharger l'archive binaire ZIP puis la décompresser.
 
-* Threads / Users
-* Ramp-up
-* Loop Count
-* Duration
-* Timer
-* KeepAlive
-
-## Backends testés
-
-Présente rapidement :
-
-### Rust Release
+Exemple :
 
 ```text
-Axum
-Tokio
-SQLx
-PostgreSQL
-cargo build --release
+C:\tools\apache-jmeter-5.6.3
 ```
 
-Précise que cette version est compilée avec les optimisations Rust.
+---
 
-### Rust Debug
+## 2. Vérifier Java
 
-```text
-Axum
-Tokio
-SQLx
-PostgreSQL
-cargo run
+JMeter nécessite Java.
+
+```bash
+java -version
 ```
 
-Précise qu'il s'agit du profil de développement.
+---
 
-### Python
+## 3. Lancer JMeter
 
-```text
-FastAPI
-Uvicorn
-asyncpg
-PostgreSQL
+Sous Windows :
+
+```powershell
+cd C:\tools\apache-jmeter-5.6.3
 ```
 
-Ajoute une phrase simple sur chaque technologie.
+Puis :
 
-## Résultats
-
-Lis précisément les trois captures et crée un tableau :
-
-```text
-Mesure | Rust Release | Rust Debug | Python | Explication
+```powershell
+.\bin\jmeter.bat
 ```
 
-Inclure :
+---
 
-* Samples
-* Throughput
-* Average
-* Min
-* Max
-* Std. Dev.
-* Error %
+## 4. Vérifier l'API
 
-Explications simples :
+Avant le benchmark, vérifier :
 
 ```text
-Samples : nombre total de requêtes
-Throughput : requêtes traitées par seconde
-Average : temps moyen de réponse
-Max : réponse la plus lente
-Std. Dev. : régularité des temps de réponse
-Error % : pourcentage d'erreurs
+http://localhost:3000/persons
 ```
 
-## Comparaison
+La réponse doit être retournée correctement.
 
-Compare principalement :
+---
 
-1. Rust Release vs Rust Debug
-2. Rust Release vs Python
+## 5. Créer le Thread Group
 
-Calcule uniquement les écarts utiles :
+Dans JMeter :
 
 ```text
-Rust Release traite X fois plus de requêtes par seconde que Rust Debug.
-Rust Release traite X fois plus de requêtes par seconde que Python.
-Python répond X fois plus lentement en moyenne que Rust Release.
+Test Plan
+    clic droit
+        Add
+            Threads (Users)
+                Thread Group
 ```
 
-Signale clairement si un résultat paraît incohérent ou inhabituel.
-
-## Conclusion
-
-Termine par une synthèse très lisible :
+Renommer :
 
 ```text
-Rust Release
-X req/s
-X ms
-X % erreur
+Backend Benchmark
+```
 
-Rust Debug
-X req/s
-X ms
-X % erreur
+---
 
+## 6. Configurer le benchmark
+
+Configurer :
+
+```text
+Number of Threads (users) : 100
+Ramp-up period (seconds)   : 20
+Loop Count                 : Infinite
+```
+
+Cocher :
+
+```text
+Same user on each iteration
+Specify Thread lifetime
+```
+
+Configurer :
+
+```text
+Duration (seconds)      : 60
+Startup delay (seconds) : 0
+```
+
+Configuration finale :
+
+```text
+Users         : 100
+Ramp-up       : 20 secondes
+Loop Count    : Infinite
+Duration      : 60 secondes
+Startup delay : 0
+```
+
+Le benchmark fonctionne ainsi :
+
+```text
+0 → 20 secondes
+montée progressive jusqu'à 100 utilisateurs
+
+20 → 60 secondes
+100 utilisateurs sous charge
+
+Charge maximale stable :
+40 secondes
+```
+
+---
+
+## 7. Ajouter la requête HTTP
+
+Clic droit sur :
+
+```text
+Backend Benchmark
+```
+
+Puis :
+
+```text
+Add
+    Sampler
+        HTTP Request
+```
+
+Renommer :
+
+```text
+GET Persons
+```
+
+Configurer :
+
+```text
+Protocol          : http
+Server Name or IP : localhost
+Port Number       : 3000
+Method            : GET
+Path              : /persons
+```
+
+Cela correspond à :
+
+```text
+GET http://localhost:3000/persons
+```
+
+---
+
+## 8. Activer KeepAlive
+
+Dans la requête HTTP, laisser coché :
+
+```text
+Use KeepAlive
+```
+
+---
+
+## 9. Ne pas ajouter de Timer
+
+Aucun Timer ne doit être ajouté.
+
+```text
+Constant Timer
+Uniform Random Timer
+Gaussian Random Timer
+Constant Throughput Timer
+```
+
+Chaque utilisateur envoie une nouvelle requête dès que la précédente est terminée.
+
+```text
+GET /persons
+    ↓
+réponse
+    ↓
+GET /persons
+    ↓
+réponse
+    ↓
+...
+```
+
+---
+
+## 10. Ajouter Summary Report
+
+Clic droit sur :
+
+```text
+Backend Benchmark
+```
+
+Puis :
+
+```text
+Add
+    Listener
+        Summary Report
+```
+
+Structure :
+
+```text
+Test Plan
+└── Backend Benchmark
+    ├── GET Persons
+    └── Summary Report
+```
+
+---
+
+## 11. Enregistrer les résultats
+
+Dans `Summary Report`, renseigner :
+
+```text
+Filename
+```
+
+avec :
+
+```text
+benchmarks\Backend Benchmark.jtl
+```
+
+Le fichier utilisé sera donc toujours :
+
+```text
+benchmarks\Backend Benchmark.jtl
+```
+
+---
+
+## 12. Écraser automatiquement l'ancien résultat
+
+Modifier :
+
+```text
+apache-jmeter-5.6.3\bin\user.properties
+```
+
+Ajouter :
+
+```properties
+resultcollector.action_if_file_exists=DELETE
+```
+
+Redémarrer ensuite JMeter.
+
+À chaque benchmark :
+
+```text
+ancien Backend Benchmark.jtl
+        ↓
+suppression
+        ↓
+nouveau Backend Benchmark.jtl
+```
+
+---
+
+## 13. Warm-up
+
+Avant les mesures officielles, effectuer un test de chauffe d'environ :
+
+```text
+30 secondes
+```
+
+Les résultats du warm-up ne sont pas conservés.
+
+Le but est simplement de démarrer :
+
+```text
+backend
+pool PostgreSQL
+connexions HTTP
+KeepAlive
+```
+
+---
+
+## 14. Nombre de benchmarks
+
+Pour chaque backend :
+
+```text
+Warm-up : 30 secondes
+
+Run 1 : 60 secondes
+Run 2 : 60 secondes
+Run 3 : 60 secondes
+```
+
+Utiliser ensuite la valeur médiane des trois runs pour la comparaison.
+
+---
+
+## 15. Lancement depuis l'interface graphique
+
+Le bouton vert permet de vérifier le scénario :
+
+```text
+Run
+    Start
+```
+
+Le `Summary Report` affiche directement les résultats.
+
+---
+
+## 16. Benchmark réel en CLI
+
+Pour les mesures officielles, utiliser JMeter en ligne de commande.
+
+Depuis le répertoire JMeter :
+
+```powershell
+.\bin\jmeter.bat -n -t "Backend Benchmark.jmx" -l "benchmarks\Backend Benchmark.jtl"
+```
+
+Si le fichier `.jmx` se trouve lui aussi dans `benchmarks` :
+
+```powershell
+.\bin\jmeter.bat -n -t "benchmarks\Backend Benchmark.jmx" -l "benchmarks\Backend Benchmark.jtl"
+```
+
+Paramètres :
+
+```text
+-n
+```
+
+Mode non graphique.
+
+```text
+-t
+```
+
+Fichier contenant le scénario JMeter.
+
+```text
+-l
+```
+
+Fichier contenant les résultats.
+
+---
+
+## 17. Générer directement un rapport HTML
+
+Supprimer éventuellement l'ancien rapport :
+
+```powershell
+Remove-Item "benchmarks\report" -Recurse -Force -ErrorAction SilentlyContinue
+```
+
+Puis lancer :
+
+```powershell
+.\bin\jmeter.bat -n -t "benchmarks\Backend Benchmark.jmx" -l "benchmarks\Backend Benchmark.jtl" -e -o "benchmarks\report"
+```
+
+Le rapport est généré dans :
+
+```text
+benchmarks\report
+```
+
+Ouvrir :
+
+```text
+benchmarks\report\index.html
+```
+
+---
+
+## 18. Résultats importants
+
+Pour chaque backend, relever :
+
+```text
+# Samples
+Average
+Min
+Max
+Std. Dev.
+Error %
+Throughput
+```
+
+### Samples
+
+Nombre total de requêtes exécutées.
+
+```text
+plus élevé = meilleur
+```
+
+### Average
+
+Temps moyen de réponse.
+
+```text
+plus bas = meilleur
+```
+
+### Max
+
+Temps de réponse maximum.
+
+```text
+plus bas = meilleur
+```
+
+### Error %
+
+Pourcentage d'erreurs.
+
+Objectif :
+
+```text
+0 %
+```
+
+### Throughput
+
+Nombre de requêtes traitées par seconde.
+
+```text
+plus élevé = meilleur
+```
+
+---
+
+## 19. Configuration finale
+
+```text
+Endpoint      : GET /persons
+Host          : localhost
+Port          : 3000
+
+Users         : 100
+Ramp-up       : 20 secondes
+Loop Count    : Infinite
+Duration      : 60 secondes
+Full load     : 40 secondes
+Startup delay : 0
+
+KeepAlive     : activé
+Timers        : aucun
+```
+
+---
+
+## 20. Protocole de comparaison
+
+Chaque backend doit utiliser exactement :
+
+```text
+même machine
+même PostgreSQL
+mêmes données
+même endpoint
+même fichier JMeter
+100 utilisateurs
+20 secondes de ramp-up
+40 secondes à pleine charge
+3 runs
+```
+
+Comparaison finale :
+
+```text
+Backend    Samples    Throughput    Average    Min    Max    Error %
+Rust
 Python
-X req/s
-X ms
-X % erreur
 ```
 
-Puis une conclusion courte :
-
-```text
-Sur ce benchmark précis, Rust Release est environ X fois plus performant en débit que Python.
-```
-
-Ne généralise pas à Rust ou Python dans l'absolu.
-
-La conclusion concerne uniquement :
-
-* ces implémentations ;
-* leur configuration actuelle ;
-* ce scénario JMeter ;
-* cette machine ;
-* cette base PostgreSQL.
-
-Reste concis : peu de texte, tableaux lisibles, chiffres faciles à comparer.
+Le benchmark mesure ainsi les performances des backends Rust et Python dans des conditions strictement identiques.

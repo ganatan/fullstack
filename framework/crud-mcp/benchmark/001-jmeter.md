@@ -1,4 +1,4 @@
-# Benchmark backend avec JMeter
+# Benchmark Rust vs Python avec JMeter
 
 Apache JMeter permet de mesurer les performances d'une API HTTP sous charge.
 
@@ -8,13 +8,11 @@ Endpoint testé :
 GET http://localhost:3000/persons
 ```
 
-L'objectif est de comparer plusieurs backends avec exactement le même scénario :
+L'objectif est de comparer deux backends avec exactement le même scénario :
 
 ```text
 Rust
 Python
-Java
-Node.js
 ```
 
 ---
@@ -514,8 +512,6 @@ Comparaison finale :
 Backend    Samples    Throughput    Average    Min    Max    Error %
 Rust
 Python
-Java
-Node.js
 ```
 
-Le benchmark mesure ainsi les performances des différents backends dans des conditions strictement identiques.
+Le benchmark mesure ainsi les performances des backends Rust et Python dans des conditions strictement identiques.
