@@ -1,12 +1,26 @@
-# Installation et benchmark avec JMeter
+# Benchmark de pression avec JMeter
 
-Apache JMeter permet de tester les performances d'une API HTTP.
+Apache JMeter permet d'appliquer une charge importante sur une API HTTP afin de mesurer ses performances.
 
-Dans cet exemple, nous allons tester :
+Le benchmark utilisé ici doit exercer une **pression maximale pendant 30 secondes** sur :
 
 ```text
 GET http://localhost:3000/persons
 ```
+
+Configuration retenue :
+
+```text
+100 utilisateurs simultanés
+30 secondes
+aucune pause
+requêtes exécutées en boucle
+démarrage immédiat des 100 utilisateurs
+```
+
+Le nombre total de requêtes n'est pas fixé.
+
+L'objectif est de mesurer combien de requêtes le backend est capable de traiter sous cette pression.
 
 ---
 
@@ -14,7 +28,7 @@ GET http://localhost:3000/persons
 
 JMeter nécessite Java.
 
-Vérifier l'installation :
+Vérifier :
 
 ```bash
 java -version
@@ -24,19 +38,21 @@ java -version
 
 ## 2. Télécharger JMeter
 
-Télécharger Apache JMeter depuis :
+Télécharger Apache JMeter :
 
 ```text
 https://jmeter.apache.org/download_jmeter.cgi
 ```
 
-Sous Windows, télécharger l'archive binaire :
+Sous Windows, télécharger l'archive ZIP binaire.
+
+Exemple :
 
 ```text
 apache-jmeter-5.6.3.zip
 ```
 
-Décompresser l'archive, par exemple dans :
+Décompresser par exemple dans :
 
 ```text
 C:\tools\apache-jmeter-5.6.3
@@ -46,45 +62,39 @@ C:\tools\apache-jmeter-5.6.3
 
 ## 3. Lancer JMeter
 
-Ouvrir un terminal dans le répertoire JMeter :
-
 ```powershell
 cd C:\tools\apache-jmeter-5.6.3
 ```
 
-Lancer :
+Puis :
 
 ```powershell
 .\bin\jmeter.bat
 ```
 
-L'interface graphique JMeter s'ouvre.
+L'interface graphique sert uniquement à préparer le scénario.
+
+Pour le véritable benchmark, le test sera exécuté en ligne de commande afin de réduire la consommation de ressources de JMeter. Apache recommande le mode CLI et déconseille les listeners lourds comme `View Results Tree` pendant les tests de charge.
 
 ---
 
 ## 4. Vérifier l'API
 
-Avant de créer le benchmark, démarrer le backend.
+Démarrer le backend.
 
-Vérifier dans le navigateur :
+Vérifier :
 
 ```text
 http://localhost:3000/persons
 ```
 
-La requête doit retourner les personnes au format JSON.
+La réponse doit être correcte avant de commencer le benchmark.
 
 ---
 
-## 5. Créer le Test Plan
+## 5. Créer le Thread Group
 
-Au démarrage, JMeter contient :
-
-```text
-Test Plan
-```
-
-Ajouter un groupe d'utilisateurs :
+Dans JMeter :
 
 ```text
 Test Plan
@@ -94,7 +104,7 @@ Test Plan
                 Thread Group
 ```
 
-Renommer le groupe :
+Renommer :
 
 ```text
 Persons Benchmark
@@ -102,29 +112,101 @@ Persons Benchmark
 
 ---
 
-## 6. Configurer le Thread Group
+## 6. Configurer la pression
+
+Configurer le `Thread Group` ainsi :
+
+```text
+Number of Threads (users) : 100
+Ramp-up period (seconds)   : 0
+Loop Count                 : Infinite
+```
+
+Le `Thread Group` représente les utilisateurs concurrents. `Loop Count = Infinite` permet à chaque thread de recommencer continuellement le scénario jusqu'à la fin de sa durée de vie.
+
+Le point important pour ce benchmark est :
+
+```text
+Ramp-up = 0
+```
+
+Cela provoque le démarrage immédiat des utilisateurs, au lieu de les répartir progressivement dans le temps. JMeter indique qu'un ramp-up à `0` ou très faible provoque justement un pic de charge au démarrage.
+
+---
+
+## 7. Configurer exactement 30 secondes
+
+Dans le `Thread Group`, cocher :
+
+```text
+Specify Thread lifetime
+```
 
 Configurer :
 
 ```text
-Number of Threads (users) : 10
-Ramp-up period (seconds)   : 1
-Loop Count                 : 100
+Duration (seconds)      : 30
+Startup delay (seconds) : 0
 ```
 
-Cela produit :
+La durée limite l'activité du `Thread Group` à la période configurée.
+
+Configuration complète :
 
 ```text
-10 utilisateurs
-×
-100 requêtes
-=
-1 000 requêtes
+Threads       : 100
+Ramp-up       : 0
+Loop Count    : Infinite
+Duration      : 30
+Startup delay : 0
 ```
 
 ---
 
-## 7. Ajouter la requête HTTP
+## 8. Principe du benchmark
+
+Le fonctionnement recherché est :
+
+```text
+t = 0 s
+    ↓
+100 utilisateurs démarrent immédiatement
+    ↓
+GET /persons
+GET /persons
+GET /persons
+GET /persons
+GET /persons
+...
+    ↓
+aucun Timer
+aucune pause
+aucun délai volontaire
+    ↓
+30 secondes
+    ↓
+arrêt
+```
+
+Chaque utilisateur envoie une nouvelle requête dès que la précédente est terminée.
+
+Cela produit un benchmark de type :
+
+```text
+closed workload
+```
+
+avec :
+
+```text
+100 requêtes maximum simultanément en cours
+```
+
+et une pression continue dépendant directement de la vitesse de réponse du backend.
+
+---
+
+## 9. Ajouter la requête HTTP
 
 Clic droit sur :
 
@@ -140,63 +222,51 @@ Add
         HTTP Request
 ```
 
-Renommer :
+Nom :
 
 ```text
 GET Persons
 ```
 
----
-
-## 8. Configurer la requête
-
 Configurer :
 
 ```text
-Protocol            : http
-Server Name or IP   : localhost
-Port Number         : 3000
-Method              : GET
-Path                : /persons
+Protocol          : http
+Server Name or IP : localhost
+Port Number       : 3000
+Method            : GET
+Path              : /persons
 ```
 
-Configuration complète :
+Ce sampler appelle :
 
 ```text
-http://localhost:3000/persons
-```
-
-Ne pas mettre l'URL complète dans `Path`.
-
-Le champ `Path` doit uniquement contenir :
-
-```text
-/persons
+GET http://localhost:3000/persons
 ```
 
 ---
 
-## 9. Ajouter un Summary Report
+## 10. Ne pas ajouter de Timer
 
-Clic droit sur :
-
-```text
-Persons Benchmark
-```
-
-Puis :
+Pour ce benchmark de pression, ne pas ajouter :
 
 ```text
-Add
-    Listener
-        Summary Report
+Constant Timer
+Uniform Random Timer
+Gaussian Random Timer
+Constant Throughput Timer
+Precise Throughput Timer
 ```
+
+Le but n'est pas de limiter volontairement le débit.
+
+Le backend doit recevoir une nouvelle requête dès qu'un thread est disponible.
 
 ---
 
-## 10. Ajouter View Results Tree
+## 11. Vérification préalable
 
-Pour vérifier les réponses pendant la préparation du test :
+Pendant la création du scénario, ajouter temporairement :
 
 ```text
 Add
@@ -204,63 +274,7 @@ Add
         View Results Tree
 ```
 
----
-
-## 11. Structure finale
-
-```text
-Test Plan
-└── Persons Benchmark
-    ├── GET Persons
-    ├── View Results Tree
-    └── Summary Report
-```
-
----
-
-## 12. Sauvegarder le test
-
-Menu :
-
-```text
-File
-    Save Test Plan As
-```
-
-Nom du fichier :
-
-```text
-persons-benchmark.jmx
-```
-
----
-
-## 13. Lancer le test
-
-Cliquer sur :
-
-```text
-Run
-    Start
-```
-
-ou utiliser :
-
-```text
-Ctrl + R
-```
-
----
-
-## 14. Vérifier les réponses
-
-Dans :
-
-```text
-View Results Tree
-```
-
-les requêtes réussies apparaissent en vert.
+Lancer quelques secondes.
 
 Vérifier :
 
@@ -268,93 +282,74 @@ Vérifier :
 Response code: 200
 ```
 
-La réponse doit contenir les données retournées par :
+Une fois le scénario validé :
 
 ```text
-GET /persons
+désactiver ou supprimer View Results Tree
+```
+
+Apache recommande explicitement de ne pas utiliser `View Results Tree` ou `View Results in Table` pendant un véritable test de charge.
+
+---
+
+## 12. Structure finale
+
+Pour le benchmark réel :
+
+```text
+Test Plan
+└── Persons Benchmark
+    └── GET Persons
+```
+
+Aucun listener graphique n'est nécessaire.
+
+---
+
+## 13. Sauvegarder
+
+```text
+File
+    Save Test Plan As
+```
+
+Nom :
+
+```text
+persons-benchmark.jmx
 ```
 
 ---
 
-## 15. Lire les résultats
+## 14. Exécuter le véritable benchmark
 
-Dans :
+Fermer JMeter graphique.
 
-```text
-Summary Report
-```
-
-les principales valeurs sont :
-
-```text
-# Samples
-Average
-Min
-Max
-Std. Dev.
-Error %
-Throughput
-```
-
-Pour comparer plusieurs backends, les valeurs les plus intéressantes sont :
-
-```text
-Average
-Min
-Max
-Error %
-Throughput
-```
-
----
-
-## 16. Benchmark en ligne de commande
-
-L'interface graphique sert principalement à créer et vérifier le test.
-
-Pour effectuer le benchmark réel, utiliser le mode ligne de commande.
-
-Fermer JMeter graphique puis lancer :
+Supprimer les anciens résultats :
 
 ```powershell
-.\bin\jmeter.bat -n -t persons-benchmark.jmx -l results.jtl
+Remove-Item results.jtl -ErrorAction SilentlyContinue
 ```
 
-Paramètres :
+Supprimer l'ancien rapport :
 
-```text
--n
+```powershell
+Remove-Item report -Recurse -Force -ErrorAction SilentlyContinue
 ```
 
-Mode non graphique.
-
-```text
--t persons-benchmark.jmx
-```
-
-Fichier de test.
-
-```text
--l results.jtl
-```
-
-Fichier contenant les résultats.
-
----
-
-## 17. Générer un rapport HTML
+Puis exécuter :
 
 ```powershell
 .\bin\jmeter.bat -n -t persons-benchmark.jmx -l results.jtl -e -o report
 ```
 
-Le rapport est généré dans :
+Le mode CLI réduit l'impact de JMeter lui-même sur le benchmark.
 
-```text
-report/
-```
+---
 
-Ouvrir :
+## 15. Ouvrir le rapport
+
+Après les 30 secondes :
 
 ```text
 report/index.html
@@ -362,19 +357,125 @@ report/index.html
 
 ---
 
-## Configuration du benchmark
+## 16. Mesures principales
+
+Pour comparer les backends, relever :
 
 ```text
-Endpoint     : GET /persons
-Host         : localhost
-Port         : 3000
-Threads      : 10
-Ramp-up      : 1 seconde
-Loop Count   : 100
-Total        : 1 000 requêtes
+Samples
+Throughput
+Average
+Median
+90th percentile
+95th percentile
+99th percentile
+Max
+Error %
 ```
 
-Cette configuration doit être conservée à l'identique pour comparer plusieurs backends.
+### Samples
+
+Nombre total de requêtes exécutées pendant les 30 secondes.
+
+```text
+plus élevé = meilleur
+```
+
+### Throughput
+
+Débit obtenu par le backend.
+
+Exemple :
+
+```text
+12 000 requests/sec
+```
+
+```text
+plus élevé = meilleur
+```
+
+### Average
+
+Temps moyen de réponse.
+
+```text
+plus bas = meilleur
+```
+
+### P95
+
+Temps sous lequel 95 % des requêtes ont répondu.
+
+```text
+plus bas = meilleur
+```
+
+### P99
+
+Temps sous lequel 99 % des requêtes ont répondu.
+
+```text
+plus bas = meilleur
+```
+
+### Error %
+
+Pourcentage d'erreurs.
+
+Objectif :
+
+```text
+0 %
+```
+
+---
+
+## 17. Configuration définitive
+
+```text
+Endpoint      : GET /persons
+Host          : localhost
+Port          : 3000
+
+Users         : 100
+Ramp-up       : 0 seconde
+Loop Count    : Infinite
+Duration      : 30 secondes
+Startup delay : 0
+
+Timers        : aucun
+GUI           : non
+Listeners     : aucun pendant le benchmark
+```
+
+Le scénario est donc :
+
+```text
+100 utilisateurs simultanés
+        ↓
+démarrage immédiat
+        ↓
+GET /persons
+        ↓
+requêtes en boucle sans pause
+        ↓
+pression continue pendant 30 secondes
+        ↓
+arrêt
+```
+
+---
+
+# Comparaison des backends
+
+Le même fichier :
+
+```text
+persons-benchmark.jmx
+```
+
+doit être utilisé pour tous les backends :
 
 ```text
 Rust
@@ -384,13 +485,28 @@ Node.js
 ...
 ```
 
-Chaque backend doit être testé avec :
+Il faut conserver :
 
 ```text
-même endpoint
-même base de données
-mêmes données
-même nombre de threads
-même nombre de requêtes
 même machine
+même PostgreSQL
+mêmes données
+même endpoint
+même JMeter
+100 threads
+ramp-up 0
+30 secondes
+aucun Timer
 ```
+
+Le tableau final pourra comparer :
+
+```text
+Backend    Requests    Req/s    Average    P95    P99    Errors
+Rust
+Python
+Java
+Node.js
+```
+
+C'est cette configuration qui met réellement chaque backend **sous pression maximale avec 100 utilisateurs concurrents pendant 30 secondes**, plutôt que d'étaler progressivement la charge.
