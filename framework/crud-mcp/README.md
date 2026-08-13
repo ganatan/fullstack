@@ -33,3 +33,6 @@
 - [Tests](./rust/008-tests.md)
 - [Test Postman](./rust/009-test-postman.md)
 
+###  Python
+- [Initialisation](./python/001-initialisation.md)
+
