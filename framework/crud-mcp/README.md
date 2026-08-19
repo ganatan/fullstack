@@ -15,6 +15,11 @@
 - [Root Controller](./springboot/002-root-controller.md)
 - [Crud Controller](./springboot/003-crud-controller.md)
 - [DTO](./springboot/004-dto.md)
+- [Service](./springboot/005-service.md)
+- [Repository](./springboot/006-repository.md)
+- [PostgreSQL](./springboot/007-postgresql.md)
+- [JPA Hibernate](./springboot/008-jpa-hibernate.md)
+
 
 ###  Quarkus
 - [Initialisation](./quarkus/001-initialisation.md)
