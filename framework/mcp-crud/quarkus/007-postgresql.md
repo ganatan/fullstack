@@ -1,0 +1,3450 @@
+# Database – Person
+
+Intégration de PostgreSQL dans le CRUD `Person`.
+
+L'architecture reste :
+
+```text
+PersonController
+    ↓
+PersonService
+    ↓
+PersonRepository
+    ↓
+PostgreSQL
+```
+
+Le stockage en mémoire disparaît complètement.
+
+Le changement principal concerne :
+
+```text
+PersonRepository
+```
+
+Le `PersonController` et le `PersonService` conservent la même architecture.
+
+---
+
+# Architecture
+
+Avant :
+
+```text
+PersonRepository
+    ↓
+CopyOnWriteArrayList<Person>
+```
+
+Maintenant :
+
+```text
+PersonRepository
+    ↓
+AgroalDataSource
+    ↓
+JDBC
+    ↓
+PostgreSQL
+```
+
+Architecture complète :
+
+```text
+HTTP
+  ↓
+PersonInputDto
+  ↓
+PersonController
+  ↓
+PersonService
+  ↓
+PersonRepository
+  ↓
+AgroalDataSource
+  ↓
+JDBC
+  ↓
+PostgreSQL
+  ↓
+PersonRepository
+  ↓
+PersonService
+  ↓
+PersonController
+  ↓
+PersonOutputDto
+  ↓
+HTTP
+```
+
+---
+
+# Responsabilités
+
+```text
+PersonInputDto
+    ↓
+validation des données entrantes
+
+PersonController
+    ↓
+gestion HTTP
+
+PersonService
+    ↓
+logique applicative
+
+PersonRepository
+    ↓
+requêtes SQL
+accès aux données
+
+AgroalDataSource
+    ↓
+pool de connexions JDBC
+
+JDBC
+    ↓
+communication avec PostgreSQL
+
+PostgreSQL
+    ↓
+persistance
+
+Person
+    ↓
+modèle interne
+
+PersonOutputDto
+    ↓
+format de sortie JSON
+```
+
+---
+
+# Structure
+
+Tous les fichiers utilisent :
+
+```text
+com.ganatan.starter.api.person
+```
+
+## Code applicatif
+
+```text
+src/main/java/com/ganatan/starter/api/person/
+├── Person.java
+├── PersonInputDto.java
+├── PersonOutputDto.java
+├── PersonRepository.java
+├── PersonService.java
+└── PersonController.java
+```
+
+## Tests
+
+```text
+src/test/java/com/ganatan/starter/api/person/
+├── PersonRepositoryTests.java
+├── PersonServiceTests.java
+└── PersonControllerTests.java
+```
+
+Configuration :
+
+```text
+src/main/resources/
+└── application.properties
+```
+
+---
+
+# Dépendance PostgreSQL
+
+Ajouter dans :
+
+```text
+pom.xml
+```
+
+la dépendance :
+
+```xml
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-jdbc-postgresql</artifactId>
+</dependency>
+```
+
+Cette extension fournit :
+
+```text
+driver JDBC PostgreSQL
+        ↓
+Agroal
+        ↓
+pool de connexions
+        ↓
+PostgreSQL
+```
+
+Il n'est pas nécessaire d'ajouter séparément :
+
+```text
+quarkus-agroal
+```
+
+pour PostgreSQL.
+
+Les dépendances précédentes restent présentes :
+
+```xml
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-rest-jackson</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-hibernate-validator</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-junit</artifactId>
+  <scope>test</scope>
+</dependency>
+
+<dependency>
+  <groupId>io.rest-assured</groupId>
+  <artifactId>rest-assured</artifactId>
+  <scope>test</scope>
+</dependency>
+
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-junit-mockito</artifactId>
+  <scope>test</scope>
+</dependency>
+```
+
+L'extension peut également être ajoutée avec :
+
+```bash
+./mvnw quarkus:add-extension -Dextensions="jdbc-postgresql"
+```
+
+---
+
+# Configuration PostgreSQL
+
+Pour cette étape, la configuration reste volontairement simple.
+
+Aucune variable d'environnement n'est utilisée.
+
+Aucun fichier `.env` n'est nécessaire.
+
+Nous conservons :
+
+```text
+application.properties
+```
+
+---
+
+# application.properties
+
+Chemin :
+
+```text
+src/main/resources/application.properties
+```
+
+Configuration :
+
+```properties
+quarkus.http.port=3000
+
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=postgres
+quarkus.datasource.password=password
+quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/quarkus_starter
+```
+
+Configuration PostgreSQL :
+
+```text
+host     : localhost
+port     : 5432
+database : quarkus_starter
+user     : postgres
+password : password
+```
+
+---
+
+# Configuration automatique Quarkus
+
+À partir de :
+
+```text
+quarkus.datasource.db-kind
+quarkus.datasource.username
+quarkus.datasource.password
+quarkus.datasource.jdbc.url
+```
+
+Quarkus configure :
+
+```text
+AgroalDataSource
+       ↓
+pool Agroal
+       ↓
+driver JDBC PostgreSQL
+       ↓
+PostgreSQL
+```
+
+Le code applicatif ne crée donc pas manuellement :
+
+```text
+pool de connexions
+driver PostgreSQL
+DataSource
+```
+
+Le repository récupère le datasource par injection CDI.
+
+---
+
+# Différence avec Spring Boot
+
+Avec Spring Boot :
+
+```text
+PersonRepository
+       ↓
+JdbcTemplate
+       ↓
+DataSource
+       ↓
+PostgreSQL
+```
+
+Dans notre projet Quarkus :
+
+```text
+PersonRepository
+       ↓
+AgroalDataSource
+       ↓
+Connection
+       ↓
+PreparedStatement
+       ↓
+ResultSet
+       ↓
+PostgreSQL
+```
+
+Il n'existe pas ici de :
+
+```text
+JdbcTemplate
+```
+
+Nous utilisons directement l'API JDBC standard.
+
+---
+
+# Création de la base
+
+Créer :
+
+```sql
+CREATE DATABASE quarkus_starter;
+```
+
+Puis se connecter à :
+
+```text
+quarkus_starter
+```
+
+---
+
+# Table Person
+
+Créer :
+
+```sql
+CREATE TABLE person (
+  id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  city_id INTEGER NOT NULL CHECK (city_id > 0)
+);
+```
+
+Structure :
+
+```text
+person
+├── id
+├── first_name
+├── last_name
+└── city_id
+```
+
+Correspondance :
+
+```text
+PostgreSQL        Java
+
+INTEGER           int
+VARCHAR           String
+```
+
+---
+
+# Données initiales
+
+```sql
+INSERT INTO person (
+  first_name,
+  last_name,
+  city_id
+)
+VALUES
+  ('Steven', 'Spielberg', 1),
+  ('Martin', 'Scorsese', 2),
+  ('Francis', 'Ford Coppola', 3),
+  ('George', 'Lucas', 4),
+  ('Quentin', 'Tarantino', 5),
+  ('David', 'Fincher', 6),
+  ('Spike', 'Lee', 7);
+```
+
+Vérification :
+
+```sql
+SELECT
+  id,
+  first_name,
+  last_name,
+  city_id
+FROM person
+ORDER BY id;
+```
+
+Résultat attendu :
+
+```text
+1 Steven   Spielberg       1
+2 Martin   Scorsese        2
+3 Francis  Ford Coppola    3
+4 George   Lucas           4
+5 Quentin  Tarantino       5
+6 David    Fincher         6
+7 Spike    Lee             7
+```
+
+---
+
+# Person
+
+Le modèle interne ne change pas.
+
+## Chemin
+
+```text
+src/main/java/com/ganatan/starter/api/person/Person.java
+```
+
+## Code
+
+```java
+package com.ganatan.starter.api.person;
+
+public record Person(
+
+    int id,
+
+    String firstName,
+
+    String lastName,
+
+    int cityId
+
+) {
+
+}
+```
+
+`Person` reste indépendant de :
+
+```text
+HTTP
+Quarkus REST
+DTO
+JDBC
+Agroal
+PostgreSQL
+```
+
+---
+
+# PersonInputDto
+
+Le DTO d'entrée ne change pas.
+
+```text
+src/main/java/com/ganatan/starter/api/person/PersonInputDto.java
+```
+
+```java
+package com.ganatan.starter.api.person;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
+public record PersonInputDto(
+
+    @NotBlank
+    @Size(max = 50)
+    String firstName,
+
+    @NotBlank
+    @Size(max = 50)
+    String lastName,
+
+    @NotNull
+    @Positive
+    Integer cityId
+
+) {
+
+  public PersonInputDto {
+
+    firstName = firstName == null
+        ? null
+        : firstName.trim();
+
+    lastName = lastName == null
+        ? null
+        : lastName.trim();
+
+  }
+
+}
+```
+
+---
+
+# PersonOutputDto
+
+Le DTO de sortie ne change pas.
+
+```text
+src/main/java/com/ganatan/starter/api/person/PersonOutputDto.java
+```
+
+```java
+package com.ganatan.starter.api.person;
+
+public record PersonOutputDto(
+
+    int id,
+
+    String firstName,
+
+    String lastName,
+
+    int cityId
+
+) {
+
+  public static PersonOutputDto from(
+      Person person
+  ) {
+
+    return new PersonOutputDto(
+        person.id(),
+        person.firstName(),
+        person.lastName(),
+        person.cityId()
+    );
+
+  }
+
+}
+```
+
+---
+
+# PersonRepository
+
+Le repository ne contient maintenant plus aucune donnée.
+
+Avant :
+
+```text
+PersonRepository
+├── AtomicInteger
+└── List<Person>
+```
+
+Maintenant :
+
+```text
+PersonRepository
+└── AgroalDataSource
+```
+
+Le repository contient désormais les requêtes :
+
+```text
+SELECT
+INSERT
+UPDATE
+DELETE
+```
+
+---
+
+# Chemin
+
+```text
+src/main/java/com/ganatan/starter/api/person/PersonRepository.java
+```
+
+# Code
+
+```java
+package com.ganatan.starter.api.person;
+
+import io.agroal.api.AgroalDataSource;
+
+import jakarta.enterprise.context.ApplicationScoped;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@ApplicationScoped
+public class PersonRepository {
+
+  private final AgroalDataSource dataSource;
+
+  public PersonRepository(
+      AgroalDataSource dataSource
+  ) {
+
+    this.dataSource =
+        dataSource;
+
+  }
+
+  public List<Person> findAll() {
+
+    String sql = """
+        SELECT
+          id,
+          first_name,
+          last_name,
+          city_id
+        FROM person
+        ORDER BY id
+        """;
+
+    try (
+        Connection connection =
+            dataSource.getConnection();
+
+        PreparedStatement statement =
+            connection.prepareStatement(sql);
+
+        ResultSet resultSet =
+            statement.executeQuery()
+    ) {
+
+      List<Person> persons =
+          new ArrayList<>();
+
+      while (resultSet.next()) {
+
+        persons.add(
+            mapPerson(resultSet)
+        );
+
+      }
+
+      return persons;
+
+    } catch (SQLException exception) {
+
+      throw new IllegalStateException(
+          exception
+      );
+
+    }
+
+  }
+
+  public Optional<Person> findById(
+      int id
+  ) {
+
+    String sql = """
+        SELECT
+          id,
+          first_name,
+          last_name,
+          city_id
+        FROM person
+        WHERE id = ?
+        """;
+
+    try (
+        Connection connection =
+            dataSource.getConnection();
+
+        PreparedStatement statement =
+            connection.prepareStatement(sql)
+    ) {
+
+      statement.setInt(
+          1,
+          id
+      );
+
+      try (
+          ResultSet resultSet =
+              statement.executeQuery()
+      ) {
+
+        if (!resultSet.next()) {
+
+          return Optional.empty();
+
+        }
+
+        return Optional.of(
+            mapPerson(resultSet)
+        );
+
+      }
+
+    } catch (SQLException exception) {
+
+      throw new IllegalStateException(
+          exception
+      );
+
+    }
+
+  }
+
+  public Person create(
+      String firstName,
+      String lastName,
+      int cityId
+  ) {
+
+    String sql = """
+        INSERT INTO person (
+          first_name,
+          last_name,
+          city_id
+        )
+        VALUES (
+          ?,
+          ?,
+          ?
+        )
+        RETURNING
+          id,
+          first_name,
+          last_name,
+          city_id
+        """;
+
+    try (
+        Connection connection =
+            dataSource.getConnection();
+
+        PreparedStatement statement =
+            connection.prepareStatement(sql)
+    ) {
+
+      statement.setString(
+          1,
+          firstName
+      );
+
+      statement.setString(
+          2,
+          lastName
+      );
+
+      statement.setInt(
+          3,
+          cityId
+      );
+
+      try (
+          ResultSet resultSet =
+              statement.executeQuery()
+      ) {
+
+        if (!resultSet.next()) {
+
+          throw new IllegalStateException();
+
+        }
+
+        return mapPerson(
+            resultSet
+        );
+
+      }
+
+    } catch (SQLException exception) {
+
+      throw new IllegalStateException(
+          exception
+      );
+
+    }
+
+  }
+
+  public Optional<Person> update(
+      int id,
+      String firstName,
+      String lastName,
+      int cityId
+  ) {
+
+    String sql = """
+        UPDATE person
+        SET
+          first_name = ?,
+          last_name = ?,
+          city_id = ?
+        WHERE id = ?
+        RETURNING
+          id,
+          first_name,
+          last_name,
+          city_id
+        """;
+
+    try (
+        Connection connection =
+            dataSource.getConnection();
+
+        PreparedStatement statement =
+            connection.prepareStatement(sql)
+    ) {
+
+      statement.setString(
+          1,
+          firstName
+      );
+
+      statement.setString(
+          2,
+          lastName
+      );
+
+      statement.setInt(
+          3,
+          cityId
+      );
+
+      statement.setInt(
+          4,
+          id
+      );
+
+      try (
+          ResultSet resultSet =
+              statement.executeQuery()
+      ) {
+
+        if (!resultSet.next()) {
+
+          return Optional.empty();
+
+        }
+
+        return Optional.of(
+            mapPerson(resultSet)
+        );
+
+      }
+
+    } catch (SQLException exception) {
+
+      throw new IllegalStateException(
+          exception
+      );
+
+    }
+
+  }
+
+  public boolean delete(
+      int id
+  ) {
+
+    String sql = """
+        DELETE FROM person
+        WHERE id = ?
+        """;
+
+    try (
+        Connection connection =
+            dataSource.getConnection();
+
+        PreparedStatement statement =
+            connection.prepareStatement(sql)
+    ) {
+
+      statement.setInt(
+          1,
+          id
+      );
+
+      int rows =
+          statement.executeUpdate();
+
+      return rows > 0;
+
+    } catch (SQLException exception) {
+
+      throw new IllegalStateException(
+          exception
+      );
+
+    }
+
+  }
+
+  private Person mapPerson(
+      ResultSet resultSet
+  ) throws SQLException {
+
+    return new Person(
+        resultSet.getInt("id"),
+        resultSet.getString("first_name"),
+        resultSet.getString("last_name"),
+        resultSet.getInt("city_id")
+    );
+
+  }
+
+}
+```
+
+---
+
+# AgroalDataSource
+
+Quarkus utilise Agroal pour gérer les connexions JDBC.
+
+Le repository possède :
+
+```java
+private final AgroalDataSource dataSource;
+```
+
+Injection par constructeur :
+
+```java
+public PersonRepository(
+    AgroalDataSource dataSource
+) {
+
+  this.dataSource =
+      dataSource;
+
+}
+```
+
+Quarkus construit le datasource à partir de :
+
+```properties
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=postgres
+quarkus.datasource.password=password
+quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/quarkus_starter
+```
+
+Architecture :
+
+```text
+configuration
+      ↓
+Quarkus
+      ↓
+AgroalDataSource
+      ↓
+PersonRepository
+```
+
+---
+
+# Pool de connexions
+
+`AgroalDataSource` ne représente pas une connexion unique.
+
+Il représente un :
+
+```text
+pool de connexions
+```
+
+Lorsqu'on appelle :
+
+```java
+dataSource.getConnection()
+```
+
+le repository récupère une connexion dans le pool.
+
+```text
+PersonRepository
+      ↓
+AgroalDataSource
+      ↓
+Pool
+├── Connection
+├── Connection
+├── Connection
+└── Connection
+```
+
+Lorsque le bloc `try` se termine :
+
+```java
+try (
+    Connection connection =
+        dataSource.getConnection()
+) {
+}
+```
+
+la connexion est libérée et retourne dans le pool.
+
+---
+
+# try-with-resources
+
+Le repository utilise :
+
+```java
+try (
+    Connection connection = ...;
+    PreparedStatement statement = ...;
+    ResultSet resultSet = ...
+) {
+}
+```
+
+Cela garantit la fermeture automatique de :
+
+```text
+ResultSet
+PreparedStatement
+Connection
+```
+
+Même lorsqu'une exception se produit.
+
+---
+
+# PreparedStatement
+
+Les requêtes utilisent :
+
+```text
+?
+```
+
+pour représenter les paramètres.
+
+Exemple :
+
+```sql
+SELECT
+  id,
+  first_name,
+  last_name,
+  city_id
+FROM person
+WHERE id = ?
+```
+
+Puis :
+
+```java
+statement.setInt(
+    1,
+    id
+);
+```
+
+Le SQL et les valeurs restent séparés.
+
+---
+
+# ResultSet
+
+PostgreSQL retourne les données JDBC dans :
+
+```text
+ResultSet
+```
+
+Exemple :
+
+```java
+resultSet.getInt("id")
+```
+
+```java
+resultSet.getString("first_name")
+```
+
+```java
+resultSet.getString("last_name")
+```
+
+```java
+resultSet.getInt("city_id")
+```
+
+Le repository transforme ensuite ces données en :
+
+```text
+Person
+```
+
+---
+
+# Mapping SQL vers Person
+
+Le mapping est centralisé dans :
+
+```java
+private Person mapPerson(
+    ResultSet resultSet
+) throws SQLException {
+
+  return new Person(
+      resultSet.getInt("id"),
+      resultSet.getString("first_name"),
+      resultSet.getString("last_name"),
+      resultSet.getInt("city_id")
+  );
+
+}
+```
+
+Flux :
+
+```text
+PostgreSQL
+    ↓
+ResultSet
+    ↓
+mapPerson()
+    ↓
+Person
+```
+
+Le mapping n'est donc pas dupliqué dans :
+
+```text
+findAll()
+findById()
+create()
+update()
+```
+
+---
+
+# Lecture de toutes les personnes
+
+```java
+public List<Person> findAll()
+```
+
+exécute :
+
+```sql
+SELECT
+  id,
+  first_name,
+  last_name,
+  city_id
+FROM person
+ORDER BY id
+```
+
+Puis :
+
+```text
+ResultSet
+    ↓
+while resultSet.next()
+    ↓
+mapPerson()
+    ↓
+List<Person>
+```
+
+---
+
+# Lecture par identifiant
+
+```java
+public Optional<Person> findById(
+    int id
+)
+```
+
+exécute :
+
+```sql
+SELECT
+  id,
+  first_name,
+  last_name,
+  city_id
+FROM person
+WHERE id = ?
+```
+
+Si :
+
+```java
+resultSet.next()
+```
+
+retourne :
+
+```text
+true
+```
+
+le repository retourne :
+
+```text
+Optional<Person>
+```
+
+Sinon :
+
+```text
+Optional.empty()
+```
+
+Le repository ne connaît toujours pas :
+
+```text
+404 Not Found
+```
+
+---
+
+# Création
+
+```java
+public Person create(
+    String firstName,
+    String lastName,
+    int cityId
+)
+```
+
+exécute :
+
+```sql
+INSERT INTO person (
+  first_name,
+  last_name,
+  city_id
+)
+VALUES (
+  ?,
+  ?,
+  ?
+)
+RETURNING
+  id,
+  first_name,
+  last_name,
+  city_id
+```
+
+PostgreSQL génère maintenant l'identifiant.
+
+Avant :
+
+```text
+AtomicInteger
+    ↓
+id
+```
+
+Maintenant :
+
+```text
+PostgreSQL
+    ↓
+IDENTITY
+    ↓
+id
+```
+
+Grâce à :
+
+```sql
+RETURNING
+```
+
+PostgreSQL retourne immédiatement la ligne créée.
+
+Flux :
+
+```text
+PersonRepository.create()
+        ↓
+PreparedStatement
+        ↓
+INSERT
+        ↓
+PostgreSQL
+        ↓
+IDENTITY
+        ↓
+RETURNING
+        ↓
+ResultSet
+        ↓
+mapPerson()
+        ↓
+Person
+```
+
+---
+
+# Modification
+
+```java
+public Optional<Person> update(
+    int id,
+    String firstName,
+    String lastName,
+    int cityId
+)
+```
+
+exécute :
+
+```sql
+UPDATE person
+SET
+  first_name = ?,
+  last_name = ?,
+  city_id = ?
+WHERE id = ?
+RETURNING
+  id,
+  first_name,
+  last_name,
+  city_id
+```
+
+Si la personne existe :
+
+```text
+Optional<Person>
+```
+
+Sinon :
+
+```text
+Optional.empty()
+```
+
+---
+
+# Suppression
+
+```java
+public boolean delete(
+    int id
+)
+```
+
+exécute :
+
+```sql
+DELETE FROM person
+WHERE id = ?
+```
+
+Puis :
+
+```java
+int rows =
+    statement.executeUpdate();
+```
+
+Si :
+
+```text
+rows > 0
+```
+
+le repository retourne :
+
+```text
+true
+```
+
+Sinon :
+
+```text
+false
+```
+
+---
+
+# PersonService
+
+Le service ne change pratiquement pas.
+
+Il ne connaît pas :
+
+```text
+PostgreSQL
+AgroalDataSource
+Connection
+PreparedStatement
+ResultSet
+SQL
+JDBC
+```
+
+Il dépend uniquement de :
+
+```text
+PersonRepository
+```
+
+## Chemin
+
+```text
+src/main/java/com/ganatan/starter/api/person/PersonService.java
+```
+
+## Code
+
+```java
+package com.ganatan.starter.api.person;
+
+import jakarta.enterprise.context.ApplicationScoped;
+
+import java.util.List;
+import java.util.Optional;
+
+@ApplicationScoped
+public class PersonService {
+
+  private final PersonRepository personRepository;
+
+  public PersonService(
+      PersonRepository personRepository
+  ) {
+
+    this.personRepository =
+        personRepository;
+
+  }
+
+  public List<Person> getAllPersons() {
+
+    return personRepository
+        .findAll();
+
+  }
+
+  public Optional<Person> getPersonById(
+      int id
+  ) {
+
+    return personRepository
+        .findById(id);
+
+  }
+
+  public Person createPerson(
+      String firstName,
+      String lastName,
+      int cityId
+  ) {
+
+    return personRepository
+        .create(
+            firstName,
+            lastName,
+            cityId
+        );
+
+  }
+
+  public Optional<Person> updatePerson(
+      int id,
+      String firstName,
+      String lastName,
+      int cityId
+  ) {
+
+    return personRepository
+        .update(
+            id,
+            firstName,
+            lastName,
+            cityId
+        );
+
+  }
+
+  public boolean deletePerson(
+      int id
+  ) {
+
+    return personRepository
+        .delete(id);
+
+  }
+
+}
+```
+
+---
+
+# Évolution du Service
+
+Avant PostgreSQL :
+
+```text
+PersonService
+    ↓
+PersonRepository
+    ↓
+List<Person>
+```
+
+Maintenant :
+
+```text
+PersonService
+    ↓
+PersonRepository
+    ↓
+AgroalDataSource
+    ↓
+PostgreSQL
+```
+
+Le service n'a pas été modifié.
+
+C'est précisément l'intérêt de la séparation des responsabilités.
+
+---
+
+# PersonController
+
+Le controller ne change pas.
+
+Il continue de dépendre uniquement de :
+
+```text
+PersonService
+```
+
+Il ne connaît pas :
+
+```text
+PersonRepository
+AgroalDataSource
+Connection
+PreparedStatement
+ResultSet
+PostgreSQL
+SQL
+```
+
+Le `PersonController` de l'étape précédente est donc conservé tel quel.
+
+Architecture :
+
+```text
+PersonController
+       ↓
+PersonService
+       ↓
+PersonRepository
+```
+
+---
+
+# Gestion des erreurs Database
+
+Les appels JDBC peuvent produire :
+
+```java
+SQLException
+```
+
+Cela peut représenter :
+
+```text
+connexion PostgreSQL impossible
+requête SQL invalide
+contrainte SQL violée
+problème réseau
+problème JDBC
+```
+
+Dans notre repository :
+
+```java
+catch (SQLException exception) {
+
+  throw new IllegalStateException(
+      exception
+  );
+
+}
+```
+
+Une erreur technique remonte donc comme une erreur applicative non contrôlée.
+
+Elle produira généralement :
+
+```text
+500 Internal Server Error
+```
+
+Une personne inexistante est différente.
+
+Le repository retourne :
+
+```text
+Optional.empty()
+```
+
+Puis le controller transforme cette absence en :
+
+```text
+404 Not Found
+```
+
+---
+
+# Construction des couches
+
+Quarkus construit automatiquement :
+
+```text
+AgroalDataSource
+       ↓
+PersonRepository
+       ↓
+PersonService
+       ↓
+PersonController
+```
+
+Grâce à CDI :
+
+```java
+@ApplicationScoped
+```
+
+sur :
+
+```text
+PersonRepository
+PersonService
+PersonController
+```
+
+Le code applicatif n'effectue jamais :
+
+```java
+new PersonRepository(...)
+```
+
+ou :
+
+```java
+new PersonService(...)
+```
+
+ou :
+
+```java
+new PersonController(...)
+```
+
+en production.
+
+Quarkus construit automatiquement le graphe des dépendances.
+
+---
+
+# Tests
+
+À partir de cette étape :
+
+```text
+PersonRepository
+    ↓
+AgroalDataSource
+    ↓
+PostgreSQL
+```
+
+Les tests unitaires ne doivent pas nécessiter PostgreSQL.
+
+On sépare donc les couches.
+
+---
+
+# Architecture des tests
+
+```text
+PersonControllerTests
+        ↓
+PersonService mocké
+```
+
+```text
+PersonServiceTests
+        ↓
+PersonRepository mocké
+```
+
+```text
+PersonRepositoryTests
+        ↓
+AgroalDataSource mocké
+        ↓
+Connection mockée
+        ↓
+PreparedStatement mocké
+        ↓
+ResultSet mocké
+```
+
+Les tests unitaires restent :
+
+```text
+rapides
+isolés
+sans PostgreSQL
+sans accès réseau
+```
+
+---
+
+# PersonControllerTests
+
+Les tests du controller restent ceux de l'étape précédente.
+
+Le service est toujours remplacé par :
+
+```java
+@InjectMock
+PersonService personService;
+```
+
+Architecture :
+
+```text
+HTTP
+    ↓
+PersonController
+    ↓
+PersonService mocké
+```
+
+Le controller ne teste donc jamais :
+
+```text
+PersonRepository
+JDBC
+PostgreSQL
+```
+
+---
+
+# PersonServiceTests
+
+Le repository est maintenant mocké.
+
+## Chemin
+
+```text
+src/test/java/com/ganatan/starter/api/person/PersonServiceTests.java
+```
+
+## Code
+
+```java
+package com.ganatan.starter.api.person;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import org.mockito.Mockito;
+
+class PersonServiceTests {
+
+  private PersonRepository repository;
+
+  private PersonService service;
+
+  @BeforeEach
+  void setUp() {
+
+    repository =
+        Mockito.mock(
+            PersonRepository.class
+        );
+
+    service =
+        new PersonService(
+            repository
+        );
+
+  }
+
+  @Test
+  void getAllPersons_shouldReturnPersons() {
+
+    when(
+        repository.findAll()
+    ).thenReturn(
+        List.of(
+            new Person(
+                1,
+                "Steven",
+                "Spielberg",
+                1
+            ),
+            new Person(
+                2,
+                "Martin",
+                "Scorsese",
+                2
+            )
+        )
+    );
+
+    List<Person> persons =
+        service.getAllPersons();
+
+    assertEquals(
+        2,
+        persons.size()
+    );
+
+    verify(
+        repository
+    ).findAll();
+
+  }
+
+  @Test
+  void getPersonById_shouldReturnPerson() {
+
+    when(
+        repository.findById(1)
+    ).thenReturn(
+        Optional.of(
+            new Person(
+                1,
+                "Steven",
+                "Spielberg",
+                1
+            )
+        )
+    );
+
+    Person person = service
+        .getPersonById(1)
+        .orElseThrow();
+
+    assertEquals(
+        1,
+        person.id()
+    );
+
+    assertEquals(
+        "Steven",
+        person.firstName()
+    );
+
+    assertEquals(
+        "Spielberg",
+        person.lastName()
+    );
+
+    assertEquals(
+        1,
+        person.cityId()
+    );
+
+    verify(
+        repository
+    ).findById(1);
+
+  }
+
+  @Test
+  void getPersonById_shouldReturnEmpty() {
+
+    when(
+        repository.findById(999)
+    ).thenReturn(
+        Optional.empty()
+    );
+
+    Optional<Person> person =
+        service.getPersonById(999);
+
+    assertTrue(
+        person.isEmpty()
+    );
+
+    verify(
+        repository
+    ).findById(999);
+
+  }
+
+  @Test
+  void createPerson_shouldReturnCreatedPerson() {
+
+    when(
+        repository.create(
+            "Clint",
+            "Eastwood",
+            8
+        )
+    ).thenReturn(
+        new Person(
+            8,
+            "Clint",
+            "Eastwood",
+            8
+        )
+    );
+
+    Person person =
+        service.createPerson(
+            "Clint",
+            "Eastwood",
+            8
+        );
+
+    assertEquals(
+        8,
+        person.id()
+    );
+
+    assertEquals(
+        "Clint",
+        person.firstName()
+    );
+
+    assertEquals(
+        "Eastwood",
+        person.lastName()
+    );
+
+    assertEquals(
+        8,
+        person.cityId()
+    );
+
+    verify(
+        repository
+    ).create(
+        "Clint",
+        "Eastwood",
+        8
+    );
+
+  }
+
+  @Test
+  void updatePerson_shouldReturnUpdatedPerson() {
+
+    when(
+        repository.update(
+            1,
+            "Steven",
+            "Spielberg Updated",
+            10
+        )
+    ).thenReturn(
+        Optional.of(
+            new Person(
+                1,
+                "Steven",
+                "Spielberg Updated",
+                10
+            )
+        )
+    );
+
+    Person person = service
+        .updatePerson(
+            1,
+            "Steven",
+            "Spielberg Updated",
+            10
+        )
+        .orElseThrow();
+
+    assertEquals(
+        1,
+        person.id()
+    );
+
+    assertEquals(
+        "Spielberg Updated",
+        person.lastName()
+    );
+
+    assertEquals(
+        10,
+        person.cityId()
+    );
+
+    verify(
+        repository
+    ).update(
+        1,
+        "Steven",
+        "Spielberg Updated",
+        10
+    );
+
+  }
+
+  @Test
+  void updatePerson_shouldReturnEmpty() {
+
+    when(
+        repository.update(
+            999,
+            "Unknown",
+            "Person",
+            1
+        )
+    ).thenReturn(
+        Optional.empty()
+    );
+
+    Optional<Person> person =
+        service.updatePerson(
+            999,
+            "Unknown",
+            "Person",
+            1
+        );
+
+    assertTrue(
+        person.isEmpty()
+    );
+
+    verify(
+        repository
+    ).update(
+        999,
+        "Unknown",
+        "Person",
+        1
+    );
+
+  }
+
+  @Test
+  void deletePerson_shouldReturnTrue() {
+
+    when(
+        repository.delete(1)
+    ).thenReturn(
+        true
+    );
+
+    boolean deleted =
+        service.deletePerson(1);
+
+    assertTrue(
+        deleted
+    );
+
+    verify(
+        repository
+    ).delete(1);
+
+  }
+
+  @Test
+  void deletePerson_shouldReturnFalse() {
+
+    when(
+        repository.delete(999)
+    ).thenReturn(
+        false
+    );
+
+    boolean deleted =
+        service.deletePerson(999);
+
+    assertFalse(
+        deleted
+    );
+
+    verify(
+        repository
+    ).delete(999);
+
+  }
+
+}
+```
+
+---
+
+# PersonRepositoryTests
+
+Le repository dépend maintenant de :
+
+```text
+AgroalDataSource
+```
+
+Dans le test, on mocke :
+
+```text
+AgroalDataSource
+Connection
+PreparedStatement
+ResultSet
+```
+
+Aucune connexion PostgreSQL n'est réalisée.
+
+## Chemin
+
+```text
+src/test/java/com/ganatan/starter/api/person/PersonRepositoryTests.java
+```
+
+## Code
+
+```java
+package com.ganatan.starter.api.person;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import io.agroal.api.AgroalDataSource;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import org.mockito.Mockito;
+
+class PersonRepositoryTests {
+
+  private AgroalDataSource dataSource;
+
+  private Connection connection;
+
+  private PreparedStatement statement;
+
+  private ResultSet resultSet;
+
+  private PersonRepository repository;
+
+  @BeforeEach
+  void setUp() throws Exception {
+
+    dataSource =
+        Mockito.mock(
+            AgroalDataSource.class
+        );
+
+    connection =
+        Mockito.mock(
+            Connection.class
+        );
+
+    statement =
+        Mockito.mock(
+            PreparedStatement.class
+        );
+
+    resultSet =
+        Mockito.mock(
+            ResultSet.class
+        );
+
+    when(
+        dataSource.getConnection()
+    ).thenReturn(
+        connection
+    );
+
+    when(
+        connection.prepareStatement(
+            anyString()
+        )
+    ).thenReturn(
+        statement
+    );
+
+    repository =
+        new PersonRepository(
+            dataSource
+        );
+
+  }
+
+  @Test
+  void findAll_shouldReturnPersons()
+      throws Exception {
+
+    when(
+        statement.executeQuery()
+    ).thenReturn(
+        resultSet
+    );
+
+    when(
+        resultSet.next()
+    ).thenReturn(
+        true,
+        true,
+        false
+    );
+
+    when(
+        resultSet.getInt("id")
+    ).thenReturn(
+        1,
+        2
+    );
+
+    when(
+        resultSet.getString("first_name")
+    ).thenReturn(
+        "Steven",
+        "Martin"
+    );
+
+    when(
+        resultSet.getString("last_name")
+    ).thenReturn(
+        "Spielberg",
+        "Scorsese"
+    );
+
+    when(
+        resultSet.getInt("city_id")
+    ).thenReturn(
+        1,
+        2
+    );
+
+    List<Person> persons =
+        repository.findAll();
+
+    assertEquals(
+        2,
+        persons.size()
+    );
+
+    assertEquals(
+        "Steven",
+        persons.get(0).firstName()
+    );
+
+    assertEquals(
+        "Martin",
+        persons.get(1).firstName()
+    );
+
+  }
+
+  @Test
+  void findById_shouldReturnPerson()
+      throws Exception {
+
+    when(
+        statement.executeQuery()
+    ).thenReturn(
+        resultSet
+    );
+
+    when(
+        resultSet.next()
+    ).thenReturn(
+        true
+    );
+
+    when(
+        resultSet.getInt("id")
+    ).thenReturn(
+        1
+    );
+
+    when(
+        resultSet.getString("first_name")
+    ).thenReturn(
+        "Steven"
+    );
+
+    when(
+        resultSet.getString("last_name")
+    ).thenReturn(
+        "Spielberg"
+    );
+
+    when(
+        resultSet.getInt("city_id")
+    ).thenReturn(
+        1
+    );
+
+    Person person = repository
+        .findById(1)
+        .orElseThrow();
+
+    assertEquals(
+        1,
+        person.id()
+    );
+
+    assertEquals(
+        "Steven",
+        person.firstName()
+    );
+
+    assertEquals(
+        "Spielberg",
+        person.lastName()
+    );
+
+    verify(
+        statement
+    ).setInt(
+        1,
+        1
+    );
+
+  }
+
+  @Test
+  void findById_shouldReturnEmpty()
+      throws Exception {
+
+    when(
+        statement.executeQuery()
+    ).thenReturn(
+        resultSet
+    );
+
+    when(
+        resultSet.next()
+    ).thenReturn(
+        false
+    );
+
+    Optional<Person> person =
+        repository.findById(999);
+
+    assertTrue(
+        person.isEmpty()
+    );
+
+  }
+
+  @Test
+  void create_shouldReturnCreatedPerson()
+      throws Exception {
+
+    when(
+        statement.executeQuery()
+    ).thenReturn(
+        resultSet
+    );
+
+    when(
+        resultSet.next()
+    ).thenReturn(
+        true
+    );
+
+    when(
+        resultSet.getInt("id")
+    ).thenReturn(
+        8
+    );
+
+    when(
+        resultSet.getString("first_name")
+    ).thenReturn(
+        "Clint"
+    );
+
+    when(
+        resultSet.getString("last_name")
+    ).thenReturn(
+        "Eastwood"
+    );
+
+    when(
+        resultSet.getInt("city_id")
+    ).thenReturn(
+        8
+    );
+
+    Person person =
+        repository.create(
+            "Clint",
+            "Eastwood",
+            8
+        );
+
+    assertEquals(
+        8,
+        person.id()
+    );
+
+    assertEquals(
+        "Clint",
+        person.firstName()
+    );
+
+    assertEquals(
+        "Eastwood",
+        person.lastName()
+    );
+
+    assertEquals(
+        8,
+        person.cityId()
+    );
+
+    verify(
+        statement
+    ).setString(
+        1,
+        "Clint"
+    );
+
+    verify(
+        statement
+    ).setString(
+        2,
+        "Eastwood"
+    );
+
+    verify(
+        statement
+    ).setInt(
+        3,
+        8
+    );
+
+  }
+
+  @Test
+  void update_shouldReturnUpdatedPerson()
+      throws Exception {
+
+    when(
+        statement.executeQuery()
+    ).thenReturn(
+        resultSet
+    );
+
+    when(
+        resultSet.next()
+    ).thenReturn(
+        true
+    );
+
+    when(
+        resultSet.getInt("id")
+    ).thenReturn(
+        1
+    );
+
+    when(
+        resultSet.getString("first_name")
+    ).thenReturn(
+        "Steven"
+    );
+
+    when(
+        resultSet.getString("last_name")
+    ).thenReturn(
+        "Spielberg Updated"
+    );
+
+    when(
+        resultSet.getInt("city_id")
+    ).thenReturn(
+        10
+    );
+
+    Person person = repository
+        .update(
+            1,
+            "Steven",
+            "Spielberg Updated",
+            10
+        )
+        .orElseThrow();
+
+    assertEquals(
+        1,
+        person.id()
+    );
+
+    assertEquals(
+        "Spielberg Updated",
+        person.lastName()
+    );
+
+    assertEquals(
+        10,
+        person.cityId()
+    );
+
+  }
+
+  @Test
+  void update_shouldReturnEmpty()
+      throws Exception {
+
+    when(
+        statement.executeQuery()
+    ).thenReturn(
+        resultSet
+    );
+
+    when(
+        resultSet.next()
+    ).thenReturn(
+        false
+    );
+
+    Optional<Person> person =
+        repository.update(
+            999,
+            "Unknown",
+            "Person",
+            1
+        );
+
+    assertTrue(
+        person.isEmpty()
+    );
+
+  }
+
+  @Test
+  void delete_shouldReturnTrue()
+      throws Exception {
+
+    when(
+        statement.executeUpdate()
+    ).thenReturn(
+        1
+    );
+
+    boolean deleted =
+        repository.delete(1);
+
+    assertTrue(
+        deleted
+    );
+
+    verify(
+        statement
+    ).setInt(
+        1,
+        1
+    );
+
+  }
+
+  @Test
+  void delete_shouldReturnFalse()
+      throws Exception {
+
+    when(
+        statement.executeUpdate()
+    ).thenReturn(
+        0
+    );
+
+    boolean deleted =
+        repository.delete(999);
+
+    assertFalse(
+        deleted
+    );
+
+  }
+
+}
+```
+
+---
+
+# Pourquoi utiliser des mocks ?
+
+Sans mock :
+
+```text
+PersonServiceTests
+    ↓
+PersonRepository
+    ↓
+AgroalDataSource
+    ↓
+PostgreSQL
+```
+
+Le test dépendrait alors d'une base réelle.
+
+Avec :
+
+```java
+Mockito.mock(
+    PersonRepository.class
+);
+```
+
+on obtient :
+
+```text
+PersonServiceTests
+    ↓
+PersonRepository mocké
+```
+
+Même principe pour le repository :
+
+```text
+PersonRepositoryTests
+    ↓
+AgroalDataSource mocké
+    ↓
+JDBC mocké
+```
+
+Aucun PostgreSQL n'est nécessaire pour les tests unitaires.
+
+---
+
+# Limite des tests du Repository
+
+Les tests :
+
+```text
+PersonRepositoryTests
+```
+
+vérifient le comportement Java du repository.
+
+Ils ne vérifient pas réellement que :
+
+```sql
+SELECT
+INSERT
+UPDATE
+DELETE
+RETURNING
+```
+
+fonctionnent contre PostgreSQL.
+
+Pour cela, il faudra plus tard créer un véritable test d'intégration :
+
+```text
+PersonRepositoryIntegrationTests
+        ↓
+AgroalDataSource réel
+        ↓
+PostgreSQL
+```
+
+Une solution adaptée sera notamment :
+
+```text
+Testcontainers
+```
+
+Mais ce n'est pas nécessaire pour cette étape.
+
+---
+
+# Flux GET
+
+```text
+GET /persons/1
+      ↓
+PersonController
+      ↓
+PersonService.getPersonById()
+      ↓
+PersonRepository.findById()
+      ↓
+AgroalDataSource
+      ↓
+Connection
+      ↓
+PreparedStatement
+      ↓
+SELECT
+      ↓
+PostgreSQL
+      ↓
+ResultSet
+      ↓
+mapPerson()
+      ↓
+Person
+      ↓
+PersonOutputDto
+      ↓
+JSON
+```
+
+---
+
+# Flux GET ALL
+
+```text
+GET /persons
+      ↓
+PersonController
+      ↓
+PersonService.getAllPersons()
+      ↓
+PersonRepository.findAll()
+      ↓
+SELECT
+      ↓
+PostgreSQL
+      ↓
+ResultSet
+      ↓
+List<Person>
+      ↓
+List<PersonOutputDto>
+      ↓
+JSON
+```
+
+---
+
+# Flux POST
+
+```text
+POST /persons
+      ↓
+JSON
+      ↓
+PersonInputDto
+      ↓
+@Valid
+      ↓
+PersonController
+      ↓
+PersonService.createPerson()
+      ↓
+PersonRepository.create()
+      ↓
+INSERT
+      ↓
+PostgreSQL
+      ↓
+IDENTITY
+      ↓
+RETURNING
+      ↓
+ResultSet
+      ↓
+Person
+      ↓
+PersonOutputDto
+      ↓
+JSON
+```
+
+---
+
+# Flux PUT
+
+```text
+PUT /persons/1
+      ↓
+PersonInputDto
+      ↓
+@Valid
+      ↓
+PersonController
+      ↓
+PersonService.updatePerson()
+      ↓
+PersonRepository.update()
+      ↓
+UPDATE
+      ↓
+PostgreSQL
+      ↓
+RETURNING
+      ↓
+Optional<Person>
+      ↓
+PersonOutputDto
+      ↓
+JSON
+```
+
+---
+
+# Flux DELETE
+
+```text
+DELETE /persons/1
+      ↓
+PersonController
+      ↓
+PersonService.deletePerson()
+      ↓
+PersonRepository.delete()
+      ↓
+DELETE
+      ↓
+PostgreSQL
+      ↓
+nombre de lignes supprimées
+      ↓
+boolean
+      ↓
+204 ou 404
+```
+
+---
+
+# Endpoints
+
+Les endpoints ne changent pas :
+
+```text
+GET    /persons
+GET    /persons/{id}
+POST   /persons
+PUT    /persons/{id}
+DELETE /persons/{id}
+```
+
+Base URL :
+
+```text
+http://localhost:3000/persons
+```
+
+---
+
+# GET
+
+```bash
+curl http://localhost:3000/persons
+```
+
+---
+
+# GET par identifiant
+
+```bash
+curl http://localhost:3000/persons/1
+```
+
+Réponse :
+
+```json
+{
+  "id": 1,
+  "firstName": "Steven",
+  "lastName": "Spielberg",
+  "cityId": 1
+}
+```
+
+---
+
+# POST
+
+```bash
+curl -X POST http://localhost:3000/persons \
+  -H "Content-Type: application/json" \
+  -d "{\"firstName\":\"Clint\",\"lastName\":\"Eastwood\",\"cityId\":8}"
+```
+
+Réponse :
+
+```text
+201 Created
+```
+
+```json
+{
+  "id": 8,
+  "firstName": "Clint",
+  "lastName": "Eastwood",
+  "cityId": 8
+}
+```
+
+---
+
+# PUT
+
+```bash
+curl -X PUT http://localhost:3000/persons/1 \
+  -H "Content-Type: application/json" \
+  -d "{\"firstName\":\"Steven\",\"lastName\":\"Spielberg Updated\",\"cityId\":10}"
+```
+
+Réponse :
+
+```json
+{
+  "id": 1,
+  "firstName": "Steven",
+  "lastName": "Spielberg Updated",
+  "cityId": 10
+}
+```
+
+---
+
+# DELETE
+
+```bash
+curl -X DELETE http://localhost:3000/persons/1
+```
+
+Réponse :
+
+```text
+204 No Content
+```
+
+---
+
+# Vérification PostgreSQL
+
+```sql
+SELECT
+  id,
+  first_name,
+  last_name,
+  city_id
+FROM person
+ORDER BY id;
+```
+
+---
+
+# Vérification Maven
+
+Compiler :
+
+```bash
+mvn compile
+```
+
+Lancer les tests :
+
+```bash
+mvn test
+```
+
+Avec le wrapper Windows :
+
+```powershell
+.\mvnw.cmd test
+```
+
+Compiler et packager :
+
+```bash
+mvn clean install
+```
+
+Résultat attendu :
+
+```text
+BUILD SUCCESS
+```
+
+---
+
+# Lancement
+
+PostgreSQL doit être démarré.
+
+Windows :
+
+```powershell
+.\mvnw.cmd quarkus:dev
+```
+
+Linux :
+
+```bash
+./mvnw quarkus:dev
+```
+
+Avec Maven installé :
+
+```bash
+mvn quarkus:dev
+```
+
+Application :
+
+```text
+http://localhost:3000
+```
+
+API :
+
+```text
+http://localhost:3000/persons
+```
+
+---
+
+# Architecture finale
+
+```text
+HTTP
+    ↓
+DTO
+    ↓
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+AgroalDataSource
+    ↓
+JDBC
+    ↓
+PostgreSQL
+```
+
+Responsabilités :
+
+```text
+Controller         → HTTP / DTO
+
+Service            → logique applicative
+
+Repository         → SQL / accès aux données
+
+AgroalDataSource   → pool de connexions
+
+JDBC               → communication avec la base
+
+PostgreSQL         → persistance
+```
+
+---
+
+# Architecture finale des tests
+
+Production :
+
+```text
+PersonController
+      ↓
+PersonService
+      ↓
+PersonRepository
+      ↓
+AgroalDataSource
+      ↓
+PostgreSQL
+```
+
+Test Controller :
+
+```text
+PersonController
+      ↓
+mock PersonService
+```
+
+Test Service :
+
+```text
+PersonService
+      ↓
+mock PersonRepository
+```
+
+Test Repository :
+
+```text
+PersonRepository
+      ↓
+mock AgroalDataSource
+      ↓
+mock JDBC
+```
+
+---
+
+# Évolution du Repository
+
+## Repository en mémoire
+
+```text
+PersonRepository
+    ↓
+CopyOnWriteArrayList<Person>
+```
+
+avec :
+
+```text
+AtomicInteger
+List<Person>
+```
+
+## Repository PostgreSQL
+
+```text
+PersonRepository
+    ↓
+AgroalDataSource
+    ↓
+JDBC
+    ↓
+PostgreSQL
+```
+
+Le repository contient maintenant :
+
+```text
+SELECT
+INSERT
+UPDATE
+DELETE
+mapping ResultSet → Person
+```
+
+Il ne contient plus directement aucune donnée.
+
+---
+
+# Évolution complète
+
+## CRUD initial
+
+```text
+HTTP
+  ↓
+PersonController
+  ↓
+List<Person>
+```
+
+## Avec DTO
+
+```text
+HTTP
+  ↓
+PersonInputDto
+  ↓
+PersonController
+  ↓
+List<Person>
+  ↓
+PersonOutputDto
+  ↓
+HTTP
+```
+
+## Avec Service
+
+```text
+HTTP
+  ↓
+PersonInputDto
+  ↓
+PersonController
+  ↓
+PersonService
+  ↓
+List<Person>
+  ↓
+PersonOutputDto
+  ↓
+HTTP
+```
+
+## Avec Repository
+
+```text
+HTTP
+  ↓
+PersonInputDto
+  ↓
+PersonController
+  ↓
+PersonService
+  ↓
+PersonRepository
+  ↓
+List<Person>
+  ↓
+PersonOutputDto
+  ↓
+HTTP
+```
+
+## Avec PostgreSQL
+
+```text
+HTTP
+  ↓
+PersonInputDto
+  ↓
+PersonController
+  ↓
+PersonService
+  ↓
+PersonRepository
+  ↓
+AgroalDataSource
+  ↓
+JDBC
+  ↓
+PostgreSQL
+  ↓
+Person
+  ↓
+PersonOutputDto
+  ↓
+HTTP
+```
+
+---
+
+# Faible couplage
+
+Avant :
+
+```text
+PersonRepository
+    ↓
+List<Person>
+```
+
+Maintenant :
+
+```text
+PersonRepository
+    ↓
+PostgreSQL
+```
+
+Mais :
+
+```text
+PersonController
+```
+
+ne change pas.
+
+Et :
+
+```text
+PersonService
+```
+
+ne change pas.
+
+La modification du mécanisme de persistance reste localisée dans :
+
+```text
+PersonRepository
+```
+
+---
+
+# Principes clés
+
+* `PersonController` reste responsable de HTTP.
+* `PersonService` reste responsable de la logique applicative.
+* `PersonRepository` reste responsable de l'accès aux données.
+* Le stockage mémoire disparaît.
+* PostgreSQL devient responsable de la persistance.
+* PostgreSQL génère les identifiants.
+* `AtomicInteger` disparaît.
+* `CopyOnWriteArrayList<Person>` disparaît.
+* `PersonRepository` contient les requêtes SQL.
+* Quarkus utilise `AgroalDataSource`.
+* Agroal fournit le pool de connexions.
+* Le repository utilise l'API JDBC standard.
+* `Connection` représente une connexion JDBC.
+* `PreparedStatement` exécute une requête paramétrée.
+* `ResultSet` contient les résultats SQL.
+* `mapPerson()` transforme une ligne SQL en `Person`.
+* `try-with-resources` libère automatiquement les ressources JDBC.
+* `PersonRepository` retourne uniquement des `Person`.
+* `PersonRepository` ne connaît pas les DTO.
+* `PersonRepository` ne connaît pas HTTP.
+* `PersonService` ne connaît pas PostgreSQL.
+* `PersonService` ne connaît pas JDBC.
+* `PersonService` ne connaît pas SQL.
+* `PersonController` ne connaît pas PostgreSQL.
+* `PersonController` ne connaît pas Agroal.
+* `PersonInputDto` contrôle les entrées.
+* `PersonOutputDto` contrôle les sorties.
+* `Person` reste le modèle interne.
+* `Optional<Person>` représente une donnée éventuellement absente.
+* Une personne inexistante produit un `404`.
+* Une erreur technique de base de données produit généralement un `500`.
+* Les tests du controller mockent le service.
+* Les tests du service mockent le repository.
+* Les tests du repository mockent le datasource et JDBC.
+* Les tests unitaires ne nécessitent pas PostgreSQL.
+* Des tests d'intégration PostgreSQL pourront être ajoutés séparément.
+
+---
+
+# Séparation finale
+
+```text
+Controller
+    │
+    │ HTTP / DTO
+    ↓
+Service
+    │
+    │ logique applicative
+    ↓
+Repository
+    │
+    │ SQL / accès aux données
+    ↓
+AgroalDataSource
+    │
+    │ pool
+    ↓
+JDBC
+    │
+    │ communication SQL
+    ↓
+PostgreSQL
+```
+
+Le passage :
+
+```text
+List<Person>
+```
+
+vers :
+
+```text
+PostgreSQL
+```
+
+est principalement isolé dans :
+
+```text
+PersonRepository
+```
+
+L'architecture reste :
+
+```text
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Database
+```
