@@ -7,8 +7,9 @@
 ###  Database
 - [Initialisation](./database/001-init.md)
 
-## Java 25
+## Installation
 - [Installation Java 25](./basics/003-java25-installation.md)
+- [Installation Rust](./basics/004-rust-installation.md)
 
 ###  SpringBoot
 - [Initialisation](./springboot/001-initialisation.md)
