@@ -54,9 +54,9 @@ quarkus-starter
 
 Le projet peut être ouvert avec :
 
-- IntelliJ IDEA ;
-- Eclipse ;
-- Visual Studio Code.
+* IntelliJ IDEA ;
+* Eclipse ;
+* Visual Studio Code.
 
 ---
 
@@ -88,21 +88,52 @@ Se placer dans le dossier du projet :
 cd quarkus-starter
 ```
 
-### Windows
+### Windows avec Maven Wrapper
 
 ```powershell
 .\mvnw.cmd quarkus:dev
 ```
 
-### Linux
+### Linux avec Maven Wrapper
 
 ```bash
 ./mvnw quarkus:dev
 ```
 
-La console affiche le démarrage de l’application Quarkus.
+Le Maven Wrapper permet d'exécuter Maven sans nécessiter une installation globale de Maven.
 
-Pour arrêter l’application :
+---
+
+## ▶️ Lancement avec Maven installé
+
+Si Maven est installé et disponible dans le `PATH`, il est également possible d'utiliser directement :
+
+```bash
+mvn quarkus:dev
+```
+
+La différence est simple :
+
+```text
+mvnw  → utilise le Maven Wrapper fourni avec le projet
+mvn   → utilise Maven installé sur la machine
+```
+
+Les deux commandes permettent de lancer Quarkus en mode développement.
+
+La console doit afficher notamment :
+
+```text
+Profile dev activated. Live Coding activated.
+```
+
+et une ligne indiquant que l'application écoute sur :
+
+```text
+http://localhost:8080
+```
+
+Pour arrêter l'application :
 
 ```text
 Ctrl + C
@@ -110,32 +141,47 @@ Ctrl + C
 
 ---
 
-## ▶️ Lancement depuis IntelliJ IDEA
+## 🌐 Tester l'application
 
-### 1. Ouvrir le projet
+Une ressource d'exemple est générée avec le projet Quarkus.
 
-Dans IntelliJ IDEA, ouvrir le dossier :
-
-```text
-quarkus-starter
-```
-
-IntelliJ doit détecter automatiquement le fichier :
+Une fois l'application démarrée, ouvrir dans le navigateur :
 
 ```text
-pom.xml
+http://localhost:8080/hello
 ```
 
-Si Maven n’est pas détecté :
+La réponse attendue est généralement :
 
 ```text
-Clic droit sur pom.xml
-Add as Maven Project
+Hello from Quarkus REST
 ```
+
+L'URL peut également être testée avec `curl` :
+
+```bash
+curl http://localhost:8080/hello
+```
+
+Le fonctionnement est donc :
+
+```text
+Navigateur / curl
+        ↓
+http://localhost:8080/hello
+        ↓
+Quarkus
+        ↓
+GreetingResource
+        ↓
+Réponse HTTP
+```
+
+Si cette URL répond correctement, le projet Quarkus fonctionne.
 
 ---
 
-### 2. Créer une configuration Maven
+## ▶️ Lancement depuis IntelliJ IDEA
 
 Ouvrir :
 
@@ -144,47 +190,37 @@ Run
 Edit Configurations
 ```
 
-Cliquer sur :
+Ajouter une configuration :
 
 ```text
-+
 Maven
 ```
 
-Configurer la nouvelle configuration :
+Configurer :
 
 ```text
 Name              : Quarkus Dev
 Command line      : quarkus:dev
-Working directory : D:\demo\quarkus-starter
-Profiles          :
+Working directory : $ProjectFileDir$
 ```
 
-Le champ `Profiles` reste vide.
-
-Le dossier de travail doit être le dossier contenant le fichier :
-
-```text
-pom.xml
-```
-
-Il est également possible d’utiliser :
-
-```text
-$ProjectFileDir$
-```
-
-comme `Working directory`.
-
----
-
-### 3. Enregistrer la configuration
-
-Cliquer sur :
+Puis cliquer sur :
 
 ```text
 Apply
 OK
+```
+
+Sélectionner ensuite :
+
+```text
+Quarkus Dev
+```
+
+et cliquer sur :
+
+```text
+Run ▶
 ```
 
 ---
@@ -209,6 +245,18 @@ Cette configuration exécute l’équivalent de :
 .\mvnw.cmd quarkus:dev
 ```
 
+ou, si Maven est installé :
+
+```bash
+mvn quarkus:dev
+```
+
+Tester ensuite :
+
+```text
+http://localhost:8080/hello
+```
+
 ---
 
 ## 🐞 Lancement en mode Debug
@@ -231,13 +279,35 @@ Il est alors possible d’utiliser des points d’arrêt dans IntelliJ.
 
 ## 🔄 Rechargement automatique
 
-La commande suivante lance Quarkus en mode développement :
+La commande :
 
-```text
-quarkus:dev
+```bash
+mvn quarkus:dev
 ```
 
+ou :
+
+```bash
+./mvnw quarkus:dev
+```
+
+lance Quarkus en mode développement.
+
 Les modifications du code sont automatiquement détectées et recompilées.
+
+Ce mécanisme est appelé :
+
+```text
+Live Coding
+```
+
+Après une modification, il suffit généralement de rappeler :
+
+```text
+http://localhost:8080/hello
+```
+
+pour constater le changement.
 
 ---
 
@@ -249,10 +319,22 @@ Les modifications du code sont automatiquement détectées et recompilées.
 .\mvnw.cmd clean package
 ```
 
+ou avec Maven installé :
+
+```powershell
+mvn clean package
+```
+
 ### Linux
 
 ```bash
 ./mvnw clean package
+```
+
+ou :
+
+```bash
+mvn clean package
 ```
 
 Le projet compilé est généré dans :
@@ -275,6 +357,12 @@ Le dossier complet suivant doit être conservé :
 target/quarkus-app/
 ```
 
+Après le démarrage, tester :
+
+```text
+http://localhost:8080/hello
+```
+
 ---
 
 ## ✅ Configuration retenue
@@ -283,8 +371,23 @@ target/quarkus-app/
 Group      : com.ganatan.starter
 Artifact   : quarkus-starter
 Build Tool : Maven
-Extension  : aucune
+Extension  : aucune supplémentaire
 Database   : aucune
+Port       : 8080
 ```
 
-Cette première étape consiste uniquement à générer, lancer et compiler une application Quarkus simple.
+Commandes possibles pour lancer le projet :
+
+```text
+.\mvnw.cmd quarkus:dev
+./mvnw quarkus:dev
+mvn quarkus:dev
+```
+
+URL de vérification :
+
+```text
+http://localhost:8080/hello
+```
+
+Cette première étape consiste uniquement à générer, lancer, tester et compiler une application Quarkus simple.
