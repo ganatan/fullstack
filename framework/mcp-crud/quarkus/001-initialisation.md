@@ -4,13 +4,13 @@
 
 Se rendre sur le générateur officiel Quarkus :
 
-👉 https://code.quarkus.io
+https://code.quarkus.io
 
 ---
 
 ## 🏗️ Configuration du projet
 
-Configurer le projet avec les paramètres suivants :
+Configurer le projet avec les paramètres suivants.
 
 ### Group
 
@@ -115,8 +115,8 @@ mvn quarkus:dev
 La différence est simple :
 
 ```text
-mvnw  → utilise le Maven Wrapper fourni avec le projet
-mvn   → utilise Maven installé sur la machine
+mvnw → utilise le Maven Wrapper fourni avec le projet
+mvn  → utilise Maven installé sur la machine
 ```
 
 Les deux commandes permettent de lancer Quarkus en mode développement.
@@ -211,7 +211,7 @@ Dans le champ **Run**, saisir exactement :
 quarkus:dev
 ```
 
-La configuration doit donc afficher :
+La configuration doit donc être :
 
 ```text
 Name              : Quarkus starter
@@ -238,7 +238,7 @@ est interprétée par Maven comme une commande et provoque l'erreur :
 Unknown lifecycle phase "Quarkus"
 ```
 
-La valeur correcte est obligatoirement :
+La valeur correcte est :
 
 ```text
 quarkus:dev
@@ -269,21 +269,13 @@ IntelliJ lance alors l'équivalent de :
 mvn quarkus:dev
 ```
 
-L'application Quarkus démarre en mode développement avec le **Live Coding** activé.
-
-
-
-Cette configuration exécute l’équivalent de :
+ou avec le Maven Wrapper :
 
 ```powershell
 .\mvnw.cmd quarkus:dev
 ```
 
-ou, si Maven est installé :
-
-```bash
-mvn quarkus:dev
-```
+L'application Quarkus démarre en mode développement avec le **Live Coding** activé.
 
 Tester ensuite :
 
@@ -293,12 +285,169 @@ http://localhost:8080/hello
 
 ---
 
-## 🐞 Lancement en mode Debug
+## 🐞 Lancement en mode Debug avec IntelliJ IDEA
 
-Sélectionner la configuration :
+Avec Quarkus, le fonctionnement du debug est légèrement différent de Spring Boot.
+
+On utilise deux configurations IntelliJ :
 
 ```text
-Quarkus Dev
+Quarkus starter
+    ↓
+configuration Maven
+    ↓
+lance Quarkus
+
+Quarkus debug
+    ↓
+configuration Remote JVM Debug
+    ↓
+connecte IntelliJ à la JVM Quarkus
+```
+
+### 1. Configuration Maven
+
+La première configuration existe déjà :
+
+```text
+Type : Maven
+
+Name : Quarkus starter
+
+Run  : quarkus:dev
+```
+
+Cette configuration sert à lancer l'application Quarkus.
+
+---
+
+### 2. Créer la configuration de Debug
+
+Ouvrir :
+
+```text
+Run
+Edit Configurations
+```
+
+Cliquer sur :
+
+```text
++
+```
+
+Puis sélectionner :
+
+```text
+Remote JVM Debug
+```
+
+Configurer :
+
+```text
+Name : Quarkus debug
+
+Debugger mode : Attach to remote JVM
+
+Transport : Socket
+
+Host : localhost
+
+Port : 5005
+```
+
+Dans :
+
+```text
+Use module classpath
+```
+
+sélectionner :
+
+```text
+quarkus-starter
+```
+
+La configuration doit donc contenir principalement :
+
+```text
+Name                 : Quarkus debug
+Debugger mode        : Attach to remote JVM
+Transport            : Socket
+Host                 : localhost
+Port                 : 5005
+Use module classpath : quarkus-starter
+```
+
+Cliquer ensuite sur :
+
+```text
+Apply
+OK
+```
+
+---
+
+## ⚠️ Ordre de lancement du Debug
+
+L'ordre est important.
+
+### Étape 1
+
+Sélectionner :
+
+```text
+Quarkus starter
+```
+
+Puis cliquer sur :
+
+```text
+Run ▶
+```
+
+Quarkus démarre en mode développement.
+
+L'application écoute sur :
+
+```text
+http://localhost:8080
+```
+
+Le port utilisé pour la connexion du debugger est :
+
+```text
+5005
+```
+
+### Étape 2
+
+Laisser Quarkus fonctionner.
+
+Ne pas arrêter la configuration :
+
+```text
+Quarkus starter
+```
+
+### Étape 3
+
+Placer un breakpoint dans le code Java.
+
+Par exemple :
+
+```java
+@GET
+@Path("status")
+public Map<String, Object> rootWithHashMap() {
+```
+
+### Étape 4
+
+Sélectionner ensuite :
+
+```text
+Quarkus debug
 ```
 
 Puis cliquer sur :
@@ -307,7 +456,95 @@ Puis cliquer sur :
 Debug 🐞
 ```
 
-Il est alors possible d’utiliser des points d’arrêt dans IntelliJ.
+IntelliJ se connecte alors à la JVM Quarkus sur :
+
+```text
+localhost:5005
+```
+
+Le fonctionnement est donc :
+
+```text
+Quarkus starter
+      ↓
+Run ▶
+      ↓
+Quarkus démarre
+      ↓
+Port HTTP 8080
+Port Debug 5005
+      ↓
+Quarkus debug
+      ↓
+Debug 🐞
+      ↓
+IntelliJ se connecte à la JVM
+      ↓
+Breakpoints actifs
+```
+
+---
+
+## ⚠️ Erreur possible : Connection refused
+
+Si la configuration :
+
+```text
+Quarkus debug
+```
+
+est lancée avant Quarkus, IntelliJ peut afficher :
+
+```text
+Unable to open debugger port (localhost:5005)
+Connection refused
+```
+
+Cela signifie simplement que rien n'écoute encore sur le port :
+
+```text
+5005
+```
+
+Il faut d'abord lancer :
+
+```text
+Quarkus starter
+→ Run ▶
+```
+
+puis seulement :
+
+```text
+Quarkus debug
+→ Debug 🐞
+```
+
+---
+
+## ✅ Résumé IntelliJ
+
+Deux configurations sont utilisées :
+
+```text
+Maven
+└── Quarkus starter
+    └── Run : quarkus:dev
+
+Remote JVM Debug
+└── Quarkus debug
+    ├── Host : localhost
+    ├── Port : 5005
+    └── Module : quarkus-starter
+```
+
+Utilisation quotidienne :
+
+```text
+1. Quarkus starter → Run ▶
+
+2. Quarkus debug   → Debug 🐞
+```
 
 ---
 
@@ -407,7 +644,8 @@ Artifact   : quarkus-starter
 Build Tool : Maven
 Extension  : aucune supplémentaire
 Database   : aucune
-Port       : 8080
+Port HTTP  : 8080
+Port Debug : 5005
 ```
 
 Commandes possibles pour lancer le projet :
@@ -424,4 +662,30 @@ URL de vérification :
 http://localhost:8080/hello
 ```
 
-Cette première étape consiste uniquement à générer, lancer, tester et compiler une application Quarkus simple.
+Configuration IntelliJ pour l'exécution :
+
+```text
+Quarkus starter
+Type : Maven
+Run  : quarkus:dev
+```
+
+Configuration IntelliJ pour le debug :
+
+```text
+Quarkus debug
+Type   : Remote JVM Debug
+Host   : localhost
+Port   : 5005
+Module : quarkus-starter
+```
+
+Ordre de lancement :
+
+```text
+Quarkus starter → Run ▶
+        ↓
+Quarkus debug → Debug 🐞
+```
+
+Cette première étape consiste uniquement à générer, lancer, tester, déboguer et compiler une application Quarkus simple.
