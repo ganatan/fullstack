@@ -190,54 +190,88 @@ Run
 Edit Configurations
 ```
 
-Ajouter une configuration :
+Ajouter une nouvelle configuration de type :
 
 ```text
 Maven
 ```
 
-Configurer :
+Configurer la configuration comme suit :
 
 ```text
-Name              : Quarkus Dev
-Command line      : quarkus:dev
+Name              : Quarkus starter
 Working directory : $ProjectFileDir$
 ```
 
-Puis cliquer sur :
+### ⚠️ IMPORTANT — Champ `Run`
+
+Dans le champ **Run**, saisir exactement :
+
+```text
+quarkus:dev
+```
+
+La configuration doit donc afficher :
+
+```text
+Name              : Quarkus starter
+
+Run
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+quarkus:dev
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Working directory : $ProjectFileDir$
+```
+
+> ⚠️ Ne pas saisir `Quarkus Dev` dans le champ **Run**.
+
+La valeur :
+
+```text
+Quarkus Dev
+```
+
+est interprétée par Maven comme une commande et provoque l'erreur :
+
+```text
+Unknown lifecycle phase "Quarkus"
+```
+
+La valeur correcte est obligatoirement :
+
+```text
+quarkus:dev
+```
+
+Cliquer ensuite sur :
 
 ```text
 Apply
 OK
 ```
 
-Sélectionner ensuite :
+Dans la barre supérieure d'IntelliJ IDEA, sélectionner :
 
 ```text
-Quarkus Dev
+Quarkus starter
 ```
 
-et cliquer sur :
-
-```text
-Run ▶
-```
-
----
-
-### 4. Lancer l’application
-
-Dans la barre supérieure d’IntelliJ, sélectionner :
-
-```text
-Quarkus Dev
-```
-
-Puis cliquer sur :
+puis cliquer sur :
 
 ```text
 Run ▶
 ```
+
+IntelliJ lance alors l'équivalent de :
+
+```bash
+mvn quarkus:dev
+```
+
+L'application Quarkus démarre en mode développement avec le **Live Coding** activé.
+
+
 
 Cette configuration exécute l’équivalent de :
 
