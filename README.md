@@ -1,6 +1,6 @@
 # Index 
 
-| Framework | Tools | Database | Concepts |  |
+| ------- | ------- | ------- | ------- |  |
 |---|---|---|---|---|
 | [STARTER](./framework/mcp-starter/README.md) | [CRUD](./framework/mcp-crud/README.md) |  |  |  |
 |  |  |  |  |  |
