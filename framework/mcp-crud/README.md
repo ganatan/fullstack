@@ -27,6 +27,8 @@
 - [Root Controller](./quarkus/002-root-controller.md)
 - [Crud Controller](./quarkus/003-crud-controller.md)
 - [DTO](./quarkus/004-dto.md)
+- [Service](./quarkus/005-service.md)
+
 
 ###  Rust
 - [Initialisation](./rust/001-initialisation.md)
