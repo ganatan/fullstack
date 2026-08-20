@@ -10,4 +10,5 @@
 ## Java
 - [Installation Maven](./java/001-installation-maven.md)
 - [Commandes Maven](./java/002-commandes-maven.md)
+- [Commandes Test](./java/003-commandes-tests.md)
 
