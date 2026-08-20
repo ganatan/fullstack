@@ -1,5 +1,6 @@
 ## CRUD / Rust / SpringBoot / Quarkus
 
-## Java 25
-- [Installation Java 25](./basics/001-java-installation.md)
+## Java
+- [Installation Java](./basics/001-java-installation.md)
+- [Variables d'environnement](./basics/002-java-variables.md)
 
