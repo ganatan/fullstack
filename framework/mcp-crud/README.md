@@ -29,6 +29,7 @@
 - [DTO](./quarkus/004-dto.md)
 - [Service](./quarkus/005-service.md)
 - [Repository](./quarkus/006-repository.md)
+- [PostgreSQL](./quarkus/007-postgresql.md)
 
 ###  Rust
 - [Initialisation](./rust/001-initialisation.md)
