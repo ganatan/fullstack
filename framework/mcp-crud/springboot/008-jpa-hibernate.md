@@ -350,27 +350,27 @@ public class Person {
 
   @Id
   @GeneratedValue(
-    strategy = GenerationType.IDENTITY
+      strategy = GenerationType.IDENTITY
   )
   private Integer id;
 
   @Column(
-    name = "first_name",
-    nullable = false,
-    length = 50
+      name = "first_name",
+      nullable = false,
+      length = 50
   )
   private String firstName;
 
   @Column(
-    name = "last_name",
-    nullable = false,
-    length = 50
+      name = "last_name",
+      nullable = false,
+      length = 50
   )
   private String lastName;
 
   @Column(
-    name = "city_id",
-    nullable = false
+      name = "city_id",
+      nullable = false
   )
   private int cityId;
 
@@ -378,10 +378,22 @@ public class Person {
   }
 
   public Person(
-    String firstName,
-    String lastName,
-    int cityId
+      String firstName,
+      String lastName,
+      int cityId
   ) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.cityId = cityId;
+  }
+
+  public Person(
+      Integer id,
+      String firstName,
+      String lastName,
+      int cityId
+  ) {
+    this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.cityId = cityId;
@@ -396,7 +408,7 @@ public class Person {
   }
 
   public void setFirstName(
-    String firstName
+      String firstName
   ) {
     this.firstName = firstName;
   }
@@ -406,7 +418,7 @@ public class Person {
   }
 
   public void setLastName(
-    String lastName
+      String lastName
   ) {
     this.lastName = lastName;
   }
@@ -416,7 +428,7 @@ public class Person {
   }
 
   public void setCityId(
-    int cityId
+      int cityId
   ) {
     this.cityId = cityId;
   }
@@ -1304,363 +1316,13 @@ src/test/java/com/ganatan/starter/api/person/PersonControllerTests.java
 ```java
 package com.ganatan.starter.api.person;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-class PersonControllerTests {
+public interface PersonRepository
+    extends JpaRepository<Person, Integer> {
 
-  private MockMvc mockMvc;
-  private PersonService service;
-
-  @BeforeEach
-  void setUp() {
-    Validator validator = Validation
-      .buildDefaultValidatorFactory()
-      .getValidator();
-
-    service =
-      Mockito.mock(PersonService.class);
-
-    PersonController controller =
-      new PersonController(service);
-
-    mockMvc = MockMvcBuilders
-      .standaloneSetup(controller)
-      .setValidator(
-        new SpringValidatorAdapter(
-          validator
-        )
-      )
-      .build();
-  }
-
-  @Test
-  void getAllPersons_shouldReturnSevenPersons()
-    throws Exception {
-
-    when(
-      service.getAllPersons()
-    ).thenReturn(
-      List.of(
-        new Person(
-          "Steven",
-          "Spielberg",
-          1
-        ),
-        new Person(
-          "Martin",
-          "Scorsese",
-          2
-        ),
-        new Person(
-          "Francis",
-          "Ford Coppola",
-          3
-        ),
-        new Person(
-          "George",
-          "Lucas",
-          4
-        ),
-        new Person(
-          "Quentin",
-          "Tarantino",
-          5
-        ),
-        new Person(
-          "David",
-          "Fincher",
-          6
-        ),
-        new Person(
-          "Spike",
-          "Lee",
-          7
-        )
-      )
-    );
-
-    mockMvc.perform(
-        get("/persons")
-      )
-      .andExpect(
-        status().isOk()
-      )
-      .andExpect(
-        jsonPath("$", hasSize(7))
-      );
-  }
-
-  @Test
-  void getPersonById_shouldReturnPerson()
-    throws Exception {
-
-    Person person =
-      new Person(
-        "Steven",
-        "Spielberg",
-        1
-      );
-
-    when(
-      service.getPersonById(1)
-    ).thenReturn(
-      Optional.of(person)
-    );
-
-    mockMvc.perform(
-        get("/persons/1")
-      )
-      .andExpect(
-        status().isOk()
-      )
-      .andExpect(
-        jsonPath("$.firstName")
-          .value("Steven")
-      )
-      .andExpect(
-        jsonPath("$.lastName")
-          .value("Spielberg")
-      )
-      .andExpect(
-        jsonPath("$.cityId")
-          .value(1)
-      );
-  }
-
-  @Test
-  void getPersonById_shouldReturnNotFound()
-    throws Exception {
-
-    when(
-      service.getPersonById(999)
-    ).thenReturn(
-      Optional.empty()
-    );
-
-    mockMvc.perform(
-        get("/persons/999")
-      )
-      .andExpect(
-        status().isNotFound()
-      );
-  }
-
-  @Test
-  void createPerson_shouldReturnCreatedPerson()
-    throws Exception {
-
-    Person person =
-      new Person(
-        "Clint",
-        "Eastwood",
-        8
-      );
-
-    when(
-      service.createPerson(
-        anyString(),
-        anyString(),
-        anyInt()
-      )
-    ).thenReturn(person);
-
-    String payload = """
-      {
-        "firstName": "Clint",
-        "lastName": "Eastwood",
-        "cityId": 8
-      }
-      """;
-
-    mockMvc.perform(
-        post("/persons")
-          .contentType(
-            MediaType.APPLICATION_JSON
-          )
-          .content(payload)
-      )
-      .andExpect(
-        status().isCreated()
-      )
-      .andExpect(
-        jsonPath("$.firstName")
-          .value("Clint")
-      )
-      .andExpect(
-        jsonPath("$.lastName")
-          .value("Eastwood")
-      )
-      .andExpect(
-        jsonPath("$.cityId")
-          .value(8)
-      );
-  }
-
-  @Test
-  void createPerson_shouldRejectInvalidPayload()
-    throws Exception {
-
-    String payload = """
-      {
-        "firstName": "",
-        "lastName": "Eastwood",
-        "cityId": 0
-      }
-      """;
-
-    mockMvc.perform(
-        post("/persons")
-          .contentType(
-            MediaType.APPLICATION_JSON
-          )
-          .content(payload)
-      )
-      .andExpect(
-        status().isBadRequest()
-      );
-  }
-
-  @Test
-  void updatePerson_shouldReturnUpdatedPerson()
-    throws Exception {
-
-    Person person =
-      new Person(
-        "Steven",
-        "Spielberg Updated",
-        10
-      );
-
-    when(
-      service.updatePerson(
-        anyInt(),
-        anyString(),
-        anyString(),
-        anyInt()
-      )
-    ).thenReturn(
-      Optional.of(person)
-    );
-
-    String payload = """
-      {
-        "firstName": "Steven",
-        "lastName": "Spielberg Updated",
-        "cityId": 10
-      }
-      """;
-
-    mockMvc.perform(
-        put("/persons/1")
-          .contentType(
-            MediaType.APPLICATION_JSON
-          )
-          .content(payload)
-      )
-      .andExpect(
-        status().isOk()
-      )
-      .andExpect(
-        jsonPath("$.firstName")
-          .value("Steven")
-      )
-      .andExpect(
-        jsonPath("$.lastName")
-          .value("Spielberg Updated")
-      )
-      .andExpect(
-        jsonPath("$.cityId")
-          .value(10)
-      );
-  }
-
-  @Test
-  void updatePerson_shouldReturnNotFound()
-    throws Exception {
-
-    when(
-      service.updatePerson(
-        anyInt(),
-        anyString(),
-        anyString(),
-        anyInt()
-      )
-    ).thenReturn(
-      Optional.empty()
-    );
-
-    String payload = """
-      {
-        "firstName": "Unknown",
-        "lastName": "Person",
-        "cityId": 1
-      }
-      """;
-
-    mockMvc.perform(
-        put("/persons/999")
-          .contentType(
-            MediaType.APPLICATION_JSON
-          )
-          .content(payload)
-      )
-      .andExpect(
-        status().isNotFound()
-      );
-  }
-
-  @Test
-  void deletePerson_shouldReturnNoContent()
-    throws Exception {
-
-    when(
-      service.deletePerson(1)
-    ).thenReturn(true);
-
-    mockMvc.perform(
-        delete("/persons/1")
-      )
-      .andExpect(
-        status().isNoContent()
-      );
-  }
-
-  @Test
-  void deletePerson_shouldReturnNotFound()
-    throws Exception {
-
-    when(
-      service.deletePerson(999)
-    ).thenReturn(false);
-
-    mockMvc.perform(
-        delete("/persons/999")
-      )
-      .andExpect(
-        status().isNotFound()
-      );
-  }
+  List<Person> findAllByOrderByIdAsc();
 }
 ```
 
