@@ -30,6 +30,7 @@
 - [Service](./quarkus/005-service.md)
 - [Repository](./quarkus/006-repository.md)
 - [PostgreSQL](./quarkus/007-postgresql.md)
+- [JPA Hibernate](./quarkus/008-jpa-hibernate.md)
 
 ###  Rust
 - [Initialisation](./rust/001-initialisation.md)
