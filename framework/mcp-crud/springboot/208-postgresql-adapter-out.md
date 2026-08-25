@@ -195,7 +195,7 @@ src/main/java/com/ganatan/starter/person/
         └── PersonConfiguration.java
 ```
 
-Ressources :
+Ressources avec `application.properties` :
 
 ```text
 src/main/resources/
@@ -204,17 +204,26 @@ src/main/resources/
 └── data.sql
 ```
 
-L'adapter mémoire peut être conservé.
-
-Il reste utile pour :
+ou avec `application.yaml` :
 
 ```text
-tests unitaires
-développement
-comparaison des adapters
+src/main/resources/
+├── application.yaml
+├── schema.sql
+└── data.sql
 ```
 
-Mais l'application Spring utilisera maintenant PostgreSQL.
+Utiliser une seule des deux configurations :
+
+```text
+application.properties
+```
+
+ou :
+
+```text
+application.yaml
+```
 
 ---
 
@@ -335,7 +344,25 @@ JpaRepository
 
 # Configuration PostgreSQL
 
-Modifier :
+Deux formats sont possibles avec Spring Boot :
+
+```text
+application.properties
+```
+
+ou :
+
+```text
+application.yaml
+```
+
+Les deux configurations suivantes sont équivalentes.
+
+---
+
+## Possibilité 1 – application.properties
+
+Chemin :
 
 ```text
 src/main/resources/application.properties
@@ -354,6 +381,77 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 
 spring.sql.init.mode=always
 ```
+
+---
+
+## Possibilité 2 – application.yaml
+
+Chemin :
+
+```text
+src/main/resources/application.yaml
+```
+
+Configuration :
+
+```yaml
+spring:
+  application:
+    name: springboot-starter
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/springboot_starter
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 3000
+```
+
+---
+
+## Équivalence
+
+Ces deux écritures représentent exactement la même configuration.
+
+### Properties
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/springboot_starter
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+```
+
+### YAML
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/springboot_starter
+    username: postgres
+    password: postgres
+```
+
+Le choix entre :
+
+```text
+application.properties
+```
+
+et :
+
+```text
+application.yaml
+```
+
+est principalement une question de préférence.
+
+Pour ce tutoriel, une seule des deux versions doit être conservée dans le projet.
 
 ---
 
@@ -483,13 +581,22 @@ id = 8
 
 # Initialisation SQL
 
-La propriété :
+Avec `application.properties` :
 
 ```properties
 spring.sql.init.mode=always
 ```
 
-demande à Spring Boot d'exécuter :
+Avec `application.yaml` :
+
+```yaml
+spring:
+  sql:
+    init:
+      mode: always
+```
+
+Cette configuration demande à Spring Boot d'exécuter :
 
 ```text
 schema.sql
@@ -508,14 +615,22 @@ Pour ce tutoriel :
 ```text
 chaque démarrage
       ↓
-table vérifiée
+schema.sql
       ↓
-données réinitialisées
+data.sql
       ↓
 7 réalisateurs
 ```
 
-Cette réinitialisation est volontaire pour conserver un état reproductible pendant le tutoriel.
+La commande :
+
+```sql
+TRUNCATE TABLE person RESTART IDENTITY;
+```
+
+réinitialise volontairement les données à chaque démarrage.
+
+Cela permet de conserver un état reproductible pendant le tutoriel.
 
 ---
 
@@ -780,41 +895,6 @@ List<Person>
 
 ---
 
-# Mapping SQL vers domaine
-
-Le mapping est réalisé avec :
-
-```java
-new Person(
-    resultSet.getInt("id"),
-    resultSet.getString("first_name"),
-    resultSet.getString("last_name"),
-    resultSet.getInt("city_id")
-)
-```
-
-La base utilise :
-
-```text
-snake_case
-```
-
-Le domaine utilise :
-
-```text
-camelCase
-```
-
-Exemple :
-
-```text
-first_name
-     ↓
-firstName
-```
-
----
-
 # findById
 
 Requête :
@@ -889,11 +969,7 @@ IDENTITY
 id
 ```
 
----
-
-## Exemple
-
-Entrée :
+Exemple :
 
 ```json
 {
@@ -901,27 +977,6 @@ Entrée :
   "lastName": "Eastwood",
   "cityId": 8
 }
-```
-
-Insertion :
-
-```sql
-INSERT INTO person (
-  first_name,
-  last_name,
-  city_id
-)
-VALUES (
-  'Clint',
-  'Eastwood',
-  8
-);
-```
-
-PostgreSQL génère :
-
-```text
-id = 8
 ```
 
 Résultat :
@@ -975,7 +1030,7 @@ DELETE FROM person
 WHERE id = ?
 ```
 
-L'adapter ne connaît toujours aucune notion HTTP.
+L'adapter ne connaît aucune notion HTTP.
 
 Il ne retourne pas :
 
@@ -1043,9 +1098,9 @@ public PersonRepository personRepository() {
 }
 ```
 
-L'application utilisait donc l'adapter mémoire.
+L'application utilisait l'adapter mémoire.
 
-Nous allons maintenant remplacer uniquement cette configuration.
+Nous allons remplacer uniquement cet adapter dans la configuration.
 
 ---
 
@@ -1127,8 +1182,6 @@ return new PostgreSqlPersonRepositoryAdapter(
     jdbcTemplate
 );
 ```
-
-C'est essentiellement le seul changement nécessaire dans l'assemblage.
 
 ---
 
@@ -1495,24 +1548,6 @@ Adapter Memory
 ```
 
 indépendamment de l'infrastructure PostgreSQL.
-
----
-
-# Test de l'adapter PostgreSQL
-
-L'adapter PostgreSQL peut être testé séparément avec une base réelle.
-
-À ce stade, le test manuel permet de vérifier :
-
-```text
-HTTP
- ↓
-Application
- ↓
-PostgreSQL
-```
-
-Les tests d'intégration PostgreSQL pourront être isolés dans une étape dédiée.
 
 ---
 
@@ -1946,6 +1981,8 @@ Prochaine étape :
 - `PostgreSqlPersonRepositoryAdapter` implémente ce port ;
 - `JdbcTemplate` appartient à l'infrastructure ;
 - les requêtes SQL appartiennent à l'adapter PostgreSQL ;
+- `application.properties` et `application.yaml` sont deux formats possibles ;
+- une seule configuration doit être utilisée ;
 - le domaine ne connaît pas JDBC ;
 - le domaine ne connaît pas PostgreSQL ;
 - `PersonService` ne connaît pas PostgreSQL ;
