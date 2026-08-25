@@ -28,6 +28,8 @@
 - [Port Repository](./springboot/202-port-repository.md)
 - [Out memory](./springboot/203-out-memory.md)
 - [In PersonUseCase](./springboot/204-in-personusecase.md)
+- [UseCase PersonService](./springboot/205-usecase-personservice.md.md)
+
 
 ###  Quarkus Layered
 - [Initialisation](./quarkus/001-initialisation.md)
