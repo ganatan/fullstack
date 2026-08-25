@@ -29,6 +29,7 @@
 - [Out memory](./springboot/203-out-memory.md)
 - [In PersonUseCase](./springboot/204-in-personusecase.md)
 - [UseCase PersonService](./springboot/205-usecase-personservice.md)
+- [Adapter In Rest Personcontroller](./springboot/206-adapter-in-rest-personcontroller.md)
 
 
 ###  Quarkus Layered
