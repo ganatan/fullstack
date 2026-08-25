@@ -11,7 +11,7 @@
 - [Installation Java 25](./basics/003-java25-installation.md)
 - [Installation Rust](./basics/004-rust-installation.md)
 
-###  SpringBoot
+###  SpringBoot Layered
 - [Initialisation](./springboot/001-initialisation.md)
 - [Root Controller](./springboot/002-root-controller.md)
 - [Crud Controller](./springboot/003-crud-controller.md)
@@ -21,8 +21,14 @@
 - [PostgreSQL](./springboot/007-postgresql.md)
 - [JPA Hibernate](./springboot/008-jpa-hibernate.md)
 
+###  SpringBoot Hexagonal
+- [Initialisation](./springboot/001-initialisation.md)
+- [Root Controller](./springboot/002-root-controller.md)
+- [Domain](./springboot/201-domain.md)
 
-###  Quarkus
+
+
+###  Quarkus Layered
 - [Initialisation](./quarkus/001-initialisation.md)
 - [Root Controller](./quarkus/002-root-controller.md)
 - [Crud Controller](./quarkus/003-crud-controller.md)
@@ -32,7 +38,7 @@
 - [PostgreSQL](./quarkus/007-postgresql.md)
 - [JPA Hibernate](./quarkus/008-jpa-hibernate.md)
 
-###  Rust
+###  Rust Layered
 - [Initialisation](./rust/001-initialisation.md)
 - [Root Controller](./rust/002-root-controller.md)
 - [Crud Controller](./rust/003-crud-controller.md)
