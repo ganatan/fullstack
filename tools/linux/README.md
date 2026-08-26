@@ -9,24 +9,27 @@
 
 - [VIM](./commandes/101-vim.md)
 - [Navigation](./commandes/102-navigation.md)
-- [Répertoires](./102-repertoires.md)
+- [Réseau](./commandes/103-reseau.md)
+- [Processus](./commandes/104-processus.md)
+- [Utilisateurs](./commandes/105-utilisateurs.md)
+- [Permissions](./commandes/106-permissions.md)
+
+
+
+
 - [Fichiers](./103-fichiers.md)
 - [Copie](./104-copie.md)
 - [Déplacement et renommage](./105-deplacement-renommage.md)
 - [Suppression](./106-suppression.md)
 - [Recherche de fichiers](./107-recherche-fichiers.md)
 - [Recherche dans les fichiers](./108-recherche-contenu.md)
-- [Permissions](./112-permissions.md)
-- [Utilisateurs](./113-utilisateurs.md)
 - [Shell](./115-shell.md)
-- [Processus](./117-processus.md)
 - [Processus en arrière-plan](./118-processus-arriere-plan.md)
 - [Mémoire](./119-memoire.md)
 - [CPU](./120-cpu.md)
 - [Espace disque](./121-espace-disque.md)
 - [Disques et partitions](./122-disques-partitions.md)
 - [Informations système](./123-informations-systeme.md)
-- [Réseau](./124-reseau.md)
 - [Ports](./125-ports.md)
 - [HTTP](./126-http.md)
 - [Services](./131-services.md)
