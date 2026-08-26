@@ -8,7 +8,7 @@
 ## Liste Commandes
 
 - [VIM](./commandes/101-vim.md)
-- [Navigation](./101-navigation.md)
+- [Navigation](./commandes/102-navigation.md)
 - [Répertoires](./102-repertoires.md)
 - [Fichiers](./103-fichiers.md)
 - [Copie](./104-copie.md)
