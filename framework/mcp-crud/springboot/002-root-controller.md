@@ -114,71 +114,25 @@ Mettre à jour les métadonnées du projet dans `pom.xml` :
 
 ---
 
-## Build & Tests
-
-Compiler, exécuter les tests et packager l’application :
+## Build & Exécution
 
 ```bash
-mvn clean install
+mvn clean install                         # Nettoie, teste, compile et package l'application
+mvn spring-boot:run                       # Lance l'application avec Maven
+java -jar target/springboot-starter-1.0.0.jar # Lance l'application packagée
+http://localhost:3000                     # Teste l'application
 ```
 
-Artefact généré :
-
-```text
-target/springboot-starter-1.0.0.jar
-```
-
----
-
-## Run
-
-### Exécution via Maven
+## Commandes Maven
 
 ```bash
-mvn spring-boot:run
+mvn clean                                 # Nettoie le dossier target
+mvn compile                               # Compile les sources
+mvn test                                  # Exécute les tests
+mvn package                               # Génère le fichier JAR
+mvn install                               # Installe le JAR dans le repository Maven local
+mvn dependency:tree                       # Affiche l'arbre des dépendances
+mvn versions:display-dependency-updates   # Vérifie les mises à jour des dépendances
+mvn versions:display-plugin-updates       # Vérifie les mises à jour des plugins Maven
+mvn spring-boot:run                       # Lance l'application Spring Boot
 ```
-
-### Exécution via Java
-
-```bash
-java -jar target/springboot-starter-1.0.0.jar
-```
-
-Accès :
-
-http://localhost:3000/
-
----
-
-## Résultat
-
-Appel via navigateur ou curl :
-
-http://localhost:3000/
-
-Réponse JSON :
-
-```json
-{
-  "application": "springboot-starter",
-  "status": "running",
-  "java": "21.0.x"
-}
-```
-
-
-
----
-
-## 📦 Commandes Maven usuelles
-
-```bash
-mvn clean                   # nettoyage du dossier target
-mvn compile                 # compilation des sources
-mvn test                    # exécution des tests
-mvn package                 # génération de l’artefact
-mvn install                 # installation en repository local
-mvn dependency:tree         # affichage de l’arbre de dépendances
-mvn versions:display-dependency-updates
-mvn versions:display-plugin-updates
-mvn spring-boot:run         # exécution de l’application Spring Boot

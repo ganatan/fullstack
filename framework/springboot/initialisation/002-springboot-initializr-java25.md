@@ -8,7 +8,7 @@ Configurer le projet avec les paramètres suivants :
 ### 🏗️ **Projet**
 - **Project** : Maven  
 - **Language** : Java  
-- **Spring Boot** : 4.0.1  
+- **Spring Boot** : 4.1.1  
 - **Java** : 25  
 - **Packaging** : JAR  
 
